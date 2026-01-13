@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 using namespace std;
 void returnToOverworld() {
 	cout << "returned to overworld";
@@ -19,9 +20,13 @@ void enterShop() {
 void chat() {
 	cout << "Talked to someone";
 }
+string quitGame(string &menu) {
+	return menu;
+}
 
 int main() {
-	cout << R"(MENU:
+
+	string menu = R"(MENU:
 
 1. Return to Game
 2. Enter Battle
@@ -31,14 +36,32 @@ int main() {
 6. Quit Game
 
 		)";
+	cout << menu;
 	int num;
 	cin >> num;
 	switch (num) {
 	case 1:
 		returnToOverworld();
-	
+		break;
 	case 2:
 		enterBattle();
+		break;
+	case 3:
+		manageInventory();
+		break;
+	case 4: 
+		enterShop();
+		break;
+	case 5:
+		chat();
+		break;
+	case 6:
+		quitGame(menu);
+		break;
+
+
+
+
 	}
 		 
 
