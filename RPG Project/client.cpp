@@ -1,9 +1,24 @@
 #include <iostream>
 using namespace std;
 void returnToOverworld() {
-
+	cout << "returned to overworld";
 }
 
+void enterBattle() {
+	cout << "entered battle";
+}
+
+void manageInventory() {
+	cout << "managed inventory";
+}
+
+void enterShop() {
+	cout << "entered shop";
+}
+
+void chat() {
+	cout << "Talked to someone";
+}
 
 int main() {
 	cout << R"(MENU:
@@ -21,6 +36,9 @@ int main() {
 	switch (num) {
 	case 1:
 		returnToOverworld();
+	
+	case 2:
+		enterBattle();
 	}
 		 
 
