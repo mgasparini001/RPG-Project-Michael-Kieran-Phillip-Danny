@@ -26,7 +26,8 @@ void quitGame() {
 }
 
 int main() {
-
+	bool hasQuit = false;
+	while (false) {
 	string menu = R"(MENU:
 
 1. Return to Game
@@ -40,8 +41,7 @@ int main() {
 	cout << menu;
 	int num;
 	cin >> num;
-	bool hasQuit = false;
-	while (false) {
+
 		switch (num) {
 		case 1:
 			returnToOverworld();
