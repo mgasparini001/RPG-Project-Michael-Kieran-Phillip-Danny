@@ -3,6 +3,7 @@
 using namespace std;
 void returnToOverworld() {
 	cout << "returned to overworld";
+
 }
 
 void enterBattle() {
@@ -20,8 +21,8 @@ void enterShop() {
 void chat() {
 	cout << "Talked to someone";
 }
-string quitGame(string &menu) {
-	return menu;
+void quitGame() {
+	cout << "quit";
 }
 
 int main() {
@@ -39,30 +40,35 @@ int main() {
 	cout << menu;
 	int num;
 	cin >> num;
-	switch (num) {
-	case 1:
-		returnToOverworld();
-		break;
-	case 2:
-		enterBattle();
-		break;
-	case 3:
-		manageInventory();
-		break;
-	case 4: 
-		enterShop();
-		break;
-	case 5:
-		chat();
-		break;
-	case 6:
-		quitGame(menu);
-		break;
+	bool hasQuit = false;
+	while (false) {
+		switch (num) {
+		case 1:
+			returnToOverworld();
+			break;
+		case 2:
+			enterBattle();
+			break;
+		case 3:
+			manageInventory();
+			break;
+		case 4:
+			enterShop();
+			break;
+		case 5:
+			chat();
+			break;
+		case 6:
+			quitGame();
+			hasQuit = true;
+			break;
+			
 
 
 
-
+		}
 	}
+
 		 
 
 
