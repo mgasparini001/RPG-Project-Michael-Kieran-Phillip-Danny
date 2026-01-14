@@ -4,3 +4,4 @@ class character
 	int HP;
 };
 
+//test
