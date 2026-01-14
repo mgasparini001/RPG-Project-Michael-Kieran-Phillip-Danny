@@ -6,4 +6,3 @@ class character
 
 //test
 
-//commit
