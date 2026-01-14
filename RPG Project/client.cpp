@@ -2,33 +2,33 @@
 #include <string>
 using namespace std;
 void returnToOverworld() {
-	cout << "returned to overworld";
+	cout << "returned to overworld\n";
 
 }
 
 void enterBattle() {
-	cout << "entered battle";
+	cout << "entered battle\n";
 }
 
 void manageInventory() {
-	cout << "managed inventory";
+	cout << "managed inventory\n";
 }
 
 void enterShop() {
-	cout << "entered shop";
+	cout << "entered shop\n";
 }
 
 void chat() {
-	cout << "Talked to someone";
+	cout << "Talked to someone\n";
 }
 void quitGame() {
-	cout << "quit";
+	cout << "quit\n";
 }
 
 int main() {
 	bool hasQuit = false;
-	while (false) {
-	string menu = R"(MENU:
+	while (!hasQuit) {
+		string menu = R"(MENU:
 
 1. Return to Game
 2. Enter Battle
@@ -38,9 +38,10 @@ int main() {
 6. Quit Game
 
 		)";
-	cout << menu;
-	int num;
-	cin >> num;
+
+		cout << menu;
+		int num;
+		cin >> num;
 
 		switch (num) {
 		case 1:
@@ -62,12 +63,14 @@ int main() {
 			quitGame();
 			hasQuit = true;
 			break;
-			
+
 
 
 
 		}
+
 	}
+
 
 		 
 
