@@ -8,6 +8,11 @@ void Character::attack(Character& target){
     target.takeDamage(dmg);
 }
 
+int Character::diceRoll(int x){
+    return (rand() % x) + 1;
+}
+
+
 void Character::takeDamage(int amount){
     hp -= amount;
     if (hp < 0){
