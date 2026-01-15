@@ -128,7 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="character.h" />
-    <ClInclude Include="npc.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="politician.H" />
   </ItemGroup>
