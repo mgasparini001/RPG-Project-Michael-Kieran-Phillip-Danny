@@ -9,13 +9,13 @@ public:
 	int Str;
 	int XPdrop;
 
-	npc(int hp; int t; int move; int dex; int str; int xpdrop) {
+	npc(int hp, int t, int move, int dex, int str, int xpdrop) {
 		HP = hp;
 		T = t;
 		Move = move;
 		Dex = dex;
 		Str = str;
-		XPdro = xpdrop;
+		XPdrop = xpdrop;
 	}
 	//loot drop
 };
