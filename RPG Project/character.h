@@ -18,14 +18,7 @@ protected:
     string name;
 
 public:
-    Character(const string& name,
-              int hp,
-              int stamina,
-              int move,
-              int dex,
-              int str,
-              int wits,
-              int dmg);
+    Character(const string& name, int hp, int stamina, int move, int dex, int str, int wits, int dmg);
 
     virtual ~Character() = default;
 
