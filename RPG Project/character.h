@@ -1,5 +1,4 @@
 #pragma once
-#include "npc.h"
 #include <string>
 using namespace std;
 
