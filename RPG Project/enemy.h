@@ -1,19 +1,19 @@
 #pragma once
 #include "character.h"
-class enemy :public character
+#include <string>
+using std::string;
+
+class enemy :public Character
 {
 public:
 	int XPdrop;
 
-	enemy(int hp, int t, int move, int dex, int str, int xpdrop, int dmg) {
-		HP = hp;
-		T = t;
-		Move = move;
-		Dex = dex;
-		Str = str;
-		XPdrop = xpdrop;
-		Dmg = dmg;
-	}
-	//loot drop
+	enemy(const string& name, int hp, int stamina, int move, int dex, int str, int wits, int dmg, int xpdrop);
+
+	void attack(Character& target) override;
+
+	int lootDrop();
+
+	
 };
 
