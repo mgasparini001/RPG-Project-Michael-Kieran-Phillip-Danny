@@ -34,16 +34,10 @@ int diceRoll(int x)
 	return (rand() % x) + 1;
 }
 
-int enterBattle() {
+int enterBattle(npc& npc, player& p1) {
 	cout << "entered battle\n";
 
-	npc npc1(5, 10, 3,  4,  7, 100);
-
-	npc npc2(6, 10, 3, 4, 7, 100);
-
-	npc npc3(7, 10, 3, 4, 7, 100);
-
-	npc npc4(8, 10, 3, 4, 7, 100);
+	
 
 	int enemyRoll = diceRoll(3);
 
@@ -63,19 +57,29 @@ int enterBattle() {
 		cout << "Enemy HP: " << npc3.getHp() << endl;
 		return npc3.getHp();
 	}
+
+	while(p1.getHp() > 0 && npc.getHp() > 0) {
 	
-	//while (
-
-
-
-
-
-
+	
+	}
 }
+
+
+
+
+
+
 int main() {
 
 	player p1();
 
+	npc npc1(5, 10, 3, 4, 7, 100);
+
+	npc npc2(6, 10, 3, 4, 7, 100);
+
+	npc npc3(7, 10, 3, 4, 7, 100);
+
+	
 
 	srand(static_cast<unsigned int>(time(0)));
 	//cout << diceRoll(6);
@@ -104,7 +108,7 @@ int main() {
 			returnToOverworld();
 			break;
 		case 2:
-			enterBattle();
+			enterBattle(npc, p1);
 			hasQuit = true;
 			break;
 			
