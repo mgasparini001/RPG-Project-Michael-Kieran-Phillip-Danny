@@ -1,13 +1,7 @@
 #pragma once
-class politician
-{
+#include "enemy.h"
+class politician:public enemy{
 public:
-	int HP;
-	int T;
-	int Move;
-	int dex;
-	int str;
-	int XPdrop;
 	int friendliness;
 
 	politician
