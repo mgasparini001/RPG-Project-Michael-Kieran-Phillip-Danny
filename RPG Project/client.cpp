@@ -35,13 +35,14 @@ int diceRoll(int x)
 }
 
 int main() {
+
 	srand(static_cast<unsigned int>(time(0)));
 	cout << diceRoll(6);
 
-	string menu = R"(MENU:
+	
 	bool hasQuit = false;
 	while (!hasQuit) {
-		string menu = R"(MENU:
+		
 	string menu = R"(MENU:
 
 1. Return to Game
