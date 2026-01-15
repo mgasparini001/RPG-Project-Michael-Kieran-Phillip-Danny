@@ -1,4 +1,6 @@
 #include "character.h"
+#include <string>
+using std::string;
 
 Character::Character(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg) : name(name), hp(hp), maxHp(hp), move(move), dex(dex), str(str), wits(wits), toughness(toughness), dmg(dmg) {}
 
