@@ -1,14 +1,15 @@
 #pragma once
 #include "character.h"
-class player :public Character
-{
-	
-	
-	public:
-		int XP = 3000;
-		int gold = 100;
+#include <string>
+using std::string;
 
-	player(const string& name, int hp, int stamina, int move, int dex, int str, int wits, int dmg);
+class player : public Character
+{
+public:
+	int XP = 3000;
+	int gold = 100;
+
+	player(const string& name, int hp, int move, int dex, int str, int wits, int dmg);
 
 	void attack(Character& target) override;
 
