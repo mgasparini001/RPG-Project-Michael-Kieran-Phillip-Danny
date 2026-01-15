@@ -1,5 +1,4 @@
 #pragma once
-#include "npc.h"
 #include <string>
 using namespace std;
 
@@ -8,11 +7,11 @@ class Character
 protected:
     int hp;
     int maxHp;
-    int stamina;
     int move;
     int dex;
     int str;
     int wits;
+	int toughness;
     int dmg;
 
     string name;
