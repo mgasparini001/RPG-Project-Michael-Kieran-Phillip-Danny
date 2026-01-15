@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 using namespace std;
+
 void returnToOverworld() {
 	cout << "returned to overworld";
 }
@@ -24,8 +26,16 @@ string quitGame(string &menu) {
 	return menu;
 }
 
+//rolls a dice based on an input (x = 6 would mean a six sided die
+int diceRoll(int x)
+{
+	return (rand() % x) + 1;
+}
+
 int main() {
 
+	srand(static_cast<unsigned int>(time(0)));
+	cout << diceRoll(6);
 	string menu = R"(MENU:
 
 1. Return to Game
