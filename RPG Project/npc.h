@@ -9,6 +9,8 @@ public:
 	int Str;
 	int XPdrop;
 
+	int getHp();
+
 	npc(int hp, int t, int move, int dex, int str, int xpdrop) {
 		HP = hp;
 		T = t;
