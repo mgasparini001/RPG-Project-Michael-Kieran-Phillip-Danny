@@ -43,6 +43,8 @@ int enterBattle() {
 
 	npc npc3(7, 10, 3, 4, 7, 100);
 
+	npc npc4(8, 10, 3, 4, 7, 100);
+
 	int enemyRoll = diceRoll(3);
 
 	cout << "Enemy #" << enemyRoll << endl;
@@ -53,16 +55,27 @@ int enterBattle() {
 	}
 
 	else if (enemyRoll == 2) {
-		cout << "Enemy HP: " << npc1.getHp() << endl;
+		cout << "Enemy HP: " << npc2.getHp() << endl;
 		return npc2.getHp();
 	}
 
 	else {
-		cout << "Enemy HP: " << npc1.getHp() << endl;
+		cout << "Enemy HP: " << npc3.getHp() << endl;
 		return npc3.getHp();
 	}
+	
+	//while (
+
+
+
+
+
+
 }
 int main() {
+
+	player p1();
+
 
 	srand(static_cast<unsigned int>(time(0)));
 	//cout << diceRoll(6);

@@ -1,9 +1,9 @@
 #pragma once
 #include "character.h"
-class player :public character
+class player :public Character
 {
-	class character
-	{
+	
+	
 	public:
 		int XP = 3000;
 		int gold = 100;
@@ -14,6 +14,6 @@ class player :public character
 
 		void flee() {}
 
-	};
+	
 };
 
