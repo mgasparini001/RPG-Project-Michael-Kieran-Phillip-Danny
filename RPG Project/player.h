@@ -10,6 +10,10 @@ class player :public character
 
 		void attack() {}
 
+		void interact() {}
+
+		void flee() {}
+
 	};
 };
 
