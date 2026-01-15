@@ -130,6 +130,7 @@
     <ClInclude Include="character.h" />
     <ClInclude Include="npc.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="politician.H" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp" />
