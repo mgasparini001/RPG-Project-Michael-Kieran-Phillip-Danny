@@ -22,6 +22,9 @@ public:
 
     virtual void attack(Character& target);
 
+	//added random function for various uses
+	int diceRoll(int x);
+
     void takeDamage(int amount);
 
     bool isAlive() const;
@@ -29,5 +32,5 @@ public:
     int getHp() const;
 
     std::string getName() const;
-	
+
 };
