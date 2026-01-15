@@ -6,14 +6,12 @@ using std::string;
 class enemy :public Character
 {
 public:
-	int XPdrop;
 
-	enemy(const string& name, int hp, int stamina, int move, int dex, int str, int wits, int dmg, int xpdrop);
+	enemy(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg);
 
 	void attack(Character& target) override;
 
 	int lootDrop();
 
-	
 };
 
