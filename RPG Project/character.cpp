@@ -37,3 +37,15 @@ int Character::getHp() const{
 string Character::getName() const{
     return name;
 }
+
+int Character::getStr() const {
+    return str;
+}
+
+int Character::getToughness() const {
+    return toughness;
+}
+
+int Character::getDmg() const {
+    return dmg;
+}

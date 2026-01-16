@@ -41,4 +41,9 @@ public:
 	// get character name
     std::string getName() const;
 
+    int getStr() const;
+
+    int getToughness() const;
+
+    int getDmg() const;
 };
