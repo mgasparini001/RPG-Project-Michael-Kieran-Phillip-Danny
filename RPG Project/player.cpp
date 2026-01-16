@@ -3,21 +3,24 @@
 using std::cout;
 using std::endl;
 
-player::player(const string& name, int hp, int move, int dex, int str, int wits, int dmg)
-    : Character(name, hp, move, dex, str, wits, 0, dmg) {
+// player constructor
+player::player(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg)
+    : Character(name, hp, move, dex, str, wits, toughness, dmg) {
 }
 
+// override attack function to include player-specific behavior
 void player::attack(Character& target) {
     cout << getName() << " attacks " << target.getName() << " for " << dmg << " damage!" << endl;
     target.takeDamage(dmg);
 }
 
+// interact function
 void player::interact() {
     cout << getName() << " interacts with the environment." << endl;
 
 }
 
-
+// flee function
 void player::flee() {
     cout << getName() << " attempts to flee from combat!" << endl;
 }

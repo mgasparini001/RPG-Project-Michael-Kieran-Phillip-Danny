@@ -3,18 +3,24 @@
 #include <string>
 using std::string;
 
+// player class derived from Character
 class player : public Character
 {
 public:
+	// gold and experience points
 	int XP = 3000;
 	int gold = 100;
 
-	player(const string& name, int hp, int move, int dex, int str, int wits, int dmg);
+	// player constructor
+	player(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg);
 
+	// override attack function
 	void attack(Character& target) override;
 
+	// interact function
 	void interact() {}
 
+	// flee function
 	void flee() {}
 };
 
