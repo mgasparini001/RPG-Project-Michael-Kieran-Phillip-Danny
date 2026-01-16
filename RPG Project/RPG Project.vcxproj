@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\bin</OutDir>
-    <IntDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\obj</IntDir>
+    <OutDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\obj\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
