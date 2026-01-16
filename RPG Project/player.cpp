@@ -14,10 +14,23 @@ void player::attack(Character& target) {
     target.takeDamage(dmg);
 }
 
-// interact function
-void player::interact() {
-    cout << getName() << " interacts with the environment." << endl;
-
+// interact with entity (npcs, items, whatever else we add later)
+void player::interact(Entity& entity) {
+    cout << getName() << " interacts with " << entity.getName() << "." << endl;
+    cout << entity.getDescription() << endl;
+    
+    // check if item and if so check if consumable, ask to use
+    Item* item = dynamic_cast<Item*>(&entity);
+    if (item && item->isConsumable()) {
+        cout << "Use " << item->getName() << "? (y/n): ";
+        char choice;
+        std::cin >> choice;
+        if (choice == 'y' || choice == 'Y') {
+            item->use(getName());
+        } else {
+            // do nothing
+        }
+    }
 }
 
 // flee function

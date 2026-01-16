@@ -1,5 +1,7 @@
 #pragma once
 #include "character.h"
+#include "entity.h"
+#include "item.h"
 #include <string>
 using std::string;
 
@@ -17,8 +19,8 @@ public:
 	// override attack function
 	void attack(Character& target) override;
 
-	// interact function
-	void interact() {}
+	// interact with entity (npcs, items, etc)
+	void interact(Entity& entity);
 
 	// flee function
 	void flee() {}
