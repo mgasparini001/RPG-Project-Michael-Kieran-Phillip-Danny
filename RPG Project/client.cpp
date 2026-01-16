@@ -88,9 +88,9 @@ int main() {
 	
 	enemy enemy1("dragon", 1, 3, 4, 7, 2, 5, 10, 100);
 
-	enemy enemy2("zombie", 1, 3, 4, 7, 2, 5, 10, 100);
+	enemy enemy2("zombie", 1, 6, 4, 7, 2, 5, 10, 100);
 
-	enemy enemy3("shrek", 1, 3, 4, 7, 2, 5, 10, 100);
+	enemy enemy3("shrek", 1, 5, 4, 7, 2, 5, 10, 100);
 
 	
 	srand(static_cast<unsigned int>(time(0)));
