@@ -133,12 +133,18 @@
   <ItemGroup>
     <ClInclude Include="character.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="item.h" />
+    <ClInclude Include="npc.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="politician.H" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="item.cpp" />
+    <ClCompile Include="npc.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="client.cpp" />
   </ItemGroup>
