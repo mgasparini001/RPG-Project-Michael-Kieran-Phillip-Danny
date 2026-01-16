@@ -22,7 +22,7 @@ public:
 	// interact with entity (npcs, items, etc)
 	void interact(Entity& entity);
 
-		void flee() {}
+	void flee();
 
 	
 };
