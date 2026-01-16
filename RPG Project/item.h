@@ -19,12 +19,6 @@ public:
     // use item (this is also virtual so derived stuff can do specific things)
     virtual void use(const std::string& playerName = "");
 
-    // get item name
-    std::string getName() const;
-
-    // get item description
-    std::string getDescription() const;
-
     // get item value
     int getValue() const;
 

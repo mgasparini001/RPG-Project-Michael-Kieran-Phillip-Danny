@@ -9,7 +9,7 @@ using std::string;
 class player : public Character
 {
 public:
-	// gold and experience points
+	// gold and experience pointsz
 	int XP = 3000;
 	int gold = 100;
 
@@ -23,6 +23,6 @@ public:
 	void interact(Entity& entity);
 
 	// flee function
-	void flee() {}
+	void flee();
 };
 
