@@ -43,31 +43,15 @@ void refreshScreen() {
 
 
 //rolls for enemy type, displays enemy name and hp, and starts battle sequence loop
-void enterBattle(enemy& enemy1,enemy& enemy2, enemy& enemy3, player& p1) {
+void enterBattle(enemy& enemy, player& p1) {
+
+	bool hasRun = false;
 
 	cout << "entered battle\n\n";
 
-	int enemyRoll = diceRoll(3);
-
-	// (not really needed, just for testing) cout << "Enemy #" << enemyRoll << endl;
-
-	if (enemyRoll == 1) {
-		cout << "A wild " << enemy1.getName() << " appears!" << endl;
-		cout << "HP: " << enemy1.getHp() << endl;
+	cout << "A wild " << enemy.getName() << " appears!" << endl;
+	cout << "HP: " << enemy.getHp() << endl;
 	
-	}
-
-	else if (enemyRoll == 2) {
-		cout << "A wild " << enemy2.getName() << " appears!" << endl;
-		cout << "HP: " << enemy2.getHp() << endl;
-
-	}
-
-	else {
-		cout << "A wild " << enemy3.getName() << " appears!" << endl;
-		cout << "HP: " << enemy3.getHp() << endl;
-
-	}
 	
 	int choice;
 
@@ -88,12 +72,63 @@ void enterBattle(enemy& enemy1,enemy& enemy2, enemy& enemy3, player& p1) {
 			2. ITEM    3. RUN
 )";
 		cin >> choice;
+		while (choice < 1 || choice > 3)
+		{
+			cout << "Invalid option, please enter a valid input";
+			cin >> choice;
+		}
+		string anything = "";
+		switch (choice) 
+		{
+			case 1:
+			{
+				p1.attack(enemy);
+				cout << "Enter anything to proceed";
+				cin >> anything;
+				refreshScreen();
+				break;
+			}
+			case 2:
+			{
+				cout << p1.getName() + " throws a rock. It has no effect." << endl;
+				cout << "Enter anything to proceed";
+				cin >> anything;
+				refreshScreen();
+				break;
+			}
+			case 3:
+			{
+				bool check = p1.flee();
+				if (check)
+				{
+					hasRun = true;
+				}
+				cout << "Enter anything to proceed";
+				cin >> anything;
+				refreshScreen();
+			}
 
-		refreshScreen();
+		}
 
-
-	}
-	while (p1.getHp() > 0 && enemy1.getHp() > 0);
+		if (enemy.getHp() > 0 && !hasRun)
+		{
+			int eRoll = enemy.diceRoll(10);
+			if (eRoll <= 5)
+			{
+				enemy.attack(p1);
+				cout << "Enter anything to proceed";
+				cin >> anything;
+				refreshScreen();
+			}
+			else
+			{
+				cout << enemy.getName() + " looks for an item but can't find any" << endl;
+				cout << "Enter anything to proceed";
+				cin >> anything;
+				refreshScreen();
+			}
+		}
+	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
 		
 
 }
@@ -137,10 +172,24 @@ int main() {
 			returnToOverworld();
 			break;
 		case 2:
-			enterBattle(enemy1, enemy2, enemy3, p1);
+		{
+			int roll = diceRoll(3);
+			if (roll == 3)
+			{
+				enterBattle(enemy1, p1);
+			}
+			else if (roll == 2)
+			{
+				enterBattle(enemy2, p1);
+			}
+			else
+			{
+				enterBattle(enemy3, p1);
+			}
+			//enterBattle(enemy1, enemy2, enemy3, p1);
 			hasQuit = true;
 			break;
-			
+		}
 		case 3:
 			manageInventory();
 			break;

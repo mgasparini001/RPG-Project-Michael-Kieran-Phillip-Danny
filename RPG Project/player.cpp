@@ -34,7 +34,7 @@ void player::interact(Entity& entity) {
 }
 
 // flee function
-void player::flee() {
+bool player::flee() {
     cout << getName() << " attempts to flee from combat!" << endl;
     
     // roll a 20 side dice plus dex to see if they succeed
@@ -42,7 +42,9 @@ void player::flee() {
     
     if (fleeRoll >= 15) {
         cout << getName() << " successfully escaped!" << endl;
+        return true;
     } else {
         cout << getName() << " failed to escape!" << endl;
+        return false;
     }
 }
