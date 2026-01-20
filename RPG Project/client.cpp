@@ -78,7 +78,7 @@ void enterBattle(enemy& enemy1,enemy& enemy2, enemy& enemy3, player& p1) {
 		cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
 		cout << "\t\t\t" << "TOUGH: " << p1.getToughness() << endl;
 		cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
-		// WIP player stats display (need these player getter methods made)
+		// WIP player stats display (prob need these player getter methods made)
 		// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
 		// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
 		// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
@@ -138,6 +138,7 @@ int main() {
 			break;
 		case 2:
 			enterBattle(enemy1, enemy2, enemy3, p1);
+			// true breaks the main menu loop. once more menu choices are implemented, we can change how it works.
 			hasQuit = true;
 			break;
 			
