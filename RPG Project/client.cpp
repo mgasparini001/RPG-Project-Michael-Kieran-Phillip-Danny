@@ -72,6 +72,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			2. ITEM    3. RUN
 )";
 		cin >> choice;
+		//valid input checker
 		while (choice < 1 || choice > 3)
 		{
 			cout << "Invalid option, please enter a valid input";
@@ -80,14 +81,17 @@ void enterBattle(enemy& enemy, player& p1) {
 		string anything = "";
 		switch (choice) 
 		{
+			//case where the player decides to attack
 			case 1:
 			{
+				//calls the player attack function
 				p1.attack(enemy);
 				cout << "Enter anything to proceed";
 				cin >> anything;
 				refreshScreen();
 				break;
 			}
+			//case where the player decides to use an item
 			case 2:
 			{
 				cout << p1.getName() + " throws a rock. It has no effect." << endl;
@@ -96,6 +100,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				refreshScreen();
 				break;
 			}
+			//case where the player tries to run away
 			case 3:
 			{
 				bool check = p1.flee();
@@ -109,10 +114,11 @@ void enterBattle(enemy& enemy, player& p1) {
 			}
 
 		}
-
+		//enemy gets a chance to move only if it has health
 		if (enemy.getHp() > 0 && !hasRun)
 		{
 			int eRoll = enemy.diceRoll(10);
+			//case where the enemy attacks
 			if (eRoll <= 5)
 			{
 				enemy.attack(p1);
@@ -120,6 +126,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				cin >> anything;
 				refreshScreen();
 			}
+			//case where the enemy tries to use an item
 			else
 			{
 				cout << enemy.getName() + " looks for an item but can't find any" << endl;
