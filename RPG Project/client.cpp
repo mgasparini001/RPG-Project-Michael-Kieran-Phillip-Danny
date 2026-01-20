@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <random>
 #include <string>
-#include <cstdlib>
 #include "npc.h"
 #include "character.h"
 #include "player.h"
@@ -62,7 +61,7 @@ void enterBattle(enemy& enemy, player& p1) {
 		cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
 		cout << "\t\t\t" << "TOUGH: " << p1.getToughness() << endl;
 		cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
-		// WIP player stats display (need these player getter methods made)
+		// WIP player stats display (prob need these player getter methods made)
 		// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
 		// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
 		// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
@@ -194,6 +193,7 @@ int main() {
 				enterBattle(enemy3, p1);
 			}
 			//enterBattle(enemy1, enemy2, enemy3, p1);
+			// true breaks the main menu loop. once more menu choices are implemented,
 			hasQuit = true;
 			break;
 		}
