@@ -23,6 +23,6 @@ public:
 	void interact(Entity& entity);
 
 	// flee function
-	void flee();
+	bool flee();
 };
 
