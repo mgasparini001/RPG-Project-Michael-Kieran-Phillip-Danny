@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <random>
 #include <string>
-#include <cstdlib>
 #include "npc.h"
 #include "character.h"
 #include "player.h"
