@@ -8,6 +8,10 @@
 #include "enemy.h"
 using namespace std;
 
+void printBattleDisplay() {
+
+}
+
 void returnToOverworld() {
 	cout << "returned to overworld\n";
 
@@ -46,29 +50,46 @@ void enterBattle(enemy& enemy, player& p1) {
 
 	bool hasRun = false;
 
-	cout << "entered battle\n\n";
+	cout << "\nentered battle...\n\n";
 
 	cout << "A wild " << enemy.getName() << " appears!" << endl;
-	cout << "HP: " << enemy.getHp() << endl;
-	
+
+	string anything = "";
+	cout << "Enter anything to proceed";
+	cin >> anything;
+
+	refreshScreen();
 	
 	int choice;
 
 	// Gameplay loop WIP 
 	do {
-		cout << "\n\n\n\n\n\n\n\n\t\t\t" << p1.getName() << endl;
+		cout << endl << "ENEMY:" << endl;
+		cout << enemy.getName() << endl;
+		cout << "\nHP: " << enemy.getHp() << endl;
+		cout << R"(
+
+
+
+-----------------------------------------
+)";
+
+		cout << "\n\t\t\t" << "PLAYER:";
+		cout << "\n\t\t\t" << p1.getName() << endl << endl;
 		cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
 		cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
 		cout << "\t\t\t" << "TOUGH: " << p1.getToughness() << endl;
 		cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
-		// WIP player stats display (prob need these player getter methods made)
+		// WIP player stats display (might need these player getter methods made)
 		// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
 		// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
 		// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
-
-		cout << R"(
-			1. FIGHT
-			2. ITEM    3. RUN
+		cout <<
+			R"(
+                       -------------------
+		      | 1. FIGHT          |
+		      | 2. ITEM    3. RUN |
+                       -------------------
 )";
 		cin >> choice;
 		while (choice < 1 || choice > 3)
@@ -76,7 +97,9 @@ void enterBattle(enemy& enemy, player& p1) {
 			cout << "Invalid option, please enter a valid input";
 			cin >> choice;
 		}
-		string anything = "";
+
+	
+
 		switch (choice) 
 		{
 			case 1:
@@ -108,7 +131,34 @@ void enterBattle(enemy& enemy, player& p1) {
 			}
 
 		}
+		cout << endl << "ENEMY:" << endl;
+		cout << enemy.getName() << endl;
+		cout << "\nHP: " << enemy.getHp() << endl;
+		cout << R"(
 
+
+
+-----------------------------------------
+)";
+
+		cout << "\n\t\t\t" << "PLAYER:";
+		cout << "\n\t\t\t" << p1.getName() << endl << endl;
+		cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
+		cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
+		cout << "\t\t\t" << "TOUGH: " << p1.getToughness() << endl;
+		cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
+		// WIP player stats display (might need these player getter methods made)
+		// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
+		// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
+		// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
+		cout <<
+			R"(
+                       -------------------
+		      | 1. FIGHT          |
+		      | 2. ITEM    3. RUN |
+                       -------------------
+)";
+	
 		if (enemy.getHp() > 0 && !hasRun)
 		{
 			int eRoll = enemy.diceRoll(10);
@@ -136,13 +186,13 @@ void enterBattle(enemy& enemy, player& p1) {
 
 int main() {
 	
-	player p1("Ash", 5, 8, 4, 3, 6, 7, 1);
+	player p1("Ash", 50, 8, 4, 3, 6, 7, 1);
 	
-	enemy enemy1("dragon", 1, 3, 4, 7, 2, 5, 10, 100);
+	enemy enemy1("dragon", 10, 3, 4, 7, 2, 5, 10, 100);
 
-	enemy enemy2("zombie", 1, 6, 4, 7, 2, 5, 10, 100);
+	enemy enemy2("zombie", 10, 6, 4, 7, 2, 5, 10, 100);
 
-	enemy enemy3("shrek", 1, 5, 4, 7, 2, 5, 10, 100);
+	enemy enemy3("shrek", 10, 5, 4, 7, 2, 5, 10, 100);
 
 	
 	srand(static_cast<unsigned int>(time(0)));
@@ -185,8 +235,8 @@ int main() {
 			{
 				enterBattle(enemy3, p1);
 			}
-			//enterBattle(enemy1, enemy2, enemy3, p1);
-			// true breaks the main menu loop. once more menu choices are implemented,
+			
+			// true breaks the main menu loop. once more menu choices are implemented, this can be changed
 			hasQuit = true;
 			break;
 		}
