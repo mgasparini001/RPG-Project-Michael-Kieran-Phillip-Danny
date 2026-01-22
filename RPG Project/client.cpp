@@ -193,6 +193,7 @@ void enterBattle(enemy& enemy, player& p1) {
                        -------------------
 )";
 	
+		//enemy gets to make a move only if it has health and the player has not run away
 		if (enemy.getHp() > 0 && !hasRun)
 		{
 			int eRoll = enemy.diceRoll(10);
