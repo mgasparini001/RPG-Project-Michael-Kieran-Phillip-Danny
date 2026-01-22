@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\bin</OutDir>
-    <IntDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\obj</IntDir>
+    <OutDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\obj\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -133,15 +133,23 @@
   <ItemGroup>
     <ClInclude Include="character.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="item.h" />
+    <ClInclude Include="npc.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="politician.H" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="item.cpp" />
+    <ClCompile Include="npc.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="client.cpp" />
-    <ClCompile Include="politician.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="toDo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

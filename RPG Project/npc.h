@@ -1,24 +1,23 @@
 #pragma once
-class npc
+#include "character.h"
+#include "entity.h"
+#include <string>
+using std::string;
+
+// npc class derived from both character and entity 
+// bc that way they can both have stats and be interacted with
+class npc : public Character, public Entity
 {
 public:
-	int HP;
-	int T;
-	int Move;
-	int Dex;
-	int Str;
-	int XPdrop;
+	int xpDrop;
 
-	int getHp();
+	// npc constructor
+	npc(const string& name, const string& description, int hp, int move, int dex, int str, int wits, int toughness, int dmg, int xpDrop);
 
-	npc(int hp, int t, int move, int dex, int str, int xpdrop) {
-		HP = hp;
-		T = t;
-		Move = move;
-		Dex = dex;
-		Str = str;
-		XPdrop = xpdrop;
-	}
-	//loot drop
+	// interact funct
+	void interact();
+
+	// loot drop funct
+	int lootDrop() const;
 };
 
