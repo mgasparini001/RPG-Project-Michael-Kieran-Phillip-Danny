@@ -5,14 +5,10 @@
 class Character
 {
 protected:
-    int hp;
-    int maxHp;
-    int move;
-    int dex;
-    int str;
-    int wits;
-    int toughness;
-    int dmg;
+    int Armor;
+    int HP;
+    int melee;
+    int range;
 
     std::string name;
 

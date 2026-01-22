@@ -137,7 +137,7 @@
     <ClInclude Include="item.h" />
     <ClInclude Include="npc.h" />
     <ClInclude Include="player.h" />
-    <ClInclude Include="politician.H" />
+    <ClInclude Include="weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp" />
