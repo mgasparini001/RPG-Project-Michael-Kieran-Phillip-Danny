@@ -4,8 +4,8 @@ TO DO:
 - In the same vein as the first to do, figure out how the strength and toughness (and other) stats will work. 
 Maybe let them just act as multipliers to the result of the damage dice roll method.
 
-- besides politician, make at least 1 other inherited enemy type class (maybe just edit npc class to be an enemy type?), and make both politician 
-and the other enemy type class have their own unique implementation of at least one of their methods.
+- make at least 2 inherited enemy type class (maybe just edit npc class to be an enemy type?),
+and make both have their own unique implementation of at least one of their methods.
 
 -enemy action engine to be implemented. Make different actions chosen at random based on weighted probability scheme (eg. 40% likely to attack, 20% to run, 30% to use heals, etc.)
 
