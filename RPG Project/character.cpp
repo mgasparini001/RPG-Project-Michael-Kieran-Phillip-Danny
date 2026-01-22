@@ -3,11 +3,22 @@
 using std::string;
 
 // character constructor
-Character::Character(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg) : name(name), hp(hp), maxHp(hp), move(move), dex(dex), str(str), wits(wits), toughness(toughness), dmg(dmg) {}
+Character::Character(const string& name, int HP, int melee, int range, int Armor)
+    : name(name), HP(HP), melee(melee), range(range), Armor(Armor) {}
 
 // basic attack function
-void Character::attack(Character& target){
-    target.takeDamage(dmg);
+void Character::attack(Character& target, bool attackType){
+    int damage = 0;
+    
+    // attackType
+    if (attackType) {
+        //melee attack
+    } else {
+        //ranged attack
+    }
+    
+    // Apply damage to target
+    target.takeDamage(damage);
 }
 
 // random dice roll function for various uses
@@ -17,35 +28,23 @@ int Character::diceRoll(int x){
 
 // function to reduce hp when taking damage
 void Character::takeDamage(int amount){
-    hp -= amount;
-    if (hp < 0){
-        hp = 0;
+    HP -= amount;
+    if (HP < 0){
+        HP = 0;
     }
 }
 
 // check if character is alive
 bool Character::isAlive() const{
-    return hp > 0;
+    return HP > 0;
 }
 
 // get current hp
 int Character::getHp() const{
-    return hp;
+    return HP;
 }
 
 // get character name
 string Character::getName() const{
     return name;
-}
-
-int Character::getStr() const {
-    return str;
-}
-
-int Character::getToughness() const {
-    return toughness;
-}
-
-int Character::getDmg() const {
-    return dmg;
 }

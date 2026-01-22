@@ -9,6 +9,8 @@ protected:
     int HP;
     int melee;
     int range;
+    int AP;
+    int dmg;
 
     std::string name;
 
@@ -36,5 +38,5 @@ public:
 	
 	// get character name
     std::string getName() const;
-    
+
 };
