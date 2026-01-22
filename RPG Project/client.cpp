@@ -8,8 +8,8 @@
 #include "enemy.h"
 using namespace std;
 
-void printBattleDisplay() {
-	/*
+void printBattleDisplay(enemy& enemy, player& p1) {
+	
 	 	cout << endl << "ENEMY:" << endl;
 	cout << enemy.getName() << endl;
 	cout << "\nHP: " << enemy.getHp() << endl;
@@ -37,7 +37,7 @@ void printBattleDisplay() {
 		      | 2. ITEM    3. RUN |
                        -------------------
 )";
-	*/
+	
 
 }
 
@@ -93,33 +93,9 @@ void enterBattle(enemy& enemy, player& p1) {
 
 	// Gameplay loop WIP 
 	do {
-		cout << endl << "ENEMY:" << endl;
-		cout << enemy.getName() << endl;
-		cout << "\nHP: " << enemy.getHp() << endl;
-		cout << R"(
 
-
-
------------------------------------------
-)";
-
-		cout << "\n\t\t\t" << "PLAYER:";
-		cout << "\n\t\t\t" << p1.getName() << endl << endl;
-		cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
-		cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
-		cout << "\t\t\t" << "TOUGH: " << p1.getToughness() << endl;
-		cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
-		// WIP player stats display (might need these player getter methods made)
-		// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
-		// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
-		// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
-		cout <<
-			R"(
-                       -------------------
-		      | 1. FIGHT          |
-		      | 2. ITEM    3. RUN |
-                       -------------------
-)";
+		printBattleDisplay(enemy, p1);
+		
 		cin >> choice;
 		//valid input checker
 		while (choice < 1 || choice > 3)
@@ -165,33 +141,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			}
 
 		}
-		cout << endl << "ENEMY:" << endl;
-		cout << enemy.getName() << endl;
-		cout << "\nHP: " << enemy.getHp() << endl;
-		cout << R"(
-
-
-
------------------------------------------
-)";
-
-		cout << "\n\t\t\t" << "PLAYER:";
-		cout << "\n\t\t\t" << p1.getName() << endl << endl;
-		cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
-		cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
-		cout << "\t\t\t" << "TOUGH: " << p1.getToughness() << endl;
-		cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
-		// WIP player stats display (might need these player getter methods made)
-		// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
-		// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
-		// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
-		cout <<
-			R"(
-                       -------------------
-		      | 1. FIGHT          |
-		      | 2. ITEM    3. RUN |
-                       -------------------
-)";
+		printBattleDisplay(enemy, p1);
 	
 		//enemy gets to make a move only if it has health and the player has not run away
 		if (enemy.getHp() > 0 && !hasRun)
