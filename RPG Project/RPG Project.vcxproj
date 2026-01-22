@@ -148,6 +148,9 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="client.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="toDo.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
