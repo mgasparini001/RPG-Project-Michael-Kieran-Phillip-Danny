@@ -10,6 +10,7 @@ and make both have their own unique implementation of at least one of their meth
 -enemy action engine to be implemented. Make different actions chosen at random based on weighted probability scheme (eg. 40% likely to attack, 20% to run, 30% to use heals, etc.)
 
 -pseudocode obviously
+-pseudocode obviously
 
 test
 -pseudocode obviously
