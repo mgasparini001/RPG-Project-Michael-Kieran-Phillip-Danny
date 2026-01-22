@@ -14,13 +14,13 @@ protected:
 
 public:
 	// constructor
-    Character(const std::string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg);
+    Character(const std::string& name, int HP, int melee, int range, int Armor);
 
 	// virtual destructor (virtual for cleanup in derived classes)
     virtual ~Character() = default;
 
 	// basic attack function (virtual so derived classes can override if neccessary)
-    virtual void attack(Character& target);
+    virtual void attack(Character& target, bool attackType);
 
 	// random dice roll function for various uses
 	int diceRoll(int x);
@@ -36,10 +36,5 @@ public:
 	
 	// get character name
     std::string getName() const;
-
-    int getStr() const;
-
-    int getToughness() const;
-
-    int getDmg() const;
+    
 };
