@@ -8,6 +8,7 @@
 #include "enemy.h"
 using namespace std;
 
+//prints the attrs of the player and enemy that are battling, and prints out an action selection prompt
 void printBattleDisplay(enemy& enemy, player& p1) {
 	
 	 	cout << endl << "ENEMY:" << endl;
@@ -77,8 +78,6 @@ void refreshScreen() {
 //rolls for enemy type, displays enemy name and hp, and starts battle sequence loop
 void enterBattle(enemy& enemy, player& p1) {
 
-	bool hasRun = false;
-
 	cout << "\nentered battle...\n\n";
 
 	cout << "A wild " << enemy.getName() << " appears!" << endl;
@@ -91,20 +90,21 @@ void enterBattle(enemy& enemy, player& p1) {
 	
 	int choice;
 
-	// Gameplay loop WIP 
+	// Gameplay loop
+	bool hasRun = false;  // when true, player has successfully run away and ended battle sequence
+
 	do {
 
 		printBattleDisplay(enemy, p1);
 		
 		cin >> choice;
+
 		//valid input checker
 		while (choice < 1 || choice > 3)
 		{
-			cout << "Invalid option, please enter a valid input";
+			cout << "Invalid option, please enter a valid input\n";
 			cin >> choice;
 		}
-
-	
 
 		switch (choice) 
 		{
@@ -118,7 +118,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				refreshScreen();
 				break;
 			}
-			//case where the player decides to use an item
+			//case where the player decides to use an item *WIP*
 			case 2:
 			{
 				cout << p1.getName() + " throws a rock. It has no effect." << endl;
@@ -141,6 +141,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			}
 
 		}
+
 		printBattleDisplay(enemy, p1);
 	
 		//enemy gets to make a move only if it has health and the player has not run away
@@ -155,7 +156,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				cin >> anything;
 				refreshScreen();
 			}
-			//case where the enemy tries to use an item
+			//case where the enemy tries to use an item *WIP*
 			else
 			{
 				cout << enemy.getName() + " looks for an item but can't find any" << endl;
@@ -175,6 +176,7 @@ int main() {
 	
 	player p1("Ash", 50, 8, 4, 3, 6, 7, 1);
 	
+	//instantiate 3 enemies WIP ***NEED ENEMY TYPES MADE INSTEAD OF JUST 3 OBJECTS***
 	enemy enemy1("dragon", 10, 3, 4, 7, 2, 5, 10, 100);
 
 	enemy enemy2("zombie", 10, 6, 4, 7, 2, 5, 10, 100);
@@ -186,6 +188,7 @@ int main() {
 	
 	
 	bool hasQuit = false;
+
 	while (!hasQuit) {
 		
 	string menu = R"(MENU:
@@ -203,21 +206,32 @@ int main() {
 		int num;
 		cin >> num;
 
+		while (num < 1 || num > 6)
+		{
+			cout << "Invalid option, please enter a valid input\n";
+			cin >> num;
+		}
+
 		switch (num) {
+
 		case 1:
 			returnToOverworld();
 			break;
+
 		case 2:
 		{
+			//roll decides which enemy to enter battle with
 			int roll = diceRoll(3);
 			if (roll == 3)
 			{
 				enterBattle(enemy1, p1);
 			}
+
 			else if (roll == 2)
 			{
 				enterBattle(enemy2, p1);
 			}
+
 			else
 			{
 				enterBattle(enemy3, p1);
