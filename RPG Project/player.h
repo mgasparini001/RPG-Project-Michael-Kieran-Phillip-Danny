@@ -14,10 +14,10 @@ public:
 	int gold = 100;
 
 	// player constructor
-	player(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg);
+	player(const string& name, int HP, int melee, int range, int Armor);
 
 	// override attack function
-	void attack(Character& target) override;
+	void attack(Character& target, bool attackType) override;
 
 	// interact with entity (npcs, items, etc)
 	void interact(Entity& entity);
