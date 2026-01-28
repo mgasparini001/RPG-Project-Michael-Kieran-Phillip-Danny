@@ -13,7 +13,7 @@ public:
 	int XP;
 
 	// enemy constructor
-	enemy(const string& name, int HP, int melee, int range, int Armor, int XP);
+	enemy(const string& name, int HP, int melee, int range, int Armor, int XP, int strength);
 
 	// override attack function for enemy-specific behavior
 	void attack(Character& target, bool attackType) override;

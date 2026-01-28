@@ -4,7 +4,7 @@ using std::cout;
 using std::endl;
 
 // player constructor
-player::player(const string& name, int HP, int melee, int range, int Armor)
+player::player(const string& name, int HP, int melee, int range, int Armor, int strength)
     : Character(name, HP, melee, range, Armor) {
 }
 
@@ -56,4 +56,17 @@ bool player::flee() {
         cout << getName() << " failed to escape!" << endl;
         return false;
     }
+}
+
+
+int player::getStr() {
+    return strength;
+}
+
+int player::getArmor() {
+    return Armor;
+}
+
+int player::getDmg() {
+    return dmg;
 }

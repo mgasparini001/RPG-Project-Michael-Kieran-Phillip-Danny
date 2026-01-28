@@ -1,8 +1,12 @@
 TO DO:
 
+***These are due for getting stamp credit by friday 1/30 5pm***
+
 - damage dice roll method in the character class. This serves to make the damage taken by player and enemy vary based on the strength/toughness stats of the player/enemy. 
 - In the same vein as the first to do, figure out how the strength and toughness (and other) stats will work. 
 Maybe let them just act as multipliers to the result of the damage dice roll method.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(OR ANY METHODS THAT MODIFIY 3 CHARACTER STATS)
 
 - make at least 2 inherited enemy type class (maybe just edit npc class to be an enemy type?),
 and make both have their own unique implementation of at least one of their methods.
@@ -10,6 +14,13 @@ and make both have their own unique implementation of at least one of their meth
 -enemy action engine to be implemented. Make different actions chosen at random based on weighted probability scheme (eg. 40% likely to attack, 20% to run, 30% to use heals, etc.)
 
 -pseudocode obviously
+
+***These are due for getting stamp credit by friday 1/30 5pm***
+
+
+
+
+
 -pseudocode obviously
 
 test

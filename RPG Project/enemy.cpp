@@ -5,7 +5,7 @@ using std::cout;
 using std::endl;
 
 // enemy constructor
-enemy::enemy(const string& name, int HP, int melee, int range, int Armor, int XP)
+enemy::enemy(const string& name, int HP, int melee, int range, int Armor, int XP, int strength)
     : Character(name, HP, melee, range, Armor), XP(XP) {
 }
 

@@ -14,7 +14,7 @@ public:
 	int gold = 100;
 
 	// player constructor
-	player(const string& name, int HP, int melee, int range, int Armor);
+	player(const string& name, int HP, int melee, int range, int Armor, int strength);
 
 	// override attack function
 	void attack(Character& target, bool attackType) override;
@@ -24,5 +24,11 @@ public:
 
 	// flee function
 	bool flee();
+
+	int getStr();
+
+	int getArmor();
+
+	int getDmg();
 };
 

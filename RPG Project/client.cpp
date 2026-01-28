@@ -8,8 +8,34 @@
 #include "enemy.h"
 using namespace std;
 
-void printBattleDisplay() {
+void printBattleDisplay(enemy &enemy, player &p1) {
+	cout << endl << "ENEMY:" << endl;
+	cout << enemy.getName() << endl;
+	cout << "\nHP: " << enemy.getHp() << endl;
+	cout << R"(
 
+
+
+-----------------------------------------
+)";
+
+	cout << "\n\t\t\t" << "PLAYER:";
+	cout << "\n\t\t\t" << p1.getName() << endl << endl;
+	cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
+	cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
+	cout << "\t\t\t" << "TOUGH: " << p1.getArmor() << endl;
+	cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
+	// WIP player stats display (might need these player getter methods made)
+	// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
+	// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
+	// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
+	cout <<
+		R"(
+                       -------------------
+		      | 1. FIGHT          |
+		      | 2. ITEM    3. RUN |
+                       -------------------
+)";
 }
 
 void returnToOverworld() {
@@ -47,7 +73,7 @@ void refreshScreen() {
 
 //rolls for enemy type, displays enemy name and hp, and starts battle sequence loop
 void enterBattle(enemy& enemy, player& p1) {
-
+	
 	bool hasRun = false;
 
 	cout << "\nentered battle...\n\n";
@@ -64,33 +90,7 @@ void enterBattle(enemy& enemy, player& p1) {
 
 	// Gameplay loop WIP 
 	do {
-		cout << endl << "ENEMY:" << endl;
-		cout << enemy.getName() << endl;
-		cout << "\nHP: " << enemy.getHp() << endl;
-		cout << R"(
-
-
-
------------------------------------------
-)";
-
-		cout << "\n\t\t\t" << "PLAYER:";
-		cout << "\n\t\t\t" << p1.getName() << endl << endl;
-		cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
-		cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
-		cout << "\t\t\t" << "TOUGH: " << p1.getToughness() << endl;
-		cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
-		// WIP player stats display (might need these player getter methods made)
-		// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
-		// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
-		// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
-		cout <<
-			R"(
-                       -------------------
-		      | 1. FIGHT          |
-		      | 2. ITEM    3. RUN |
-                       -------------------
-)";
+		printBattleDisplay(enemy, p1);
 		cin >> choice;
 		//valid input checker
 		while (choice < 1 || choice > 3)
@@ -107,7 +107,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			case 1:
 			{
 				//calls the player attack function
-				p1.attack(enemy);
+				p1.attack(enemy, true);
 				cout << "Enter anything to proceed";
 				cin >> anything;
 				refreshScreen();
@@ -136,33 +136,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			}
 
 		}
-		cout << endl << "ENEMY:" << endl;
-		cout << enemy.getName() << endl;
-		cout << "\nHP: " << enemy.getHp() << endl;
-		cout << R"(
-
-
-
------------------------------------------
-)";
-
-		cout << "\n\t\t\t" << "PLAYER:";
-		cout << "\n\t\t\t" << p1.getName() << endl << endl;
-		cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
-		cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
-		cout << "\t\t\t" << "TOUGH: " << p1.getToughness() << endl;
-		cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
-		// WIP player stats display (might need these player getter methods made)
-		// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
-		// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
-		// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
-		cout <<
-			R"(
-                       -------------------
-		      | 1. FIGHT          |
-		      | 2. ITEM    3. RUN |
-                       -------------------
-)";
+		printBattleDisplay(enemy, p1);
 	
 		if (enemy.getHp() > 0 && !hasRun)
 		{
@@ -170,7 +144,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			//case where the enemy attacks
 			if (eRoll <= 5)
 			{
-				enemy.attack(p1);
+				enemy.attack(p1, true);
 				cout << "Enter anything to proceed";
 				cin >> anything;
 				refreshScreen();
@@ -193,13 +167,13 @@ void enterBattle(enemy& enemy, player& p1) {
 
 int main() {
 	
-	player p1("Ash", 50, 8, 4, 3, 6, 7, 1);
+	player p1("Ash", 50, 8, 4, 3, 8);
 	
-	enemy enemy1("dragon", 10, 3, 4, 7, 2, 5, 10, 100);
+	enemy enemy1("dragon", 10, 3, 4, 7, 3, 6);
 
-	enemy enemy2("zombie", 10, 6, 4, 7, 2, 5, 10, 100);
+	enemy enemy2("zombie", 10, 6, 4, 7, 4, 5);
 
-	enemy enemy3("shrek", 10, 5, 4, 7, 2, 5, 10, 100);
+	enemy enemy3("shrek", 10, 5, 4, 7, 5, 9);
 
 	
 	srand(static_cast<unsigned int>(time(0)));
