@@ -26,13 +26,12 @@ void Character::attack(Character& target, bool attackType){
             Stamina -= 100;
             //melee attack
             if (diceRoll(Melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
-                int damage = diceRoll(Melee) + Dmg;
-                std::cout << Name << " hits " << target.getName() << " for " << damage << " damage!";
-                target.takeDamage(damage);
+                attackMessage(target);
+                target.takeDamage(diceRoll(Melee) + Dmg);
             }
         }
         else {
-            
+            std::cout << Name << "is too exhuasted to make the attack!";
         }
     }
     else {
@@ -40,10 +39,13 @@ void Character::attack(Character& target, bool attackType){
         if (Stamina > 100) {
             Stamina -= 100;
             if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
-                int damage = diceRoll(Range);
-                std::cout << Name << " shoots " << target.getName() << " for " << damage << " damage!";
-                target.takeDamage(damage);
+                attackMessage(target);
+                target.takeDamage(diceRoll(Melee) + Dmg);
             }
+        }
+        else
+        {
+            std::cout << Name << "is too exhuasted to make the attack!";
         }
     }
 }

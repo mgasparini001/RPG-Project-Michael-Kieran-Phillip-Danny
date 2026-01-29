@@ -9,10 +9,7 @@ enemy::enemy(const std::string& name, int hp, int melee, int range, int armor, i
     : Character(name, hp, melee, range, armor, stamina, dmg, ap) {
 }
 
-// override attack function for enemy-specific behavior
-void enemy::attackMessage(){};
 
-void rest() {}
 
 // loot drop, returns random amount of gold
 int enemy::lootDrop() {

@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include <iostream>
 // Base Character class
 class Character
 {
@@ -23,8 +23,10 @@ public:
 	// virtual destructor (virtual for cleanup in derived classes)
     virtual ~Character() = default;
 
+    virtual void attackMessage(Character& target) = 0;
+
 	// basic attack function (virtual so derived classes can override if neccessary)
-    virtual void attack(Character& target, bool attackType);
+    void attack(Character& target, bool attackType);
 
 	// random dice roll function for various uses
 	int diceRoll(int x);

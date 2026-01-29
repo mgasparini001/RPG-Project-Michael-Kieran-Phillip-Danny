@@ -8,35 +8,9 @@ player::player(const std::string& name, int hp, int melee, int range, int armor,
     : Character(name, hp, melee, range, armor, stamina, dmg, ap) {
 }
 
-// override attack function to include player-specific behavior
-void player::attack(Character& target, bool attackType) {
-    int damage = 0;
-
-    // attackType
-    if (attackType) {
-        if (Stamina > 100) {
-            Stamina -= 100;
-            //melee attack
-            if (diceRoll(Melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
-                target.takeDamage(diceRoll(Melee) + Dmg);
-            }
-        }
-        else {
-            cout << Name <<  "is too exhuasted to make the attack!" << endl;
-        }
-    }
-    else {
-        //ranged attack
-        if (Stamina > 50) {
-            Stamina -= 50;
-            if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
-                target.takeDamage(diceRoll(Range));
-            }
-        }
-        else {
-            cout << Name << "is too exhuasted to make the attack!" << endl;
-        }
-    }
+void player::attackMessage(Character& target)
+{
+    cout << Name << " hits " << target.getName() << " for some damage.";
 }
 
 // interact with entity (npcs, items, whatever else we add later)

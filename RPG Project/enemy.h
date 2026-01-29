@@ -9,14 +9,9 @@ using std::string;
 class enemy :public Character
 {
 public:
-	// experience points given when defeated
-	int XP;
-
 	// enemy constructor
 	enemy(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
-	
-	//manages attack message. overridden later
-	virtual void attackMessage()=0;
+
 
 
 	// loot drop function
