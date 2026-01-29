@@ -106,8 +106,18 @@ void enterBattle(enemy& enemy, player& p1) {
 			//case where the player decides to attack
 			case 1:
 			{
-				//calls the player attack function
-				p1.attack(enemy, true);
+				int choice;
+				cout << "1. Melee Attack (Costs 100 stamina)";
+				cout << "2. Ranged Attack (Costs 50 stamina)";
+				cin >> choice;
+				if (choice == 1)
+				{
+					p1.attack(enemy, true);
+				}
+				else
+				{
+					p1.attack(enemy, false);
+				}
 				cout << "Enter anything to proceed";
 				cin >> anything;
 				refreshScreen();
