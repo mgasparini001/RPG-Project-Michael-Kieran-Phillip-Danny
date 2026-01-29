@@ -110,9 +110,14 @@ void enterBattle(enemy& enemy, player& p1) {
 			case 1:
 			{
 				int choice;
-				cout << "1. Melee Attack (Costs 100 stamina)";
-				cout << "2. Ranged Attack (Costs 50 stamina)";
+				cout << "1. Melee Attack (Costs 100 stamina)" << endl;
+				cout << "2. Ranged Attack (Costs 50 stamina)" << endl;
 				cin >> choice;
+				while (choice < 1 || choice > 2)
+				{
+					cout << "Invalid option, please enter a valid input";
+					cin >> choice;
+				}
 				if (choice == 1)
 				{
 					p1.attack(enemy, true);
