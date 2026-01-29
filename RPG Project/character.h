@@ -44,7 +44,7 @@ public:
 
     int getAp();
 
-    virtual void rest()=0;
+    void rest();
 	
 	// get character name
     std::string getName() const;

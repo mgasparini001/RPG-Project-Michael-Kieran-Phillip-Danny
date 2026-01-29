@@ -4,7 +4,7 @@ class fodder :
     public enemy
 {
 public:
-    void attackMessage();
+    void attackMessage() override;
 
 
 };

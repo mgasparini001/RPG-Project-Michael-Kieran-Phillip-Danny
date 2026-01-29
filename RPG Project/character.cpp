@@ -82,3 +82,8 @@ int Character::getAp()
 {
     return AP;
 }
+
+void Character::rest()
+{
+    Stamina += Stamina / 5;
+}
