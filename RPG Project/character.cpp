@@ -6,6 +6,9 @@ using std::string;
 Character::Character(const string& name, int HP, int melee, int range, int Armor)
     : name(name), HP(HP), melee(melee), range(range), Armor(Armor) {}
 
+int Character::getArmor() {
+    return Armor;
+}
 // basic attack function
 void Character::attack(Character& target, bool attackType){
     int damage = 0;
@@ -13,13 +16,20 @@ void Character::attack(Character& target, bool attackType){
     // attackType
     if (attackType) {
         //melee attack
+        if (diceRoll(melee)+AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
+            target.takeDamage(diceRoll(melee)+dmg);
+        }
     } else {
         //ranged attack
+        if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
+            target.takeDamage(diceRoll(range));
+        }
     }
     
     // Apply damage to target
     target.takeDamage(damage);
 }
+
 
 // random dice roll function for various uses
 int Character::diceRoll(int x){

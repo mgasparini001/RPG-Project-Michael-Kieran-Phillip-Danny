@@ -15,4 +15,8 @@ and make both have their own unique implementation of at least one of their meth
 test
 -pseudocode obviously
 
-update rules!!! (working on)
+update methods (working on)
+
+item durability (potions, swords, etc)
+
+conversation (npc: basic(shop kinda stuff), dynamic(per npc))
