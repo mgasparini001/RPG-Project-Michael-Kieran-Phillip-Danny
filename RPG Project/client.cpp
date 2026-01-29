@@ -25,7 +25,7 @@ void printBattleDisplay(enemy &enemy, player &p1) {
 	cout << "\n\t\t\t" << "PLAYER:";
 	cout << "\n\t\t\t" << p1.getName() << endl << endl;
 	cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
-	//cout << "\t\t\t" << "SP: " << p1.getStamina() << endl;
+	cout << "\t\t\t" << "SP: " << p1.getStamina() << endl;
 	cout << "\t\t\t" << "AP: " << p1.getAp() << endl;
 	cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
 
@@ -128,7 +128,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				{
 					p1.attack(enemy, false);
 				}
-				cout << "Enter anything to proceed";
+				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
 				break;
@@ -138,7 +138,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			{
 				cout << p1.getName() << " rests and restores some stamina!" << endl;
 				p1.rest();
-				cout << "Enter anything to proceed";
+				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
 				break;
@@ -151,7 +151,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				{
 					hasRun = true;
 				}
-				cout << "Enter anything to proceed";
+				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
 			}
@@ -169,7 +169,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			if (eRoll <= 3)
 			{
 				enemy.attack(p1, true);
-				cout << "Enter anything to proceed";
+				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
 			}
@@ -178,18 +178,18 @@ void enterBattle(enemy& enemy, player& p1) {
 			{
 				cout << enemy.getName() << " rests and restores some stamina!" << endl;
 				p1.rest();
-				cout << "Enter anything to proceed";
+				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
 				break;
 
-				cout << "Enter anything to proceed";
+				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
 			}
 			else {
 				//enemy flees
-				//enemy.flee();
+				enemy.flee();
 			}
 		}
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
@@ -201,13 +201,13 @@ void enterBattle(enemy& enemy, player& p1) {
 
 int main() {
 	
-	player p1("Ash", 50, 8, 4, 3, 8, 6, 7);
+	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
 	
-	fodder zombie("zombie", 10, 3, 4, 7, 3, 6, 7);
+	fodder zombie("zombie", 50, 3, 4, 7, 1000, 6, 7);
 
-	heavy dragon("dragon", 10, 6, 4, 7, 4, 5, 6);
+	heavy dragon("dragon", 50, 6, 4, 7, 1000, 5, 6);
 
-	boss shrek("shrek", 10, 5, 4, 7, 5, 9, 6);
+	boss shrek("shrek", 50, 5, 4, 7, 1000, 9, 6);
 
 	
 	srand(static_cast<unsigned int>(time(0)));
