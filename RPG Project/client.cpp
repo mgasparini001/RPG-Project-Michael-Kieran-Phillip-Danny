@@ -181,15 +181,16 @@ void enterBattle(enemy& enemy, player& p1) {
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
-				break;
+				
 
-				cout << "Enter anything to proceed\n";
-				cin >> anything;
-				refreshScreen();
+				
 			}
 			else {
 				//enemy flees
 				enemy.flee();
+				cout << "Enter anything to proceed\n";
+				cin >> anything;
+				refreshScreen();
 			}
 		}
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
