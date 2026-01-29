@@ -3,5 +3,9 @@
 class heavy :
     public enemy
 {
+    void attackMessage();
+
+
+
 };
 
