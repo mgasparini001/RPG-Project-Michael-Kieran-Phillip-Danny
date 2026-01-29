@@ -22,6 +22,5 @@ public:
 	// loot drop function
 	int lootDrop();
 
-	virtual void rest()=0;
 };
 

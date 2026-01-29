@@ -23,8 +23,6 @@ public:
 	// interact with entity (npcs, items, etc)
 	void interact(Entity& entity);
 
-	void rest() override;
-
 	// flee function
 	bool flee();
 };
