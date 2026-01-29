@@ -16,7 +16,7 @@ public:
 	enemy(const string& name, int HP, int melee, int range, int Armor, int XP, int strength);
 	
 	//manages attack message. overridden later
-	void attackMessage() override;
+	void virtual attackMessage();
 
 
 	// loot drop function

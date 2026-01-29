@@ -9,7 +9,7 @@ protected:
     int HP;
     int melee;
     int range;
-    int AP; 
+    int AP; // Armor Penetration (strength) 
     int dmg;
     
 
