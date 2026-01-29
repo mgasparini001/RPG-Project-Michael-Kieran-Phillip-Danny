@@ -33,7 +33,7 @@ void printBattleDisplay(enemy &enemy, player &p1) {
 		R"(
                        -------------------
 		      | 1. FIGHT          |
-		      | 2. ITEM    3. RUN |
+		      | 2. REST    3. RUN |
                        -------------------
 )";
 }
@@ -106,6 +106,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			//case where the player decides to attack
 			case 1:
 			{
+
 				//calls the player attack function
 				p1.attack(enemy, true);
 				cout << "Enter anything to proceed";
