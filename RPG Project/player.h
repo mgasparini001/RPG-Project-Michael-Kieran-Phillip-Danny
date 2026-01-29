@@ -21,8 +21,5 @@ public:
 
 	// interact with entity (npcs, items, etc)
 	void interact(Entity& entity);
-
-	// flee function
-	bool flee();
 };
 

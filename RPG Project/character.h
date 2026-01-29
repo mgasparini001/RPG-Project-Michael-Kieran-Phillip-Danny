@@ -48,6 +48,8 @@ public:
 
     void rest();
 
+    bool flee();
+
     int getStamina();
 	
 	// get character name
