@@ -74,3 +74,8 @@ bool player::flee() {
         return false;
     }
 }
+
+void player::rest()
+{
+    Stamina += 200;
+}
