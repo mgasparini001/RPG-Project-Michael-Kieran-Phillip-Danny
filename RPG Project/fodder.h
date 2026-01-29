@@ -4,7 +4,9 @@ class fodder :
     public enemy
 {
 public:
-    void attackMessage() override;
+    fodder(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
+       
+    
 
 
 };
