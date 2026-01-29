@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 using std :: string;
+using std::cout;
 
 // character constructor
 Character::Character(const string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap) {
@@ -90,7 +91,30 @@ int Character::getAp()
     return AP;
 }
 
+int Character::getStamina()
+{
+    return Stamina;
+}
+
+
 void Character::rest()
 {
     Stamina += Stamina / 5;
+}
+
+bool Character::flee()
+{
+    cout << getName() << " attempts to flee from combat!" << endl;
+
+    // roll a 20 side dice to see if they succeed
+    int fleeRoll = diceRoll(20);
+
+    if (fleeRoll >= 15) {
+        cout << getName() << " successfully escaped!" << endl;
+        return true;
+    }
+    else {
+        cout << getName() << " failed to escape!" << endl;
+        return false;
+    }
 }

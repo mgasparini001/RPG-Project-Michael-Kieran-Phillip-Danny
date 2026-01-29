@@ -47,6 +47,10 @@ public:
     int getAp();
 
     void rest();
+
+    bool flee();
+
+    int getStamina();
 	
 	// get character name
     std::string getName() const;
