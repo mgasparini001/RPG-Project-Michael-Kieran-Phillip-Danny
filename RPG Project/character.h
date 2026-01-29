@@ -11,8 +11,6 @@ protected:
     int range;
     int AP; 
     int dmg;
-    int strength;
-    int toughness;
     
 
     std::string name;
@@ -32,6 +30,8 @@ public:
 
 	// function to reduce hp when taking damage
     void takeDamage(int amount);
+
+    int getArmor();
 
 	// check if character is alive
     bool isAlive() const;

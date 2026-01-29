@@ -14,9 +14,10 @@ public:
 
 	// enemy constructor
 	enemy(const string& name, int HP, int melee, int range, int Armor, int XP, int strength);
+	
+	//manages attack message. overridden later
+	void attackMessage() override;
 
-	// override attack function for enemy-specific behavior
-	void attack(Character& target, bool attackType) override;
 
 	// loot drop function
 	int lootDrop();
