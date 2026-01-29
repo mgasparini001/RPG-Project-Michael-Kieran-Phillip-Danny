@@ -22,7 +22,7 @@ void printBattleDisplay(enemy &enemy, player &p1) {
 	cout << "\n\t\t\t" << "PLAYER:";
 	cout << "\n\t\t\t" << p1.getName() << endl << endl;
 	cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
-	cout << "\t\t\t" << "AP: " << p1.getStr() << endl;
+	cout << "\t\t\t" << "AP: " << p1.getAp() << endl;
 	cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
 	// WIP player stats display (might need these player getter methods made)
 	//cout << "\t\t\t" << "TOUGH: " << p1.getArmor() << endl;
@@ -152,7 +152,7 @@ void enterBattle(enemy& enemy, player& p1) {
 		{
 			int eRoll = enemy.diceRoll(10);
 			//case where the enemy attacks
-			if (eRoll <= 5)
+			if (eRoll <= 3)
 			{
 				enemy.attack(p1, true);
 				cout << "Enter anything to proceed";
@@ -160,12 +160,17 @@ void enterBattle(enemy& enemy, player& p1) {
 				refreshScreen();
 			}
 			//case where the enemy tries to use an item
-			else
+			else if (eRoll <= 6)
 			{
+				//enemy rests
 				cout << enemy.getName() + " looks for an item but can't find any" << endl;
 				cout << "Enter anything to proceed";
 				cin >> anything;
 				refreshScreen();
+			}
+			else {
+				//enemy flees
+				
 			}
 		}
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
@@ -177,13 +182,13 @@ void enterBattle(enemy& enemy, player& p1) {
 
 int main() {
 	
-	player p1("Ash", 50, 8, 4, 3, 8);
+	player p1("Ash", 50, 8, 4, 3, 8, 6, 7);
 	
-	enemy enemy1("dragon", 10, 3, 4, 7, 3, 6);
+	fodder zombie("zombie", 10, 3, 4, 7, 3, 6, 7, 8);
 
-	enemy enemy2("zombie", 10, 6, 4, 7, 4, 5);
+	heavy dragon("dragon", 10, 6, 4, 7, 4, 5, 6, 7);
 
-	enemy enemy3("shrek", 10, 5, 4, 7, 5, 9);
+	boss shrek("shrek", 10, 5, 4, 7, 5, 9, 6, 7);
 
 	
 	srand(static_cast<unsigned int>(time(0)));
