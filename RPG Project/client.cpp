@@ -129,7 +129,8 @@ void enterBattle(enemy& enemy, player& p1) {
 			//case where the player decides to use an item
 			case 2:
 			{
-				cout << p1.getName() + " throws a rock. It has no effect." << endl;
+				cout << p1.getName() << " rests and restores some stamina!" << endl;
+				p1.rest();
 				cout << "Enter anything to proceed";
 				cin >> anything;
 				refreshScreen();
