@@ -174,16 +174,13 @@ void enterBattle(enemy& enemy, player& p1) {
 				refreshScreen();
 			}
 			//case where the enemy tries to use an item
-			else if (eRoll <= 3)
+			else if (eRoll <= 9)
 			{
 				cout << enemy.getName() << " rests and restores some stamina!" << endl;
-				p1.rest();
+				enemy.rest();
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
-				
-
-				
 			}
 			else {
 				bool check = enemy.flee();
@@ -205,7 +202,7 @@ void enterBattle(enemy& enemy, player& p1) {
 
 int main() {
 	
-	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
+	player p1("Ash", 50, 8, 4, 10, 1000, 6, 7);
 	
 	fodder zombie("zombie", 50, 3, 4, 7, 1000, 6, 7);
 
