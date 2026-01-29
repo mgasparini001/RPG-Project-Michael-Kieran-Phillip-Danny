@@ -3,6 +3,7 @@
 #include <iostream>
 using std :: string;
 using std::cout;
+using std::endl;
 
 // character constructor
 Character::Character(const string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap) {
