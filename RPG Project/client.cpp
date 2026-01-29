@@ -6,6 +6,9 @@
 #include "character.h"
 #include "player.h"
 #include "enemy.h"
+#include "fodder.h"
+#include "heavy.h"
+#include "boss.h"
 using namespace std;
 
 void printBattleDisplay(enemy &enemy, player &p1) {
@@ -163,14 +166,17 @@ void enterBattle(enemy& enemy, player& p1) {
 			else if (eRoll <= 6)
 			{
 				//enemy rests
-				cout << enemy.getName() + " looks for an item but can't find any" << endl;
+				enemy.rest();
+				cout << enemy.getName() + " rests." << endl;
+				int eStamRoll = enemy.diceRoll(10);
+
 				cout << "Enter anything to proceed";
 				cin >> anything;
 				refreshScreen();
 			}
 			else {
 				//enemy flees
-				
+				//enemy.flee();
 			}
 		}
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
@@ -221,15 +227,15 @@ int main() {
 			int roll = diceRoll(3);
 			if (roll == 3)
 			{
-				enterBattle(enemy1, p1);
+				enterBattle(zombie, p1);
 			}
 			else if (roll == 2)
 			{
-				enterBattle(enemy2, p1);
+				enterBattle(dragon, p1);
 			}
 			else
 			{
-				enterBattle(enemy3, p1);
+				enterBattle(shrek, p1);
 			}
 			
 			// true breaks the main menu loop. once more menu choices are implemented, this can be changed
