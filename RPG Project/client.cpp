@@ -166,7 +166,7 @@ void enterBattle(enemy& enemy, player& p1) {
 
 			int eRoll = enemy.diceRoll(10);
 			//case where the enemy attacks
-			if (eRoll <= 3)
+			if (eRoll <= 6)
 			{
 				enemy.attack(p1, true);
 				cout << "Enter anything to proceed\n";
@@ -174,7 +174,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				refreshScreen();
 			}
 			//case where the enemy tries to use an item
-			else if (eRoll <= 6)
+			else if (eRoll <= 3)
 			{
 				cout << enemy.getName() << " rests and restores some stamina!" << endl;
 				p1.rest();
@@ -186,9 +186,12 @@ void enterBattle(enemy& enemy, player& p1) {
 				
 			}
 			else {
-				//enemy flees
-				enemy.flee();
-				cout << "Enter anything to proceed\n";
+				bool check = enemy.flee();
+				if (check)
+				{
+					hasRun = true;
+				}
+				cout << "Enter anything to proceed";
 				cin >> anything;
 				refreshScreen();
 			}
