@@ -202,13 +202,13 @@ void enterBattle(enemy& enemy, player& p1) {
 
 int main() {
 	
-	player p1("Ash", 50, 8, 4, 3, 8, 6, 7);
+	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
 	
-	fodder zombie("zombie", 10, 3, 4, 7, 3, 6, 7);
+	fodder zombie("zombie", 50, 3, 4, 7, 1000, 6, 7);
 
-	heavy dragon("dragon", 10, 6, 4, 7, 4, 5, 6);
+	heavy dragon("dragon", 50, 6, 4, 7, 1000, 5, 6);
 
-	boss shrek("shrek", 10, 5, 4, 7, 5, 9, 6);
+	boss shrek("shrek", 50, 5, 4, 7, 1000, 9, 6);
 
 	
 	srand(static_cast<unsigned int>(time(0)));
