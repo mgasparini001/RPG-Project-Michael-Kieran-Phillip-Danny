@@ -14,7 +14,7 @@ protected:
     int Stamina;
     
 
-    std::string name;
+    std::string Name;
 
 public:
 	// constructor
