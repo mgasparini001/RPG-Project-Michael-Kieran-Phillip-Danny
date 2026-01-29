@@ -3,5 +3,9 @@
 class fodder :
     public enemy
 {
+public:
+
+
+
 };
 
