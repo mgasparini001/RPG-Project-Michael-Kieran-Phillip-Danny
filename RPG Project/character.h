@@ -40,9 +40,14 @@ public:
 	// get current hp
     int getHp() const;
 
+    int getDmg();
+
+    int getAp();
+
     virtual void rest()=0;
 	
 	// get character name
     std::string getName() const;
+
 
 };
