@@ -3,5 +3,11 @@
 class boss :
     public enemy
 {
+    void attackMessage();
+
+
+
+
+
 };
 

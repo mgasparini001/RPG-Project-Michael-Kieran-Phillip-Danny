@@ -22,10 +22,10 @@ void printBattleDisplay(enemy &enemy, player &p1) {
 	cout << "\n\t\t\t" << "PLAYER:";
 	cout << "\n\t\t\t" << p1.getName() << endl << endl;
 	cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
-	cout << "\t\t\t" << "STR: " << p1.getStr() << endl;
-	cout << "\t\t\t" << "TOUGH: " << p1.getArmor() << endl;
+	cout << "\t\t\t" << "AP: " << p1.getStr() << endl;
 	cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
 	// WIP player stats display (might need these player getter methods made)
+	//cout << "\t\t\t" << "TOUGH: " << p1.getArmor() << endl;
 	// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
 	// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
 	// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
