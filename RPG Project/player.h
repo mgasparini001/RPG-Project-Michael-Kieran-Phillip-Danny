@@ -9,17 +9,17 @@ using std::string;
 class player : public Character
 {
 private:
-	int stamina = 1000;
+	stamina = 1000;
 	int XP = 3000;
 	int gold = 100;
 public:
 	// gold and experience pointsz
 	
 	// player constructor
-	player(const string& name, int HP, int melee, int range, int Armor, int strength);
+	player(const string& name, int HP, int melee, int range, int Armor, int AP);
 
 	// override attack function
-	void attack(Character& target, bool attackType) override;
+	void attack(Character& target, bool attackType) override; //overridden on account of messages
 
 	// interact with entity (npcs, items, etc)
 	void interact(Entity& entity);

@@ -7,17 +7,18 @@ class Character
 protected:
     int Armor;
     int HP;
-    int melee;
-    int range;
+    int Melee;
+    int Range;
     int AP; 
-    int dmg;
+    int Dmg;
+    int Stamina;
     
 
     std::string name;
 
 public:
 	// constructor
-    Character(const std::string& name, int HP, int melee, int range, int Armor);
+    Character(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
 
 	// virtual destructor (virtual for cleanup in derived classes)
     virtual ~Character() = default;
@@ -38,6 +39,8 @@ public:
 
 	// get current hp
     int getHp() const;
+
+    virtual void rest()=0;
 	
 	// get character name
     std::string getName() const;

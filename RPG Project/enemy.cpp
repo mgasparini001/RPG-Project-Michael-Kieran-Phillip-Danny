@@ -12,6 +12,8 @@ enemy::enemy(const string& name, int HP, int melee, int range, int Armor, int XP
 // override attack function for enemy-specific behavior
 void enemy::attackMessage(){};
 
+void rest() {}
+
 // loot drop, returns random amount of gold
 int enemy::lootDrop() {
     int gold = diceRoll(50) + 10; // random gold between 10 and 59

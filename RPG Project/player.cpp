@@ -4,7 +4,7 @@ using std::cout;
 using std::endl;
 
 // player constructor
-player::player(const string& name, int HP, int melee, int range, int Armor, int strength)
+player::player(const string& name, int HP, int melee, int range, int Armor, int AP)
     : Character(name, HP, melee, range, Armor) {
 }
 
@@ -36,10 +36,11 @@ void player::attack(Character& target, bool attackType) {
         else {
             cout << "You are too exhuasted to make the attack!" << endl;
         }
+    }
 }
 
 // interact with entity (npcs, items, whatever else we add later)
-/*
+
 void player::interact(Entity& entity) {
     cout << getName() << " interacts with " << entity.getName() << "." << endl;
     cout << entity.getDescription() << endl;
@@ -57,7 +58,6 @@ void player::interact(Entity& entity) {
         }
     }
 }
-*/
 
 // flee function
 bool player::flee() {
@@ -73,17 +73,4 @@ bool player::flee() {
         cout << getName() << " failed to escape!" << endl;
         return false;
     }
-}
-
-
-int player::getStr() {
-    return strength;
-}
-
-int player::getArmor() {
-    return Armor;
-}
-
-int player::getDmg() {
-    return dmg;
 }

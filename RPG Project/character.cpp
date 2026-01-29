@@ -3,8 +3,15 @@
 using std::string;
 
 // character constructor
-Character::Character(const string& name, int HP, int melee, int range, int Armor)
-    : name(name), HP(HP), melee(melee), range(range), Armor(Armor) {}
+Character::Character(const string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap) {
+    Armor=armor;
+    HP=hp;
+    Melee=melee;
+    Range=range;
+    AP=ap;
+    Dmg=dmg;
+    Stamina=stamina;
+}
 
 int Character::getArmor() {
     return Armor;
@@ -12,24 +19,32 @@ int Character::getArmor() {
 // basic attack function
 void Character::attack(Character& target, bool attackType){
     int damage = 0;
-    
+
     // attackType
     if (attackType) {
-        //melee attack
-        if (diceRoll(melee)+AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
-            target.takeDamage(diceRoll(melee)+dmg);
+        if (stamina > 100) {
+            stamina -= 100;
+            //melee attack
+            if (diceRoll(melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
+                target.takeDamage(diceRoll(melee) + dmg);
+            }
         }
-    } else {
-        //ranged attack
-        if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
-            target.takeDamage(diceRoll(range));
+        else {
+            
         }
     }
-    
-    // Apply damage to target
-    target.takeDamage(damage);
+    else {
+        //ranged attack
+        if (stamina > 100) {
+            stamina -= 100;
+            if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
+                target.takeDamage(diceRoll(range));
+            }
+        }
+    }
 }
 
+void rest(){}
 
 // random dice roll function for various uses
 int Character::diceRoll(int x){

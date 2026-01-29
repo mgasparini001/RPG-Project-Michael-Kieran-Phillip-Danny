@@ -16,11 +16,12 @@ public:
 	enemy(const string& name, int HP, int melee, int range, int Armor, int XP, int strength);
 	
 	//manages attack message. overridden later
-	void attackMessage() override;
+	virtual void attackMessage()=0;
 
 
 	// loot drop function
 	int lootDrop();
 
+	virtual void rest()=0;
 };
 
