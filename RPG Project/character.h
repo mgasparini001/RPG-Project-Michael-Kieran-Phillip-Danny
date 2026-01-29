@@ -11,8 +11,6 @@ protected:
     int range;
     int AP; 
     int dmg;
-    int strength;
-    int toughness;
     
 
     std::string name;

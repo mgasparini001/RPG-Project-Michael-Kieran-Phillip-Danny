@@ -8,11 +8,13 @@ using std::string;
 // player class derived from Character
 class player : public Character
 {
-public:
-	// gold and experience pointsz
+private:
+	int stamina = 1000;
 	int XP = 3000;
 	int gold = 100;
-
+public:
+	// gold and experience pointsz
+	
 	// player constructor
 	player(const string& name, int HP, int melee, int range, int Armor, int strength);
 
@@ -24,11 +26,5 @@ public:
 
 	// flee function
 	bool flee();
-
-	int getStr();
-
-	int getArmor();
-
-	int getDmg();
 };
 
