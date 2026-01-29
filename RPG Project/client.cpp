@@ -193,11 +193,11 @@ int main() {
 	
 	player p1("Ash", 50, 8, 4, 3, 8, 6, 7);
 	
-	fodder zombie("zombie", 10, 3, 4, 7, 3, 6, 7, 8);
+	fodder zombie("zombie", 10, 3, 4, 7, 3, 6, 7);
 
-	heavy dragon("dragon", 10, 6, 4, 7, 4, 5, 6, 7);
+	heavy dragon("dragon", 10, 6, 4, 7, 4, 5, 6);
 
-	boss shrek("shrek", 10, 5, 4, 7, 5, 9, 6, 7);
+	boss shrek("shrek", 10, 5, 4, 7, 5, 9, 6);
 
 	
 	srand(static_cast<unsigned int>(time(0)));
