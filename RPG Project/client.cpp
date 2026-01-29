@@ -25,8 +25,10 @@ void printBattleDisplay(enemy &enemy, player &p1) {
 	cout << "\n\t\t\t" << "PLAYER:";
 	cout << "\n\t\t\t" << p1.getName() << endl << endl;
 	cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
+	//cout << "\t\t\t" << "SP: " << p1.getStamina() << endl;
 	cout << "\t\t\t" << "AP: " << p1.getAp() << endl;
 	cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
+
 	// WIP player stats display (might need these player getter methods made)
 	//cout << "\t\t\t" << "TOUGH: " << p1.getArmor() << endl;
 	// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
@@ -111,7 +113,7 @@ void enterBattle(enemy& enemy, player& p1) {
 			{
 				int choice;
 				cout << "1. Melee Attack (Costs 100 stamina)";
-				cout << "2. Ranged Attack (Costs 50 stamina)";
+				cout << "2. Ranged Attack (Costs 50 stamina)\n";
 				cin >> choice;
 				if (choice == 1)
 				{
@@ -154,6 +156,9 @@ void enterBattle(enemy& enemy, player& p1) {
 	
 		if (enemy.getHp() > 0 && !hasRun)
 		{
+
+			// Enemy Action Engine:
+
 			int eRoll = enemy.diceRoll(10);
 			//case where the enemy attacks
 			if (eRoll <= 3)
