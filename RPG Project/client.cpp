@@ -166,10 +166,12 @@ void enterBattle(enemy& enemy, player& p1) {
 			//case where the enemy tries to use an item
 			else if (eRoll <= 6)
 			{
-				//enemy rests
-				enemy.rest();
-				cout << enemy.getName() + " rests." << endl;
-				int eStamRoll = enemy.diceRoll(10);
+				cout << enemy.getName() << " rests and restores some stamina!" << endl;
+				p1.rest();
+				cout << "Enter anything to proceed";
+				cin >> anything;
+				refreshScreen();
+				break;
 
 				cout << "Enter anything to proceed";
 				cin >> anything;
