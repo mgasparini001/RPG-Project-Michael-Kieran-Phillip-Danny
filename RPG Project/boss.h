@@ -3,7 +3,7 @@
 class boss :
     public enemy
 {
-    void attackMessage();
+    void attackMessage() override;
 
 
 

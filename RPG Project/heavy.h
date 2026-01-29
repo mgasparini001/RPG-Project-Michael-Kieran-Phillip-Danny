@@ -3,7 +3,7 @@
 class heavy :
     public enemy
 {
-    void attackMessage();
+    void attackMessage() override;
 
 
 
