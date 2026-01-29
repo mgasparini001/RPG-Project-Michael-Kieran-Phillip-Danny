@@ -72,3 +72,13 @@ int Character::getHp() const{
 string Character::getName() const{
     return Name;
 }
+
+int Character::getDmg()
+{
+    return Dmg;
+}
+
+int Character::getAp()
+{
+    return AP;
+}

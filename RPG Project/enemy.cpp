@@ -5,8 +5,8 @@ using std::cout;
 using std::endl;
 
 // enemy constructor
-enemy::enemy(const string& name, int HP, int melee, int range, int Armor, int XP, int strength)
-    : Character(name, HP, melee, range, Armor), XP(XP) {
+enemy::enemy(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap)
+    : Character(name, hp, melee, range, armor, stamina, dmg, ap) {
 }
 
 // override attack function for enemy-specific behavior

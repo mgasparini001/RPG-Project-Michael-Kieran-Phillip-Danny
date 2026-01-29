@@ -9,14 +9,13 @@ using std::string;
 class player : public Character
 {
 private:
-	stamina = 1000;
 	int XP = 3000;
 	int gold = 100;
 public:
 	// gold and experience pointsz
 	
 	// player constructor
-	player(const string& name, int HP, int melee, int range, int Armor, int AP);
+	player(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
 
 	// override attack function
 	void attack(Character& target, bool attackType) override; //overridden on account of messages

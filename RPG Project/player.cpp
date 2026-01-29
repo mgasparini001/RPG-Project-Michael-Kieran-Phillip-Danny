@@ -4,8 +4,8 @@ using std::cout;
 using std::endl;
 
 // player constructor
-player::player(const string& name, int HP, int melee, int range, int Armor, int AP)
-    : Character(name, HP, melee, range, Armor) {
+player::player(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap)
+    : Character(name, hp, melee, range, armor, stamina, dmg, ap) {
 }
 
 // override attack function to include player-specific behavior
@@ -14,27 +14,27 @@ void player::attack(Character& target, bool attackType) {
 
     // attackType
     if (attackType) {
-        if (stamina > 100) {
-            stamina -= 100;
+        if (Stamina > 100) {
+            Stamina -= 100;
             //melee attack
-            if (diceRoll(melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
-                target.takeDamage(diceRoll(melee) + dmg);
+            if (diceRoll(Melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
+                target.takeDamage(diceRoll(Melee) + Dmg);
             }
         }
         else {
-            cout << "You are too exhuasted to make the attack!" << endl;
+            cout << Name <<  "is too exhuasted to make the attack!" << endl;
         }
     }
     else {
         //ranged attack
-        if (stamina > 50) {
-            stamina -= 50;
+        if (Stamina > 50) {
+            Stamina -= 50;
             if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
-                target.takeDamage(diceRoll(range));
+                target.takeDamage(diceRoll(Range));
             }
         }
         else {
-            cout << "You are too exhuasted to make the attack!" << endl;
+            cout << Name << "is too exhuasted to make the attack!" << endl;
         }
     }
 }

@@ -13,7 +13,7 @@ public:
 	int XP;
 
 	// enemy constructor
-	enemy(const string& name, int HP, int melee, int range, int Armor, int XP, int strength);
+	enemy(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
 	
 	//manages attack message. overridden later
 	virtual void attackMessage()=0;
