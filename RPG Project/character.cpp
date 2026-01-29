@@ -1,6 +1,7 @@
 #include "character.h"
 #include <string>
-using std::string;
+#include <iostream>
+using std :: string;
 
 // character constructor
 Character::Character(const string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap) {
@@ -25,7 +26,9 @@ void Character::attack(Character& target, bool attackType){
             Stamina -= 100;
             //melee attack
             if (diceRoll(Melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
-                target.takeDamage(diceRoll(Melee) + Dmg);
+                int damage = diceRoll(Melee) + Dmg;
+                std::cout << Name << " hits " << target.getName() << " for " << damage << " damage!";
+                target.takeDamage(damage);
             }
         }
         else {
@@ -37,13 +40,15 @@ void Character::attack(Character& target, bool attackType){
         if (Stamina > 100) {
             Stamina -= 100;
             if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
-                target.takeDamage(diceRoll(Range));
+                int damage = diceRoll(Range);
+                std::cout << Name << " shoots " << target.getName() << " for " << damage << " damage!";
+                target.takeDamage(damage);
             }
         }
     }
 }
 
-void rest(){}
+
 
 // random dice roll function for various uses
 int Character::diceRoll(int x){
