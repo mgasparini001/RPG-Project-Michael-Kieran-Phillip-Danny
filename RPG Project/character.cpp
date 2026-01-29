@@ -90,6 +90,12 @@ int Character::getAp()
     return AP;
 }
 
+int Character::getStamina()
+{
+    return Stamina;
+}
+
+
 void Character::rest()
 {
     Stamina += Stamina / 5;
