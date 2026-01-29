@@ -9,8 +9,11 @@ protected:
     int HP;
     int melee;
     int range;
-    int AP;
+    int AP; 
     int dmg;
+    int strength;
+    int toughness;
+    
 
     std::string name;
 

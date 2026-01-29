@@ -4,14 +4,23 @@ using std::cout;
 using std::endl;
 
 // player constructor
-player::player(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg)
-    : Character(name, hp, move, dex, str, wits, toughness, dmg) {
+player::player(const string& name, int HP, int melee, int range, int Armor, int strength)
+    : Character(name, HP, melee, range, Armor) {
 }
 
 // override attack function to include player-specific behavior
-void player::attack(Character& target) {
-    cout << getName() << " attacks " << target.getName() << " for " << dmg << " damage!" << endl;
-    target.takeDamage(dmg);
+void player::attack(Character& target, bool attackType) {
+    int damage = 0;
+    
+    // attackType
+    if (attackType) {
+        //melee attack
+    } else {
+        //ranged attack
+    }
+    
+    cout << getName() << " attacks " << target.getName() << " for " << damage << " damage!" << endl;
+    target.takeDamage(damage);
 }
 
 // interact with entity (npcs, items, whatever else we add later)
@@ -37,8 +46,8 @@ void player::interact(Entity& entity) {
 bool player::flee() {
     cout << getName() << " attempts to flee from combat!" << endl;
     
-    // roll a 20 side dice plus dex to see if they succeed
-    int fleeRoll = diceRoll(20) + dex;
+    // roll a 20 side dice to see if they succeed
+    int fleeRoll = diceRoll(20);
     
     if (fleeRoll >= 15) {
         cout << getName() << " successfully escaped!" << endl;
@@ -47,4 +56,17 @@ bool player::flee() {
         cout << getName() << " failed to escape!" << endl;
         return false;
     }
+}
+
+
+int player::getStr() {
+    return strength;
+}
+
+int player::getArmor() {
+    return Armor;
+}
+
+int player::getDmg() {
+    return dmg;
 }

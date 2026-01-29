@@ -13,10 +13,10 @@ public:
 	int XP;
 
 	// enemy constructor
-	enemy(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg, int XP);
+	enemy(const string& name, int HP, int melee, int range, int Armor, int XP, int strength);
 
 	// override attack function for enemy-specific behavior
-	void attack(Character& target) override;
+	void attack(Character& target, bool attackType) override;
 
 	// loot drop function
 	int lootDrop();
