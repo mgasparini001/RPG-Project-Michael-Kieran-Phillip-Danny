@@ -8,5 +8,5 @@ boss::boss(const std::string& name, int hp, int melee, int range, int armor, int
 
 void boss:: attackMessage(Character& target)
 {
-	std::cout << Name << " strikes " << target.getName() << " with full force!";
+	std::cout << Name << " strikes " << target.getName() << " with full force!" << std::endl;
 }

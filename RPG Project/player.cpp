@@ -10,7 +10,7 @@ player::player(const std::string& name, int hp, int melee, int range, int armor,
 
 void player::attackMessage(Character& target)
 {
-    cout << Name << " hits " << target.getName() << " for some damage.";
+    cout << Name << " hits " << target.getName() << " for some damage." << endl;
 }
 
 // interact with entity (npcs, items, whatever else we add later)
