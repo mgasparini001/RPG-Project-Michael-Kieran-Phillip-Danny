@@ -29,7 +29,7 @@ void printBattleDisplay(enemy &enemy, player &p1) {
 	cout << "\t\t\t" << "AP: " << p1.getAp() << endl;
 	cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
 
-	// WIP player stats display (might need these player getter methods made)
+	// WIP player stats display 
 	//cout << "\t\t\t" << "TOUGH: " << p1.getArmor() << endl;
 	// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
 	// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
@@ -86,17 +86,18 @@ void enterBattle(enemy& enemy, player& p1) {
 	cout << "A wild " << enemy.getName() << " appears!" << endl;
 
 	string anything = "";
-	cout << "Enter anything to proceed";
+	cout << "Enter anything to proceed\n";
 	cin >> anything;
 
 	refreshScreen();
 	
 	int choice;
 
-	// Gameplay loop WIP 
+	// Gameplay loop 
 	do {
 		printBattleDisplay(enemy, p1);
 		cin >> choice;
+
 		//valid input checker
 		while (choice < 1 || choice > 3)
 		{
@@ -104,7 +105,6 @@ void enterBattle(enemy& enemy, player& p1) {
 			cin >> choice;
 		}
 
-	
 
 		switch (choice) 
 		{
@@ -204,7 +204,8 @@ void enterBattle(enemy& enemy, player& p1) {
 
 
 int main() {
-	
+
+	//makes player
 	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
 	
 	fodder zombie("zombie", 50, 3, 4, 7, 1000, 6, 7);
