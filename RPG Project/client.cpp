@@ -104,8 +104,6 @@ void enterBattle(enemy& enemy, player& p1) {
 			cin >> choice;
 		}
 
-	
-
 		switch (choice) 
 		{
 			//case where the player decides to attack
@@ -161,7 +159,6 @@ void enterBattle(enemy& enemy, player& p1) {
 	
 		if (enemy.getHp() > 0 && !hasRun)
 		{
-
 			// Enemy Action Engine:
 
 			int eRoll = enemy.diceRoll(10);
