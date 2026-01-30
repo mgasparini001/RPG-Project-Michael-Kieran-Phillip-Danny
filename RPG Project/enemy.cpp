@@ -11,7 +11,7 @@ enemy::enemy(const std::string& name, int hp, int melee, int range, int armor, i
 
 
 
-// loot drop, returns random amount of gold
+//Output: int, loot drop, returns random amount of gold
 int enemy::lootDrop() {
     int gold = diceRoll(50) + 10; // random gold between 10 and 59
     cout << getName() << " dropped " << gold << " gold!" << endl;

@@ -8,6 +8,7 @@ player::player(const std::string& name, int hp, int melee, int range, int armor,
     : Character(name, hp, melee, range, armor, stamina, dmg, ap) {
 }
 
+//Input: Address of Character object, Output: void, prints a message that signifies the player's attack
 void player::attackMessage(Character& target)
 {
     cout << Name << " hits " << target.getName() << " for some damage." << endl;

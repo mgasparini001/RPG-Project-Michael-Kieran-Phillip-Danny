@@ -17,6 +17,7 @@ public:
 	// player constructor
 	player(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
 
+	//overridden attackMessage function
 	void attackMessage(Character& target) override;
 
 	// interact with entity (npcs, items, etc)
