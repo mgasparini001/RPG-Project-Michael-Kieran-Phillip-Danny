@@ -140,7 +140,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				refreshScreen();
 				break;
 			}
-			//case where the player decides to use an item
+			//case where the player decides to rest
 			case 2:
 			{
 				cout << p1.getName() << " rests and restores some stamina!" << endl;
