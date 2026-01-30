@@ -17,10 +17,11 @@ Character::Character(const string& name, int hp, int melee, int range, int armor
     Stamina=stamina;
 }
 
+//armor getter
 int Character::getArmor() {
     return Armor;
 }
-// basic attack function
+//input: Address of character object and boolean represnting attack type, Output: void, does an attack
 void Character::attack(Character& target, bool attackType){
     // attackType
     if (attackType) {
@@ -58,12 +59,12 @@ void Character::attack(Character& target, bool attackType){
 
 
 
-// random dice roll function for various uses
+//Input: int represnting the sided die that is to be rolled, Output: int, Rolls a dice
 int Character::diceRoll(int x){
     return (rand() % x) + 1;
 }
 
-// function to reduce hp when taking damage
+//Input: int representing a specfic amount of damage to be taken, Output: void, reduces hp by the given amount
 void Character::takeDamage(int amount){
     HP -= amount;
     if (HP < 0){
@@ -71,12 +72,12 @@ void Character::takeDamage(int amount){
     }
 }
 
-// check if character is alive
+//Output: bool, check to see if the character is alive
 bool Character::isAlive() const{
     return HP > 0;
 }
 
-// get current hp
+//hp getter
 int Character::getHp() const{
     return HP;
 }
@@ -86,34 +87,34 @@ string Character::getName() const{
     return Name;
 }
 
-// get damage stat
+//damage getter
 int Character::getDmg()
 {
     return Dmg;
 }
 
-// get armor penetration points
+//armor penitration getter
 int Character::getAp()
 {
     return AP;
 }
 
-// get stamina points
+//stamina getter
 int Character::getStamina()
 {
     return Stamina;
 }
 
-// recharges stamina
+//Output: void, restores some of the characters stamina
 void Character::rest()
 {
     Stamina += Stamina / 5;
 }
 
-// rolls dice to determine if party successfully flees
+//Output: bool, function where character tries to flee, returns true if succesful, false otherwise
 bool Character::flee()
 {
-    cout << getName() << " attempts to flee from combat!" << endl;
+    cout << Name << " attempts to flee from combat!" << endl;
 
     // roll a 20 side dice to see if they succeed
     int fleeRoll = diceRoll(20);
