@@ -8,21 +8,19 @@ using std::string;
 // player class derived from Character
 class player : public Character
 {
-public:
-	// gold and experience pointsz
+private:
 	int XP = 3000;
 	int gold = 100;
-
+public:
+	
+	
 	// player constructor
-	player(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg);
+	player(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
 
-	// override attack function
-	void attack(Character& target) override;
+	//overridden attackMessage function
+	void attackMessage(Character& target) override;
 
 	// interact with entity (npcs, items, etc)
 	void interact(Entity& entity);
-
-	// flee function
-	bool flee();
 };
 

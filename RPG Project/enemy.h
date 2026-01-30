@@ -3,20 +3,14 @@
 #include <string>
 using std::string;
 
-// *** Possibly need to make inherited classes from enemy class for "enemy types" ***
-
 // enemy class derived from Character
 class enemy :public Character
 {
 public:
-	// experience points given when defeated
-	int XP;
-
 	// enemy constructor
-	enemy(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg, int XP);
+	enemy(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
 
-	// override attack function for enemy-specific behavior
-	void attack(Character& target) override;
+
 
 	// loot drop function
 	int lootDrop();

@@ -5,17 +5,13 @@ using std::cout;
 using std::endl;
 
 // enemy constructor
-enemy::enemy(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg, int XP)
-    : Character(name, hp, move, dex, str, wits, toughness, dmg), XP(XP) {
+enemy::enemy(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap)
+    : Character(name, hp, melee, range, armor, stamina, dmg, ap) {
 }
 
-// override attack function for enemy-specific behavior
-void enemy::attack(Character& target) {
-    cout << getName() << " attacks " << target.getName() << " for " << dmg << " damage!" << endl;
-    target.takeDamage(dmg);
-}
 
-// loot drop, returns random amount of gold
+
+//Output: int, loot drop, returns random amount of gold
 int enemy::lootDrop() {
     int gold = diceRoll(50) + 10; // random gold between 10 and 59
     cout << getName() << " dropped " << gold << " gold!" << endl;

@@ -1,51 +1,130 @@
 #include "character.h"
 #include <string>
-using std::string;
+#include <iostream>
+using std :: string;
+using std::cout;
+using std::endl;
 
 // character constructor
-Character::Character(const string& name, int hp, int move, int dex, int str, int wits, int toughness, int dmg) : name(name), hp(hp), maxHp(hp), move(move), dex(dex), str(str), wits(wits), toughness(toughness), dmg(dmg) {}
-
-// basic attack function
-void Character::attack(Character& target){
-    target.takeDamage(dmg);
+Character::Character(const string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap) {
+    Name = name;
+    Armor=armor;
+    HP=hp;
+    Melee=melee;
+    Range=range;
+    AP=ap;
+    Dmg=dmg;
+    Stamina=stamina;
 }
 
-// random dice roll function for various uses
+//armor getter
+int Character::getArmor() {
+    return Armor;
+}
+//input: Address of character object and boolean represnting attack type, Output: void, does an attack
+void Character::attack(Character& target, bool attackType){
+    // attackType
+    if (attackType) {
+        if (Stamina > 100) {
+            Stamina -= 100;
+            //melee attack
+            if (diceRoll(Melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
+                attackMessage(target);
+                target.takeDamage(diceRoll(Melee) + Dmg);
+            }
+        }
+        else {
+            std::cout << Name << "is too exhuasted to make the attack!";
+        }
+    }
+    else {
+        //ranged attack
+        if (Stamina > 100) {
+            Stamina -= 100;
+            if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
+                attackMessage(target);
+                target.takeDamage(diceRoll(Melee) + Dmg);
+            }
+            else
+            {
+                std::cout << "The attack missed!" << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << Name << "is too exhuasted to make the attack!";
+        }
+    }
+}
+
+
+
+//Input: int represnting the sided die that is to be rolled, Output: int, Rolls a dice
 int Character::diceRoll(int x){
     return (rand() % x) + 1;
 }
 
-// function to reduce hp when taking damage
+//Input: int representing a specfic amount of damage to be taken, Output: void, reduces hp by the given amount
 void Character::takeDamage(int amount){
-    hp -= amount;
-    if (hp < 0){
-        hp = 0;
+    HP -= amount;
+    if (HP < 0){
+        HP = 0;
     }
 }
 
-// check if character is alive
+//Output: bool, check to see if the character is alive
 bool Character::isAlive() const{
-    return hp > 0;
+    return HP > 0;
 }
 
-// get current hp
+//hp getter
 int Character::getHp() const{
-    return hp;
+    return HP;
 }
 
 // get character name
 string Character::getName() const{
-    return name;
+    return Name;
 }
 
-int Character::getStr() const {
-    return str;
+//damage getter
+int Character::getDmg()
+{
+    return Dmg;
 }
 
-int Character::getToughness() const {
-    return toughness;
+//armor penitration getter
+int Character::getAp()
+{
+    return AP;
 }
 
-int Character::getDmg() const {
-    return dmg;
+//stamina getter
+int Character::getStamina()
+{
+    return Stamina;
+}
+
+//Output: void, restores some of the characters stamina
+void Character::rest()
+{
+    Stamina += Stamina / 5;
+}
+
+//Output: bool, function where character tries to flee, returns true if succesful, false otherwise
+bool Character::flee()
+{
+    cout << Name << " attempts to flee from combat!" << endl;
+
+    // roll a 20 side dice to see if they succeed
+    int fleeRoll = diceRoll(20);
+
+    if (fleeRoll >= 15) {
+        cout << getName() << " successfully escaped!" << endl;
+        return true;
+    }
+    else {
+        cout << getName() << " failed to escape!" << endl;
+        return false;
+    }
 }
