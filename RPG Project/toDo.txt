@@ -6,17 +6,6 @@ TO DO:
 
 -pseudocode obviously
 
-***These are due for getting stamp credit by friday 1/30 5pm***
-
-
-
-
-
--pseudocode obviously
-
-test
--pseudocode obviously
-
 update methods (working on)
 
 item durability (potions, swords, etc)
