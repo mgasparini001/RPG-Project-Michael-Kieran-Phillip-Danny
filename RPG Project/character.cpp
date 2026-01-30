@@ -86,27 +86,31 @@ string Character::getName() const{
     return Name;
 }
 
+// get damage stat
 int Character::getDmg()
 {
     return Dmg;
 }
 
+// get armor penetration points
 int Character::getAp()
 {
     return AP;
 }
 
+// get stamina points
 int Character::getStamina()
 {
     return Stamina;
 }
 
-
+// recharges stamina
 void Character::rest()
 {
     Stamina += Stamina / 5;
 }
 
+// rolls dice to determine if party successfully flees
 bool Character::flee()
 {
     cout << getName() << " attempts to flee from combat!" << endl;

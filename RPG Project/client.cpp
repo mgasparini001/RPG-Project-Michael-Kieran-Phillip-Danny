@@ -11,6 +11,8 @@
 #include "boss.h"
 using namespace std;
 
+// Input: an enemy and a player     Output: Player and enemy stats
+// desc: prints out player and enemy in battle and an action prompt for player
 void printBattleDisplay(enemy &enemy, player &p1) {
 	cout << endl << "ENEMY:" << endl;
 	cout << enemy.getName() << endl;
@@ -63,20 +65,22 @@ void quitGame() {
 	cout << "quit\n";
 }
 
-//rolls a dice based on an input (x = 6 would mean a six sided die
-
+// Input: int that represents the sided dice you want to roll    Output: the number you get after rolling
+// desc: rolls a dice based on an input (x = 6 would mean a six sided die)
 int diceRoll(int x)
 {
 	return (rand() % x) + 1;
 }
 
-//refreshes terminal screen
+// refreshes terminal screen
 void refreshScreen() {
 	system("cls");
 }
 
 
-//rolls for enemy type, displays enemy name and hp, and starts battle sequence loop
+// Input: an enemy and a player    Output: an interactive battle loop that reverts to main menu upon ending
+// desc: displays enemy name and hp, and starts battle sequence loop, letting user either fight, rest, or flee. uses Character hp, stamina, dmg, and armor penetration (strength)
+// lets player decide on melee or ranged attack, with ranged having a chance to miss but taking less stamina
 void enterBattle(enemy& enemy, player& p1) {
 	
 	bool hasRun = false;
@@ -94,7 +98,8 @@ void enterBattle(enemy& enemy, player& p1) {
 	int choice;
 
 	// Gameplay loop 
-	do {
+	do 
+	{
 		printBattleDisplay(enemy, p1);
 		cin >> choice;
 
@@ -183,6 +188,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				cin >> anything;
 				refreshScreen();
 			}
+			// case where enemy attempts to flee
 			else {
 				bool check = enemy.flee();
 				if (check)
@@ -194,24 +200,26 @@ void enterBattle(enemy& enemy, player& p1) {
 				refreshScreen();
 			}
 		}
+		// ends once a party dies or escapes
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
 		
 
 }
 
 
-
+int main(){
 	
-	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
+	// the users player
 	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
 	
+	// 3 enemy types that can be fought
 	fodder zombie("zombie", 50, 3, 4, 7, 1000, 6, 7);
 
 	heavy dragon("dragon", 50, 6, 4, 7, 1000, 5, 6);
 
 	boss shrek("shrek", 50, 5, 4, 7, 1000, 9, 6);
 
-	
+	//setting dice seed
 	srand(static_cast<unsigned int>(time(0)));
 	
 	
@@ -253,8 +261,8 @@ void enterBattle(enemy& enemy, player& p1) {
 				enterBattle(shrek, p1);
 			}
 			
-			// true breaks the main menu loop. once more menu choices are implemented, this can be changed
-			hasQuit = true;
+			//after battle ends, refreshes and goes back to menu
+			refreshScreen();
 			break;
 		}
 		case 3:

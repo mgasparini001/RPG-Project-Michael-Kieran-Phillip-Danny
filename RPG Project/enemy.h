@@ -3,8 +3,6 @@
 #include <string>
 using std::string;
 
-// *** Possibly need to make inherited classes from enemy class for "enemy types" ***
-
 // enemy class derived from Character
 class enemy :public Character
 {
