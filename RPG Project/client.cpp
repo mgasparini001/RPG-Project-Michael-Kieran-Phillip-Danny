@@ -105,6 +105,8 @@ void enterBattle(enemy& enemy, player& p1) {
 			cin >> choice;
 		}
 
+	
+
 
 		switch (choice) 
 		{
@@ -161,7 +163,6 @@ void enterBattle(enemy& enemy, player& p1) {
 	
 		if (enemy.getHp() > 0 && !hasRun)
 		{
-
 			// Enemy Action Engine:
 
 			int eRoll = enemy.diceRoll(10);
@@ -177,13 +178,10 @@ void enterBattle(enemy& enemy, player& p1) {
 			else if (eRoll <= 9)
 			{
 				cout << enemy.getName() << " rests and restores some stamina!" << endl;
-				p1.rest();
+				enemy.rest();
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
-				
-
-				
 			}
 			else {
 				bool check = enemy.flee();
@@ -203,9 +201,8 @@ void enterBattle(enemy& enemy, player& p1) {
 
 
 
-int main() {
-
-	//makes player
+	
+	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
 	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
 	
 	fodder zombie("zombie", 50, 3, 4, 7, 1000, 6, 7);

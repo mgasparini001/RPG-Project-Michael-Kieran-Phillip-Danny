@@ -44,6 +44,10 @@ void Character::attack(Character& target, bool attackType){
                 attackMessage(target);
                 target.takeDamage(diceRoll(Melee) + Dmg);
             }
+            else
+            {
+                std::cout << "The attack missed!" << std::endl;
+            }
         }
         else
         {
