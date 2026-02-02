@@ -14,5 +14,5 @@ public:
 	void setPrev(T prevItem);
 	void setNext(T setNext);
 	itemNode* getNext();
-	itemNode getPrev();
+	itemNode* getPrev();
 };
