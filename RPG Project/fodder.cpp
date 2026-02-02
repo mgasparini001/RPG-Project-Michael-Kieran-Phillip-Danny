@@ -10,5 +10,5 @@ fodder::fodder(const std::string& name, int hp, int melee, int range, int armor,
 //Input: Address of Character object, Output: void, prints a message that signifies a fodders' attack
 void fodder::attackMessage(Character& target)
 {
-	std::cout << Name << " swings widly into " << target.getName() << "!" << std::endl;
+	std::cout << Name << " swings wildly into " << target.getName() << "!" << std::endl;
 }

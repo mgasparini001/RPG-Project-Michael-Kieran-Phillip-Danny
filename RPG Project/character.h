@@ -55,5 +55,6 @@ public:
 	// get character name
     std::string getName() const;
 
+    void setHp(int hp);
 
 };

@@ -179,7 +179,7 @@ void enterBattle(enemy& enemy, player& p1) {
 				cin >> anything;
 				refreshScreen();
 			}
-			//case where the enemy tries to use an item
+			//case where the enemy tries to rest
 			else if (eRoll <= 9)
 			{
 				cout << enemy.getName() << " rests and restores some stamina!" << endl;
@@ -274,8 +274,10 @@ int main(){
 			}
 			
 			//after battle ends, refreshes and goes back to menu
-			refreshScreen();
+			//refreshScreen();
+			hasQuit = true; //try to implement it reverting to main menu later. must figure out out to reset the player stats after battle tho. Maybe just use setters?
 			break;
+			
 		}
 		case 3:
 			manageInventory();

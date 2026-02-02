@@ -128,3 +128,8 @@ bool Character::flee()
         return false;
     }
 }
+
+
+void Character::setHp(int hp) {
+    HP = hp;
+}
