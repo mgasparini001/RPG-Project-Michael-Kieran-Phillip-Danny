@@ -1,4 +1,4 @@
-/* #pragma once
+#pragma once
 #include <iostream>
 
 template<class T>
@@ -136,7 +136,7 @@ public:
 		index = beg;
 		size--;
 	}
-	
+
 	void deleteAtLocation(int i)
 	{
 		for (int c = 1; c < i - 1; c++)
@@ -151,4 +151,3 @@ public:
 	}
 };
 
-*/

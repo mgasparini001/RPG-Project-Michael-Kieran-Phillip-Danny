@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="boss.h" />
     <ClInclude Include="character.h" />
+    <ClInclude Include="DLL.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="fodder.h" />
