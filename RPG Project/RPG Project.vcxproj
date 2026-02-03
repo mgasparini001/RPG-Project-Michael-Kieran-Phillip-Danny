@@ -146,7 +146,6 @@
   <ItemGroup>
     <ClCompile Include="boss.cpp" />
     <ClCompile Include="character.cpp" />
-    <ClCompile Include="DLL.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="fodder.cpp" />

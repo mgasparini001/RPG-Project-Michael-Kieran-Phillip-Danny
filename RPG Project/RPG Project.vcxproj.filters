@@ -80,9 +80,6 @@
     <ClCompile Include="boss.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DLL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ItemNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
