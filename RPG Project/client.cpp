@@ -52,6 +52,9 @@ void returnToOverworld() {
 
 void manageInventory() {
 	cout << "managed inventory\n";
+
+
+
 }
 
 void enterShop() {
