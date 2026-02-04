@@ -10,7 +10,7 @@
 #include "heavy.h"
 #include "boss.h"
 #include "ItemRegistry.h"
-#include "Inventory.h"
+#include "inventory.h"
 using namespace std;
 
 // refresehs terminal screen

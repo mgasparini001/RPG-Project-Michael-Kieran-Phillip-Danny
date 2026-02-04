@@ -70,10 +70,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\Dev\Build\RPG Project\obj\</IntDir>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -138,23 +134,28 @@
     <ClInclude Include="entity.h" />
     <ClInclude Include="fodder.h" />
     <ClInclude Include="heavy.h" />
+    <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
+    <ClInclude Include="ItemRegistry.h" />
     <ClInclude Include="npc.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="politician.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="boss.cpp" />
     <ClCompile Include="character.cpp" />
+    <ClCompile Include="client.cpp" />
+    <ClCompile Include="DLL.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="fodder.cpp" />
     <ClCompile Include="heavy.cpp" />
+    <ClCompile Include="inventory.cpp" />
     <ClCompile Include="item.cpp" />
-    <ClCompile Include="ItemNode.cpp" />
+    <ClCompile Include="ItemRegistry.cpp" />
     <ClCompile Include="npc.cpp" />
     <ClCompile Include="player.cpp" />
-    <ClCompile Include="client.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="toDo.txt" />

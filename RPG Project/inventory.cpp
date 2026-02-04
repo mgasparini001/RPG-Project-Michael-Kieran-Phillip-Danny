@@ -1,4 +1,4 @@
-#include "Inventory.h"
+#include "inventory.h"
 #include <iostream>
 
 Inventory::Inventory() : head(nullptr), tail(nullptr) {}
