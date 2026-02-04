@@ -10,7 +10,8 @@
 #include "heavy.h"
 #include "boss.h"
 #include "ItemRegistry.h"
-#include "Inventory.h"
+#include "inventory.h"
+#include <SFML/Audio.hpp>
 using namespace std;
 
 // refresehs terminal screen
@@ -217,8 +218,8 @@ void refreshScreen() {
 // Input: an enemy and a player    Output: an interactive battle loop that reverts to main menu upon ending
 // desc: displays enemy name and hp, and starts battle sequence loop, letting user either fight, rest, or flee. uses Character hp, stamina, dmg, and armor penetration (strength)
 // lets player decide on melee or ranged attack, with ranged having a chance to miss but taking less stamina
-void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
-	
+void enterBattle(enemy& enemy, player& p1) {
+	sf::Music Music;
 	bool hasRun = false;
 
 	cout << "\nentered battle...\n\n";
@@ -231,6 +232,12 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
 
 	refreshScreen();
 	
+	Music.openFromFile("Placeholder_song.wav");
+
+	Music.setLooping(true);
+
+	Music.play();
+
 	int choice;
 
 	// Gameplay loop 
@@ -344,7 +351,8 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
 		}
 		// ends once a party dies or escapes
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
-		
+	
+	Music.stop();
 
 }
 
