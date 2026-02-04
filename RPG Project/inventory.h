@@ -45,3 +45,5 @@ public:
     // print inventory contents with item names
     void printInventory(ItemRegistry& registry) const;
 };
+
+//test commit
