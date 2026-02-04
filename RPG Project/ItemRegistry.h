@@ -20,3 +20,5 @@ public:
     // Print all registered items
     void printRegistry() const;
 };
+
+//test commit

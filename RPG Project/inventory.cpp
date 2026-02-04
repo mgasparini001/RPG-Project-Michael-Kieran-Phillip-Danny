@@ -115,3 +115,6 @@ void Inventory::printInventory(ItemRegistry& registry) const
     }
     std::cout << "==================\n";
 }
+
+
+//test commit
