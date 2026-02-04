@@ -9,7 +9,12 @@
 #include "fodder.h"
 #include "heavy.h"
 #include "boss.h"
+#include "ItemRegistry.h"
+#include "Inventory.h"
 using namespace std;
+
+// refresehs terminal screen
+void refreshScreen();
 
 // Input: an enemy and a player     Output: Player and enemy stats
 // desc: prints out player and enemy in battle and an action prompt for player
@@ -50,11 +55,15 @@ void returnToOverworld() {
 
 }
 
-void manageInventory() {
-	cout << "managed inventory\n";
-
-
-
+void manageInventory(player& p1, ItemRegistry& registry) {
+	cout << "\n    INVENTORY    ";
+	cout << "\nPlayer: " << p1.getName() << "\n\n";
+	p1.getInventory().printInventory(registry);
+	
+	cout << "\nPress enter to go back";
+	cin.ignore();
+	cin.get();
+	refreshScreen();
 }
 
 void enterShop() {
@@ -67,6 +76,72 @@ void chat() {
 void quitGame() {
 	cout << "quit\n";
 }
+
+void debugMenu(player& p1, ItemRegistry& registry) {
+	bool inDebug = true;
+	while (inDebug) {
+		refreshScreen();
+		cout << "\n    DEBUG MENU    \n";
+		cout << "1. add item \n";
+		cout << "2. remove item \n";
+		cout << "3. view inventory\n";
+		cout << "4. exit debug menu\n\n";
+		
+		int choice;
+		cin >> choice;
+		
+		if (choice == 1) {
+			cout << "\aitems:\n";
+			registry.printRegistry();
+			
+			int itemID, quantity;
+			cout << "enter item ID: ";
+			cin >> itemID;
+			cout << "enter quantity: ";
+			cin >> quantity;
+			
+			p1.addItemToInventory(itemID, quantity);
+			cout << "Added " << quantity << " of " << registry.getItemName(itemID) << "!\n";
+			cout << "press enter";
+			cin.ignore();
+			cin.get();
+		}
+		else if (choice == 2) {
+			cout << "\n";
+			p1.getInventory().printInventory(registry);
+			
+			int itemID, quantity;
+			cout << "enter item ID to remove: ";
+			cin >> itemID;
+			cout << "enter quantity: ";
+			cin >> quantity;
+			
+			if (p1.removeItemFromInventory(itemID, quantity)) {
+				cout << "Removed " << quantity << " of " << registry.getItemName(itemID) << "!\n";
+			} else {
+				cout << "Item not found!\n";
+			}
+			cout << "press enter";
+			cin.ignore();
+			cin.get();
+		}
+		else if (choice == 3) {
+			cout << "\n";
+			p1.getInventory().printInventory(registry);
+			cout << "press enter";
+			cin.ignore();
+			cin.get();
+		}
+		else if (choice == 4) {
+			inDebug = false;
+			refreshScreen();
+		}
+		else {
+			cout << "invalid option womp womp\n";
+		}
+	}
+}
+
 
 // Input: int that represents the sided dice you want to roll    Output: the number you get after rolling
 // desc: rolls a dice based on an input (x = 6 would mean a six sided die)
@@ -222,6 +297,18 @@ int main(){
 
 	boss shrek("shrek", 50, 5, 4, 7, 1000, 9, 6);
 
+	// really basic item registry for testing
+	ItemRegistry itemRegistry;
+	itemRegistry.setItemName(0, "Iron Sword");
+	itemRegistry.setItemName(1, "Health Potion");
+	itemRegistry.setItemName(2, "Gold Coins");
+	itemRegistry.setItemName(3, "Shield");
+	
+	// add some items to the player for testing
+	p1.addItemToInventory(1, 5);  // 5 health potions
+	p1.addItemToInventory(2, 50); // 50 gold
+	p1.addItemToInventory(0, 1);  // 1 sword
+
 	//setting dice seed
 	srand(static_cast<unsigned int>(time(0)));
 	
@@ -237,7 +324,8 @@ int main(){
 3. Manage Inventory
 4. Enter Shop
 5. Talk to Someone
-6. Quit Game
+6. DEBUG Menu
+7. Quit Game
 
 )";
 
@@ -245,7 +333,7 @@ int main(){
 		int num;
 		cin >> num;
 
-		while (num < 1 || num > 6)
+		while (num < 1 || num > 7)
 		{
 			cout << "Invalid option, please enter a valid input\n";
 			cin >> num;
@@ -283,7 +371,7 @@ int main(){
 			
 		}
 		case 3:
-			manageInventory();
+			manageInventory(p1, itemRegistry);
 			break;
 		case 4:
 			enterShop();
@@ -292,6 +380,9 @@ int main(){
 			chat();
 			break;
 		case 6:
+			debugMenu(p1, itemRegistry);
+			break;
+		case 7:
 			quitGame();
 			hasQuit = true;
 			break;

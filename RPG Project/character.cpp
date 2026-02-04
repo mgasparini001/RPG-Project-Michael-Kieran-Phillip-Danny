@@ -114,17 +114,17 @@ void Character::rest()
 //Output: bool, function where character tries to flee, returns true if succesful, false otherwise
 bool Character::flee()
 {
-    cout << Name << " attempts to flee from combat!" << endl;
+    std::cout << Name << " attempts to flee from combat!" << std::endl;
 
     // roll a 20 side dice to see if they succeed
     int fleeRoll = diceRoll(20);
 
     if (fleeRoll >= 15) {
-        cout << getName() << " successfully escaped!" << endl;
+        std::cout << getName() << " successfully escaped!" << std::endl;
         return true;
     }
     else {
-        cout << getName() << " failed to escape!" << endl;
+        std::cout << getName() << " failed to escape!" << std::endl;
         return false;
     }
 }
@@ -133,3 +133,25 @@ bool Character::flee()
 void Character::setHp(int hp) {
     HP = hp;
 }
+
+// Inventory management implementation
+Inventory& Character::getInventory() {
+    return inventory;
+}
+
+void Character::addItemToInventory(int itemID, int quantity) {
+    inventory.addItem(itemID, quantity);
+}
+
+bool Character::removeItemFromInventory(int itemID, int quantity) {
+    return inventory.removeItem(itemID, quantity);
+}
+
+int Character::getItemQuantity(int itemID) const {
+    return inventory.getQuantity(itemID);
+}
+
+bool Character::hasItem(int itemID) const {
+    return inventory.hasItem(itemID);
+}
+

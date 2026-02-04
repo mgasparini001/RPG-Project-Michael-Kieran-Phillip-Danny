@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include "Inventory.h"
 // Base Character class
 class Character
 {
@@ -15,6 +16,7 @@ protected:
     
 
     std::string Name;
+    Inventory inventory;
 
 public:
 	// constructor
@@ -57,4 +59,11 @@ public:
 
     void setHp(int hp);
 
-};
+    // Inventory management
+    Inventory& getInventory();
+    void addItemToInventory(int itemID, int quantity = 1);
+    bool removeItemFromInventory(int itemID, int quantity = 1);
+    int getItemQuantity(int itemID) const;
+    bool hasItem(int itemID) const;
+    
+    };
