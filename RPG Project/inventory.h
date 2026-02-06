@@ -1,8 +1,10 @@
 #pragma once
-#include "ItemRegistry.h"
+
 
 //forward declare so it can be used in inventory declaration
 class Character;
+class player;
+class ItemRegistry;
 
 // node for dll in inventory
 struct InventoryNode
@@ -11,11 +13,11 @@ struct InventoryNode
     int quantity;    // how much we has
     InventoryNode* next;
     InventoryNode* prev;
-
+    bool isEquipped;
     
 
     InventoryNode(int id, int qty = 1)
-        : itemID(id), quantity(qty), next(nullptr), prev(nullptr) {
+        : itemID(id), quantity(qty), next(nullptr), prev(nullptr), isEquipped(false) {
     }
 };
 
@@ -37,7 +39,7 @@ public:
     void addItem(int itemID, int quantity = 1);
 
     // remove or decrease
-    bool removeItem(int itemID, int quantity = 1);
+    bool removeItem(int itemID, ItemRegistry registry, player &p, int quantity = 1);
 
     // get amount of specific item
     int getQuantity(int itemID) const;

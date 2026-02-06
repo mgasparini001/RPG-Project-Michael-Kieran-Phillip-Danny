@@ -1,12 +1,14 @@
 #include "enemy.h"
 #include <iostream>
 #include <cstdlib>
+#include "character.h"
 using std::cout;
 using std::endl;
 
+
 // enemy constructor
 enemy::enemy(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap)
-    : Character(name, hp, melee, range, armor, stamina, dmg, ap) {
+    : Character(name, hp, melee, range, armor, stamina, dmg, ap, false) {
 }
 
 

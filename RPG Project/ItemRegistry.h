@@ -7,8 +7,10 @@ class ItemRegistry
 private:
     static const int MAX_ITEMS = 50;
     std::string itemNames[MAX_ITEMS];
+
     std::string equippedItemName;
 
+   
 public:
     ItemRegistry();
     
@@ -20,9 +22,8 @@ public:
     
     // Print all registered items
     void printRegistry() const;
-
-
    
+    void setEquippedItemName(int itemID, std::string& name);
    
 };
 

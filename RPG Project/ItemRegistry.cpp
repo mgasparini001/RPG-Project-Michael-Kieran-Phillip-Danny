@@ -43,5 +43,8 @@ void ItemRegistry::printRegistry() const
 }
 
 
-
+void ItemRegistry::setEquippedItemName(int itemID, std::string& name)
+{
+    equippedItemName = name;
+}
 //test commit

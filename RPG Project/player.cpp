@@ -5,7 +5,7 @@ using std::endl;
 
 // player constructor
 player::player(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap)
-    : Character(name, hp, melee, range, armor, stamina, dmg, ap) {
+    : Character(name, hp, melee, range, armor, stamina, dmg, ap, false) {
 }
 
 //Input: Address of Character object, Output: void, prints a message that signifies the player's attack

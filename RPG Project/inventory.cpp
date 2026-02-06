@@ -1,6 +1,7 @@
 #include "Inventory.h"
 #include <iostream>
 #include "player.h"
+#include "ItemRegistry.h"
 
 Inventory::Inventory() : head(nullptr), tail(nullptr) {}
 
@@ -38,7 +39,7 @@ void Inventory::addItem(int itemID, int quantity)
     }
 }
 
-bool Inventory::removeItem(int itemID, int quantity)
+bool Inventory::removeItem(int itemID, ItemRegistry registry, player &p, int quantity)
 {
     InventoryNode* current = head;
 
@@ -51,6 +52,11 @@ bool Inventory::removeItem(int itemID, int quantity)
             // if quantity is zero remove the node
             if (current->quantity <= 0)
             {
+                if (p.getHasItemEquipped() == true)
+                {
+                    p.unequipItem(registry);
+                }
+               
                 if (current->prev != nullptr)
                     current->prev->next = current->next;
                 else
@@ -114,12 +120,24 @@ void Inventory::printInventory(ItemRegistry& registry, Character &p) const
     InventoryNode* current = head;
 
     std::cout << "=== Inventory ===\n";
-    std::cout << "Equipped: " << registry.getItemName(current->itemID) << std::endl;
+
+    if (p.getHasItemEquipped() == true)
+    {
+        std::cout << "\nEquipped: " << registry.getItemName(p.getEquippedItemID()) << std::endl << std::endl;
+    }
+    else
+    {
+        std::cout << "Equipped: N/A\n";
+    }
+    
+   
     while (current != nullptr)
     {
-        std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
+        std::cout << current->itemID << ") " << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
         current = current->next;
+       
     }
+    std::cout << "\t\tCHOOSE AN ITEM TO LOOK AT ITS STATS (WIP/not req)\n";
     std::cout << "==================\n";
 }
 
