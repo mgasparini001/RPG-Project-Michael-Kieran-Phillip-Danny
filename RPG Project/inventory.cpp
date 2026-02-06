@@ -1,5 +1,6 @@
 #include "Inventory.h"
 #include <iostream>
+#include "player.h"
 
 Inventory::Inventory() : head(nullptr), tail(nullptr) {}
 
@@ -87,6 +88,7 @@ bool Inventory::hasItem(int itemID) const
     return getQuantity(itemID) > 0;
 }
 
+
 void Inventory::clear()
 {
     while (head != nullptr)
@@ -98,7 +100,10 @@ void Inventory::clear()
     tail = nullptr;
 }
 
-void Inventory::printInventory(ItemRegistry& registry) const
+
+
+
+void Inventory::printInventory(ItemRegistry& registry, Character &p) const
 {
     if (head == nullptr)
     {
@@ -106,14 +111,20 @@ void Inventory::printInventory(ItemRegistry& registry) const
         return;
     }
 
-    std::cout << "=== Inventory ===\n";
     InventoryNode* current = head;
+
+    std::cout << "=== Inventory ===\n";
+    std::cout << "Equipped: " << registry.getItemName(current->itemID) << std::endl;
     while (current != nullptr)
     {
         std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
         current = current->next;
     }
     std::cout << "==================\n";
+}
+
+InventoryNode* Inventory::getHead() {
+    return head;
 }
 
 

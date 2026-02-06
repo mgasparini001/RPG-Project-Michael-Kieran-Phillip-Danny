@@ -138,7 +138,9 @@
     <ClInclude Include="entity.h" />
     <ClInclude Include="fodder.h" />
     <ClInclude Include="heavy.h" />
+    <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
+    <ClInclude Include="ItemRegistry.h" />
     <ClInclude Include="npc.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="weapon.h" />
@@ -146,12 +148,14 @@
   <ItemGroup>
     <ClCompile Include="boss.cpp" />
     <ClCompile Include="character.cpp" />
+    <ClCompile Include="DLL.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="fodder.cpp" />
     <ClCompile Include="heavy.cpp" />
+    <ClCompile Include="inventory.cpp" />
     <ClCompile Include="item.cpp" />
-    <ClCompile Include="ItemNode.cpp" />
+    <ClCompile Include="ItemRegistry.cpp" />
     <ClCompile Include="npc.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="client.cpp" />

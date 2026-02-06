@@ -1,12 +1,15 @@
 #include "character.h"
 #include <string>
 #include <iostream>
+#include "ItemRegistry.h"
+#include "player.h"
+#include "inventory.h"
 using std :: string;
 using std::cout;
 using std::endl;
 
 // character constructor
-Character::Character(const string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap) {
+Character::Character(const string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap, bool itemEquipped = false) {
     Name = name;
     Armor=armor;
     HP=hp;
@@ -15,6 +18,7 @@ Character::Character(const string& name, int hp, int melee, int range, int armor
     AP=ap;
     Dmg=dmg;
     Stamina=stamina;
+    hasItemEquipped = itemEquipped;
 }
 
 //armor getter
@@ -154,4 +158,108 @@ int Character::getItemQuantity(int itemID) const {
 bool Character::hasItem(int itemID) const {
     return inventory.hasItem(itemID);
 }
+
+bool Character::getHasItemEquipped()
+{
+    return hasItemEquipped;
+}
+
+void Character::unequipItem(int equippedItemID, ItemRegistry& registry, Inventory inventory)
+{
+    InventoryNode* current = inventory.getHead();
+    //check for any items already equipped
+    
+
+    //unequip
+    if (current->itemID == 0)
+    {
+        current = nullptr;
+        hasItemEquipped = false;
+        AP -= 3;
+    }
+
+    else if (current->itemID == 1)
+    {
+        current = nullptr;
+        hasItemEquipped = false;
+
+    }
+
+    else if (current->itemID == 2)
+    {
+        current = nullptr;
+        hasItemEquipped = true;
+
+    }
+
+    else
+    {
+        current = nullptr;
+        hasItemEquipped = true;
+        Armor -= 2;
+    }
+}
+void Character::equipItem(int equippedItemID, ItemRegistry &registry, Inventory inventory)
+{
+    if (hasItemEquipped)
+    {
+        unequipItem(equippedItemID, registry, inventory);
+    }
+   
+    InventoryNode* current = inventory.getHead();
+    cout << "Which item would you like to equip? (enter ID)\n";
+    std::cin >> equippedItemID;
+    
+    while (current->itemID != equippedItemID)
+    {
+        //std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
+        current = current->next;
+    }
+    if (current == nullptr)
+    {
+        cout << "Outside input range, womp womp\n";
+    }
+   
+
+    if (!hasItemEquipped && current->itemID == 0) {
+        //attach equipped item to a var or node
+        hasItemEquipped = true;
+        AP += 3;
+    }
+
+    else if (!hasItemEquipped && current->itemID == 1)
+    {
+        current->itemID = equippedItemID;
+        hasItemEquipped = true;
+
+    }
+
+    else if (!hasItemEquipped && current->itemID == 2)
+    {
+        current->itemID = equippedItemID;
+        hasItemEquipped = true;
+
+    }
+
+    else if (!hasItemEquipped && current->itemID == 3)
+    {
+        current->itemID = equippedItemID;
+        hasItemEquipped = true;
+        Armor += 2;
+
+    }
+
+   
+}
+
+
+std::string Character::getEquippedItemName(int itemID)
+{
+
+   
+        return equippedItemName;
+    
+}
+
+    
 

@@ -1,6 +1,9 @@
 #pragma once
 #include "ItemRegistry.h"
 
+//forward declare so it can be used in inventory declaration
+class Character;
+
 // node for dll in inventory
 struct InventoryNode
 {
@@ -9,8 +12,11 @@ struct InventoryNode
     InventoryNode* next;
     InventoryNode* prev;
 
+    
+
     InventoryNode(int id, int qty = 1)
-        : itemID(id), quantity(qty), next(nullptr), prev(nullptr) {}
+        : itemID(id), quantity(qty), next(nullptr), prev(nullptr) {
+    }
 };
 
 // inventory class
@@ -43,7 +49,10 @@ public:
     void clear();
 
     // print inventory contents with item names
-    void printInventory(ItemRegistry& registry) const;
+    void printInventory(ItemRegistry& registry, Character &p) const;
+
+    InventoryNode* getHead();
+ 
 };
 
 //test commit

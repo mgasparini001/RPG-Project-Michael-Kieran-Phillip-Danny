@@ -8,6 +8,7 @@ ItemRegistry::ItemRegistry()
     {
         itemNames[i] = "";
     }
+    equippedItemName = "";
 }
 
 // set item to ID
@@ -40,5 +41,7 @@ void ItemRegistry::printRegistry() const
         }
     }
 }
+
+
 
 //test commit

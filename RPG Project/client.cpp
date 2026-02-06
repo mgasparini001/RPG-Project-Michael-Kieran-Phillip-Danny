@@ -18,7 +18,8 @@ void refreshScreen();
 
 // Input: an enemy and a player     Output: Player and enemy stats
 // desc: prints out player and enemy in battle and an action prompt for player
-void printBattleDisplay(enemy &enemy, player &p1) {
+void printBattleDisplay(enemy &enemy, player &p1) 
+{
 	cout << endl << "ENEMY:" << endl;
 	cout << enemy.getName() << endl;
 	cout << "\nHP: " << enemy.getHp() << endl;
@@ -44,8 +45,8 @@ void printBattleDisplay(enemy &enemy, player &p1) {
 	cout <<
 		R"(
                        -------------------
-		      | 1. FIGHT          |
-		      | 2. REST    3. RUN |
+		      | 1. FIGHT   3. RUN |
+		      | 2. REST    4. ITEM|
                        -------------------
 )";
 }
@@ -58,7 +59,7 @@ void returnToOverworld() {
 void manageInventory(player& p1, ItemRegistry& registry) {
 	cout << "\n    INVENTORY    ";
 	cout << "\nPlayer: " << p1.getName() << "\n\n";
-	p1.getInventory().printInventory(registry);
+	p1.getInventory().printInventory(registry, p1);
 	
 	cout << "\nPress enter to go back";
 	cin.ignore();
@@ -77,20 +78,25 @@ void quitGame() {
 	cout << "quit\n";
 }
 
-void debugMenu(player& p1, ItemRegistry& registry) {
+void debugMenu(player& p1, ItemRegistry& registry, Inventory inventory) 
+{
 	bool inDebug = true;
-	while (inDebug) {
+	bool isEquipped = false;
+	while (inDebug) 
+	{
 		refreshScreen();
 		cout << "\n    DEBUG MENU    \n";
 		cout << "1. add item \n";
 		cout << "2. remove item \n";
 		cout << "3. view inventory\n";
-		cout << "4. exit debug menu\n\n";
-		
+		cout << "4. exit debug menu\n";
+		cout << "5. equip item (WIP)\n\n";
+
 		int choice;
 		cin >> choice;
 		
-		if (choice == 1) {
+		if (choice == 1) 
+		{
 			cout << "\aitems:\n";
 			registry.printRegistry();
 			
@@ -106,9 +112,10 @@ void debugMenu(player& p1, ItemRegistry& registry) {
 			cin.ignore();
 			cin.get();
 		}
-		else if (choice == 2) {
+		else if (choice == 2) 
+		{
 			cout << "\n";
-			p1.getInventory().printInventory(registry);
+			p1.getInventory().printInventory(registry, p1);
 			
 			int itemID, quantity;
 			cout << "enter item ID to remove: ";
@@ -125,18 +132,38 @@ void debugMenu(player& p1, ItemRegistry& registry) {
 			cin.ignore();
 			cin.get();
 		}
-		else if (choice == 3) {
+		else if (choice == 3) 
+		{
 			cout << "\n";
-			p1.getInventory().printInventory(registry);
+			p1.getInventory().printInventory(registry, p1);
 			cout << "press enter";
 			cin.ignore();
 			cin.get();
 		}
-		else if (choice == 4) {
+		else if (choice == 4) 
+		{
 			inDebug = false;
 			refreshScreen();
 		}
-		else {
+		else if (choice == 5)
+		{
+			cout << "\aitems:\n";
+			registry.printRegistry();
+
+			int itemID;
+			cout << "enter item ID: ";
+			cin >> itemID;
+
+			p1.equipItem(itemID, registry, inventory);
+			isEquipped = true;
+			cout << "Equipped " << registry.getItemName(itemID) << "!\n";
+			cout << "press enter";
+			cin.ignore();
+			cin.get();
+
+		}
+		else 
+		{
 			cout << "invalid option womp womp\n";
 		}
 	}
@@ -291,14 +318,16 @@ int main(){
 	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
 	
 	// 3 enemy types that can be fought
-	fodder zombie("zombie", 50, 3, 4, 7, 1000, 6, 7);
+	fodder zombie("zombie", 50, 3, 4, 3, 1000, 6, 7);
 
 	heavy dragon("dragon", 50, 6, 4, 7, 1000, 5, 6);
 
-	boss shrek("shrek", 50, 5, 4, 7, 1000, 9, 6);
+	boss shrek("shrek", 50, 5, 4, 10, 1000, 9, 6);
 
 	// really basic item registry for testing
 	ItemRegistry itemRegistry;
+	Inventory inventory;
+
 	itemRegistry.setItemName(0, "Iron Sword");
 	itemRegistry.setItemName(1, "Health Potion");
 	itemRegistry.setItemName(2, "Gold Coins");
@@ -380,7 +409,7 @@ int main(){
 			chat();
 			break;
 		case 6:
-			debugMenu(p1, itemRegistry);
+			debugMenu(p1, itemRegistry, inventory);
 			break;
 		case 7:
 			quitGame();
