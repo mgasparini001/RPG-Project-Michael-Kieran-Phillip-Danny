@@ -54,9 +54,6 @@
     <ClInclude Include="ItemRegistry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="politician.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp">
