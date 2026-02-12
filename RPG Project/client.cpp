@@ -12,6 +12,7 @@
 #include "ItemRegistry.h"
 #include "inventory.h"
 #include <SFML/Audio.hpp>
+#include <filesystem>
 using namespace std;
 
 // refresehs terminal screen
@@ -359,6 +360,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
 
 int main(){
 	
+	cout << filesystem::current_path() << endl;
 	// the users player
 	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
 	
