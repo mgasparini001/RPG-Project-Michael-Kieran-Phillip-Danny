@@ -385,7 +385,7 @@ int main(){
 	p1.addItemToInventory(3, 1); // 1 shield
 	//setting dice seed
 	srand(static_cast<unsigned int>(time(0)));
-	
+	//test commit
 	
 	bool hasQuit = false;
 
