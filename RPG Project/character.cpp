@@ -36,6 +36,10 @@ void Character::attack(Character& target, bool attackType){
                 attackMessage(target);
                 target.takeDamage(diceRoll(Melee) + Dmg);
             }
+            else
+            {
+                std::cout << "Qwaping, the attack did nothing";
+            }
         }
         else {
             std::cout << Name << "is too exhuasted to make the attack!";
@@ -43,11 +47,11 @@ void Character::attack(Character& target, bool attackType){
     }
     else {
         //ranged attack
-        if (Stamina > 100) {
-            Stamina -= 100;
+        if (Stamina > 50) {
+            Stamina -= 50;
             if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
                 attackMessage(target);
-                target.takeDamage(diceRoll(Melee) + Dmg);
+                target.takeDamage(diceRoll(Range) + Dmg);
             }
             else
             {
