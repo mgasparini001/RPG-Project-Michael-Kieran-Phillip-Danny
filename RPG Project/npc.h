@@ -6,6 +6,7 @@ using std::string;
 
 // npc class derived from both character and entity 
 // bc that way they can both have stats and be interacted with
+
 class npc : public Character, public Entity
 {
 public:

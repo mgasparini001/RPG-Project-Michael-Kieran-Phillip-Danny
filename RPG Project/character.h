@@ -1,6 +1,14 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include "Inventory.h"
+
+
+//forward declare so it can be used in character declaration
+struct InventoryNode;
+class ItemRegistry;
+class player;
+
 // Base Character class
 class Character
 {
@@ -12,13 +20,16 @@ protected:
     int AP; 
     int Dmg;
     int Stamina;
+
+    bool hasItemEquipped;
     
 
     std::string Name;
+    Inventory inventory;
 
 public:
 	// constructor
-    Character(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap);
+    Character(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap, bool itemEquipped);
 
 	// virtual destructor (virtual for cleanup in derived classes)
     virtual ~Character() = default;
@@ -55,5 +66,20 @@ public:
 	// get character name
     std::string getName() const;
 
+    void setHp(int hp);
 
-};
+    // Inventory management
+    Inventory& getInventory();
+    void addItemToInventory(int itemID, int quantity = 1);
+    bool removeItemFromInventory(int itemID, ItemRegistry registry, player &p, int quantity = 1);
+    int getItemQuantity(int itemID) const;
+    bool hasItem(int itemID) const;
+
+   
+    bool getHasItemEquipped();
+    void unequipItem(ItemRegistry& registry);
+    bool equipItem(int equippedItemID, ItemRegistry &registry);
+    int getEquippedItemID();
+    //bool hasItemEquipped(bool isEquipped);
+   
+    };
