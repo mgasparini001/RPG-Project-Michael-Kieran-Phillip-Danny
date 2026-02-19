@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug RPG Project",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/RPG Project/x64/Debug/RPG Project.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/RPG Project",
+            "environment": [],
+            "console": "externalTerminal",
+            "preLaunchTask": "Build RPG Project (MSVC)"
+        }
+    ]
+}

@@ -2,21 +2,74 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build RPG Project",
+            "label": "Build RPG Project (MSVC)",
             "type": "shell",
-            "command": "powershell",
+            "command": "msbuild",
             "args": [
-                "-Command",
-                "g++ -o RPGGame (Get-ChildItem *.cpp | ForEach-Object { $_.Name }) -std=c++17"
+                "${workspaceFolder}\\RPG Project.vcxproj",
+                "/p:Configuration=Debug",
+                "/p:Platform=x64"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": ["$gcc"],
+            "problemMatcher": ["$msCompile"],
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/C",
+                        "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\" &&"
+                    ]
+                }
+            },
             "presentation": {
                 "reveal": "always",
-                "panel": "new"
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build RPG Project (Release)",
+            "type": "shell",
+            "command": "msbuild",
+            "args": [
+                "${workspaceFolder}\\RPG Project.vcxproj",
+                "/p:Configuration=Release",
+                "/p:Platform=x64"
+            ],
+            "problemMatcher": ["$msCompile"],
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/C",
+                        "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\" &&"
+                    ]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "msbuild",
+            "args": [
+                "${workspaceFolder}\\RPG Project.vcxproj",
+                "/t:Clean"
+            ],
+            "problemMatcher": [],
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": [
+                        "/C",
+                        "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\" &&"
+                    ]
+                }
             }
         }
     ]

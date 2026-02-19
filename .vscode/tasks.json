@@ -1,0 +1,62 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build RPG Project (MSVC)",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/C",
+                "\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\" && msbuild \"${workspaceFolder}\\RPG Project\\RPG Project.vcxproj\" /p:Configuration=Debug /p:Platform=x64\""
+            ],
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe"
+                }
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$msCompile"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build RPG Project (Release)",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/C",
+                "\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\" && msbuild \"${workspaceFolder}\\RPG Project\\RPG Project.vcxproj\" /p:Configuration=Release /p:Platform=x64\""
+            ],
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe"
+                }
+            },
+            "problemMatcher": ["$msCompile"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/C",
+                "\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\" && msbuild \"${workspaceFolder}\\RPG Project\\RPG Project.vcxproj\" /t:Clean\""
+            ],
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe"
+                }
+            },
+            "problemMatcher": []
+        }
+    ]
+}
