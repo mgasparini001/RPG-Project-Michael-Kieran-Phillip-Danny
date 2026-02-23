@@ -1,16 +1,20 @@
 #pragma once
+#include "ItemRegistry.h"
+#include "Inventory.h"
 #include <iostream>
 #include <string>
 #include "npc.h"
 class store
 {
 private:
-	npc owner;
-	//string name;
+	npc* owner;
+	string storeName;
 public:
-	//constructor
-	//method where player buys something
-	//method where player sells something
+	store(npc* o, string n);
+	
+	void buySomething(Character& buyer);
+
+	void sellSomething(Character& seller);
 
 
 

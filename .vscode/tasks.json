@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build RPG Project",
+            "type": "shell",
+            "command": "msbuild",
+            "args": [
+                "${workspaceFolder}/RPG Project.slnx",
+                "/p:Configuration=Debug",
+                "/p:Platform=x64",
+                "/m"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "detail": "Builds the RPG Project using MSBuild"
+        }
+    ]
+}
