@@ -362,7 +362,7 @@ int main(){
 	
 	//cout << filesystem::current_path() << endl;
 	// the users player
-	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7);
+	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7, 1000, 1000);
 	
 	// 3 enemy types that can be fought
 	fodder zombie("zombie", 50, 3, 4, 3, 1000, 6, 7);
