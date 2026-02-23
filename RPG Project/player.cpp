@@ -4,8 +4,10 @@ using std::cout;
 using std::endl;
 
 // player constructor
-player::player(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap)
+player::player(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap, int x, int g)
     : Character(name, hp, melee, range, armor, stamina, dmg, ap, false) {
+    gold = g;
+    XP = x;
 }
 
 //Input: Address of Character object, Output: void, prints a message that signifies the player's attack
@@ -32,6 +34,26 @@ void player::interact(Entity& entity) {
             // do nothing
         }
     }
+}
+
+int player::getGold()
+{
+    return gold;
+}
+
+int player::getXp()
+{
+    return XP;
+}
+
+void player::setGold(int g)
+{
+    gold = g;
+}
+
+void player::setXp(int x)
+{
+    XP = x;
 }
 
 
