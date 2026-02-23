@@ -1,4 +1,6 @@
 #pragma once
+#include "ItemRegistry.h"
+#include "Inventory.h"
 #include <iostream>
 #include <string>
 #include "npc.h"
@@ -9,8 +11,10 @@ private:
 	string storeName;
 public:
 	store(npc* o, string n);
-	//method where player buys something
-	//method where player sells something
+	
+	void buySomething(Character& buyer);
+
+	void sellSomething(Character& seller);
 
 
 
