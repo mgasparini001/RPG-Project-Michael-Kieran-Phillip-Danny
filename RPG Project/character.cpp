@@ -147,7 +147,7 @@ Inventory& Character::getInventory() {
     return inventory;
 }
 
-void Character::addItemToInventory(int itemID, int quantity) {
+void Character::addItemToInventory(int itemID, ItemRegistry registry, int quantity) {
     inventory.addItem(itemID, quantity);
 }
 
@@ -189,6 +189,7 @@ void Character::unequipItem(ItemRegistry& registry)
     {
         current->isEquipped = false;
         hasItemEquipped = false;
+        HP -= 12;
 
     }
 
@@ -198,13 +199,38 @@ void Character::unequipItem(ItemRegistry& registry)
         hasItemEquipped = false;
 
     }
-
-    else
+    else if (current->itemID == 3)
     {
         current->isEquipped = false;
         hasItemEquipped = false;
         Armor -= 2;
     }
+    else if (!hasItemEquipped && current->itemID == 4)
+    {
+        // current->itemID = equippedItemID;
+        current->isEquipped = true;
+        hasItemEquipped = true;
+        AP -= 2;
+        
+    }
+    else if (!hasItemEquipped && current->itemID == 5)
+    {
+        // current->itemID = equippedItemID;
+        current->isEquipped = true;
+        hasItemEquipped = true;
+        AP -= 5;
+        Armor -= 1;
+
+    }
+    else if (!hasItemEquipped && current->itemID == 6)
+    {
+        // current->itemID = equippedItemID;
+        current->isEquipped = true;
+        hasItemEquipped = true;
+        AP -= 7;
+        Stamina -= 250;
+    }
+   
 }
 bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
 {
@@ -240,7 +266,7 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
        // current->itemID = equippedItemID;
         current->isEquipped = true;
         hasItemEquipped = true;
-
+        HP += 12;
     }
 
     else if (!hasItemEquipped && current->itemID == 2)
@@ -257,6 +283,33 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
         current->isEquipped = true;
         hasItemEquipped = true;
         Armor += 2;
+
+    }
+
+    else if (!hasItemEquipped && current->itemID == 4)
+    {
+        // current->itemID = equippedItemID;
+        current->isEquipped = true;
+        hasItemEquipped = true;
+        AP += 2;
+
+    }
+    else if (!hasItemEquipped && current->itemID == 5)
+    {
+        // current->itemID = equippedItemID;
+        current->isEquipped = true;
+        hasItemEquipped = true;
+        AP += 5;
+        Armor += 1;
+
+    }
+    else if (!hasItemEquipped && current->itemID == 6)
+    {
+        // current->itemID = equippedItemID;
+        current->isEquipped = true;
+        hasItemEquipped = true;
+        AP += 7;
+        Stamina += 250;
 
     }
     return true;

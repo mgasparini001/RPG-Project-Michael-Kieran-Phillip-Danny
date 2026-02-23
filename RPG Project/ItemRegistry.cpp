@@ -9,6 +9,7 @@ ItemRegistry::ItemRegistry()
         itemNames[i] = "";
     }
     equippedItemName = "";
+    
 }
 
 // set item to ID
@@ -17,6 +18,7 @@ void ItemRegistry::setItemName(int itemID, const std::string& name)
     if (itemID >= 0 && itemID < MAX_ITEMS)
     {
         itemNames[itemID] = name;
+        
     }
 }
 
@@ -47,4 +49,6 @@ void ItemRegistry::setEquippedItemName(int itemID, std::string& name)
 {
     equippedItemName = name;
 }
+
+
 //test commit

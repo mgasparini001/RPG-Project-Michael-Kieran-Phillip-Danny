@@ -9,7 +9,7 @@ private:
     std::string itemNames[MAX_ITEMS];
 
     std::string equippedItemName;
-
+    
    
 public:
     ItemRegistry();
@@ -25,6 +25,7 @@ public:
    
     void setEquippedItemName(int itemID, std::string& name);
    
+    
 };
 
 //test commit

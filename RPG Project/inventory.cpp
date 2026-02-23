@@ -3,11 +3,22 @@
 #include "player.h"
 #include "ItemRegistry.h"
 
-Inventory::Inventory() : head(nullptr), tail(nullptr) {}
+Inventory::Inventory() : head(nullptr), tail(nullptr), Size(0) {}
 
 Inventory::~Inventory()
 {
-    clear();
+   //sorry, i changed clear params trying to keep track of inv size so user cant add item outside id range
+   // -mike 
+   //clear();
+}
+int Inventory::getSize()
+{
+    return Size;
+}
+
+void Inventory::setSize(int size)
+{
+    Size = size;
 }
 
 void Inventory::addItem(int itemID, int quantity)
@@ -23,10 +34,12 @@ void Inventory::addItem(int itemID, int quantity)
         }
         current = current->next;
     }
-
+ 
     // item not found, create new one
     InventoryNode* newNode = new InventoryNode(itemID, quantity);
-
+    // keeps track of how many item types there are
+    Size += 1;
+    
     if (head == nullptr)
     {
         head = tail = newNode;
@@ -38,6 +51,7 @@ void Inventory::addItem(int itemID, int quantity)
         tail = newNode;
     }
 }
+
 
 bool Inventory::removeItem(int itemID, ItemRegistry registry, Character &p, int quantity)
 {
@@ -68,6 +82,7 @@ bool Inventory::removeItem(int itemID, ItemRegistry registry, Character &p, int 
                     tail = current->prev;
 
                 delete current;
+                Size -= 1;
             }
             return true;
         }
@@ -95,13 +110,14 @@ bool Inventory::hasItem(int itemID) const
 }
 
 
-void Inventory::clear()
+void Inventory::clear(ItemRegistry itemreg)
 {
     while (head != nullptr)
     {
         InventoryNode* temp = head;
         head = head->next;
         delete temp;
+        Size -= 1;
     }
     tail = nullptr;
 }

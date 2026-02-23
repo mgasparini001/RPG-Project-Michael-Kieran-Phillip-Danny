@@ -10,11 +10,11 @@ class ItemRegistry;
 struct InventoryNode
 {
     int itemID;      // id
-    int quantity;    // how much we has
+    int quantity;  // how much we has   
     InventoryNode* next;
     InventoryNode* prev;
     bool isEquipped;
-    
+     //how many different items you have in your inventory
 
     InventoryNode(int id, int qty = 1)
         : itemID(id), quantity(qty), next(nullptr), prev(nullptr), isEquipped(false) {
@@ -27,6 +27,7 @@ class Inventory
 private:
     InventoryNode* head;
     InventoryNode* tail;
+    int Size;
 
 public:
     // constructor
@@ -35,6 +36,8 @@ public:
     // destructor for bang bang boom
     ~Inventory();
 
+    int getSize();
+    void setSize(int size);
     // add or increase
     void addItem(int itemID, int quantity = 1);
 
@@ -48,7 +51,7 @@ public:
     bool hasItem(int itemID) const;
 
     // clear entire inventory
-    void clear();
+    void clear(ItemRegistry itemreg);
 
     // print inventory contents with item names
     void printInventory(ItemRegistry& registry, Character &p) const;

@@ -70,7 +70,7 @@ public:
 
     // Inventory management
     Inventory& getInventory();
-    void addItemToInventory(int itemID, int quantity = 1);
+    void addItemToInventory(int itemID, ItemRegistry registry, int quantity = 1);
     bool removeItemFromInventory(int itemID, ItemRegistry registry, player &p, int quantity = 1);
     int getItemQuantity(int itemID) const;
     bool hasItem(int itemID) const;

@@ -11,7 +11,7 @@
 #include "boss.h"
 #include "ItemRegistry.h"
 #include "inventory.h"
-#include <SFML/Audio.hpp>
+//#include <SFML/Audio.hpp>
 //#include <filesystem>
 using namespace std;
 
@@ -78,7 +78,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 |  1. Add Item             |
 |  2. Remove Item          |
 |  3. View Inventory       |
-|  4. Equip Item           |
+|  4. Equip/Use Item       |
 |  5. Exit                 |
 ============================
 )";
@@ -102,7 +102,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << "enter quantity: ";
 			cin >> quantity;
 
-			p1.addItemToInventory(itemID, quantity);
+			p1.addItemToInventory(itemID, registry, quantity);
 			cout << "Added " << quantity << " of " << registry.getItemName(itemID) << "!\n";
 			cout << "press enter";
 			cin.ignore();
@@ -157,16 +157,38 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << endl;
 			p1.getInventory().printInventory(registry, p1);
 			int itemID;
+			
 			cout << "enter item ID: ";
 			cin >> itemID;
-			while (itemID < 0 || itemID > 3)
+			while (itemID > (p1.getInventory().getSize() - 1) || itemID < 0)
 			{
 				cout << "Outside input range, womp womp\n";
+				cout << "enter a valid ID: ";
+				cin >> itemID;
 			}
-			if (p1.equipItem(itemID, registry))
+			while (itemID == 2)
 			{
-				isEquipped = true;
-				cout << "Equipped " << registry.getItemName(itemID) << "!\n";
+				cout << "What are you gonna do with your coins, chuck it at him?\n";
+				cout << "enter a valid ID: ";
+				cin >> itemID;
+			}
+
+			bool equip = p1.equipItem(itemID, registry);
+			if (equip == true)
+			{
+				if (itemID == 1)
+				{
+					cout << "Consumed " << registry.getItemName(itemID) << "!\n";
+					p1.removeItemFromInventory(itemID, registry, p1, 1); 
+					
+				}
+				
+				else
+				{
+					isEquipped = true;
+					cout << "Equipped " << registry.getItemName(itemID) << "!\n";
+				}
+				
 			}
 			else
 			{
@@ -197,10 +219,10 @@ void quitGame() {
 	cout << "quit\n";
 }
 
-void debugMenu(player& p1, ItemRegistry& registry) 
-{
+//void debugMenu(player& p1, ItemRegistry& registry) 
+//{
 	
-}
+//}
 
 
 // Input: int that represents the sided dice you want to roll    Output: the number you get after rolling
@@ -219,8 +241,8 @@ void refreshScreen() {
 // Input: an enemy and a player    Output: an interactive battle loop that reverts to main menu upon ending
 // desc: displays enemy name and hp, and starts battle sequence loop, letting user either fight, rest, or flee. uses Character hp, stamina, dmg, and armor penetration (strength)
 // lets player decide on melee or ranged attack, with ranged having a chance to miss but taking less stamina
-void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
-	sf::Music Music;
+void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv) {
+	//sf::Music Music;
 	bool hasRun = false;
 
 	cout << "\nentered battle...\n\n";
@@ -233,11 +255,11 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
 
 	refreshScreen();
 	
-	Music.openFromFile("Placeholder_song.wav");
+//	Music.openFromFile("Placeholder_song.wav");
 
-	Music.setLooping(true);
+	//Music.setLooping(true);
 
-	Music.play();
+	//Music.play();
 
 	int choice;
 
@@ -353,7 +375,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
 		// ends once a party dies or escapes
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
 	
-	Music.stop();
+	//Music.stop();
 
 }
 
@@ -373,18 +395,26 @@ int main(){
 
 	// really basic item registry for testing
 	ItemRegistry itemRegistry;
-	
+	Inventory inventory;
 
 	itemRegistry.setItemName(0, "Iron Sword");
 	itemRegistry.setItemName(1, "Health Potion");
 	itemRegistry.setItemName(2, "Gold Coins");
 	itemRegistry.setItemName(3, "Shield");
+	itemRegistry.setItemName(4, "Water Gun");
+	itemRegistry.setItemName(5, "Ice Beam");
+	itemRegistry.setItemName(6, "Hyper Beam");
 	
 	// add some items to the player for testing
-	p1.addItemToInventory(0, 1);  // 1 sword
-	p1.addItemToInventory(1, 5);  // 5 health potions
-	p1.addItemToInventory(2, 50); // 50 gold
-	p1.addItemToInventory(3, 1); // 1 shield
+	p1.addItemToInventory(0, itemRegistry, 1);  // 1 sword
+	p1.addItemToInventory(1, itemRegistry, 5);  // 5 health potions
+	p1.addItemToInventory(2, itemRegistry, 50); // 50 gold
+	p1.addItemToInventory(3, itemRegistry, 1); // 1 shield
+	p1.addItemToInventory(4, itemRegistry, 1); // 1 watergun
+	p1.addItemToInventory(5, itemRegistry, 1); // 1 ice beam weapon
+	p1.addItemToInventory(6, itemRegistry, 1); // 1 Hyper Beam weapon
+
+	
 	//setting dice seed
 	srand(static_cast<unsigned int>(time(0)));
 	//test commit
@@ -443,17 +473,17 @@ int main(){
 			int roll = diceRoll(3);
 			if (roll == 3)
 			{
-				enterBattle(zombie, p1, itemRegistry);
+				enterBattle(zombie, p1, itemRegistry, inventory);
 			}
 
 			else if (roll == 2)
 			{
-				enterBattle(dragon, p1, itemRegistry);
+				enterBattle(dragon, p1, itemRegistry, inventory);
 			}
 
 			else
 			{
-				enterBattle(shrek, p1, itemRegistry);
+				enterBattle(shrek, p1, itemRegistry, inventory);
 			}
 			
 			//after battle ends, refreshes and goes back to menu
