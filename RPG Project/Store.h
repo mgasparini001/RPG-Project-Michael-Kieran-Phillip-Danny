@@ -5,10 +5,10 @@
 class store
 {
 private:
-	npc owner;
-	//string name;
+	npc* owner;
+	string storeName;
 public:
-	//constructor
+	store(npc* o, string n);
 	//method where player buys something
 	//method where player sells something
 
