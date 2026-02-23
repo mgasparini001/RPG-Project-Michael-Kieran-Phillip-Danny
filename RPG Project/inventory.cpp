@@ -39,7 +39,7 @@ void Inventory::addItem(int itemID, int quantity)
     }
 }
 
-bool Inventory::removeItem(int itemID, ItemRegistry registry, player &p, int quantity)
+bool Inventory::removeItem(int itemID, ItemRegistry registry, Character &p, int quantity)
 {
     InventoryNode* current = head;
 

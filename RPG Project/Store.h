@@ -5,7 +5,7 @@
 class store
 {
 private:
-	//npc owner;
+	npc owner;
 	//string name;
 public:
 	//constructor

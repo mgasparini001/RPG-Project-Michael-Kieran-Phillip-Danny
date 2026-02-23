@@ -39,7 +39,7 @@ public:
     void addItem(int itemID, int quantity = 1);
 
     // remove or decrease
-    bool removeItem(int itemID, ItemRegistry registry, player &p, int quantity = 1);
+    bool removeItem(int itemID, ItemRegistry registry, Character &p, int quantity = 1);
 
     // get amount of specific item
     int getQuantity(int itemID) const;

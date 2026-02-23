@@ -15,10 +15,13 @@ public:
 	// npc constructor
 	npc(const string& name, const string& description, int HP, int melee, int range, int Armor, int xpDrop);
 
-	// interact funct
+	// interact function
 	void interact();
 
 	// loot drop funct
 	int lootDrop() const;
+
+
+
 };
 
