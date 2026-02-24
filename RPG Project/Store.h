@@ -12,10 +12,8 @@ private:
 public:
 	store(npc* o, string n);
 	
-	void buySomething(Character& buyer);
+	void buySomething(player& buyer);
 
-	void sellSomething(Character& seller);
-
-
+	void sellSomething(player& seller);
 
 };
