@@ -147,12 +147,17 @@ Inventory& Character::getInventory() {
     return inventory;
 }
 
-void Character::addItemToInventory(int itemID, ItemRegistry registry, int quantity) {
-    inventory.addItem(itemID, quantity);
+void Character::addItemToInventory(int itemID, ItemRegistry& registry, int quantity) {
+    std::shared_ptr<Item> item = registry.getItem(itemID);
+    if (!item)
+    {
+        return;
+    }
+    inventory.addItem(item, quantity);
 }
 
-bool Character::removeItemFromInventory(int itemID, ItemRegistry registry, player &p, int quantity) {
-    return inventory.removeItem(itemID, registry, p, quantity);
+bool Character::removeItemFromInventory(int itemID, player &p, int quantity) {
+    return inventory.removeItem(itemID, p, quantity);
 }
 
 int Character::getItemQuantity(int itemID) const {
@@ -168,7 +173,7 @@ bool Character::getHasItemEquipped()
     return hasItemEquipped;
 }
 
-void Character::unequipItem(ItemRegistry& registry)
+void Character::unequipItem()
 {
     //find equipped item
     InventoryNode* current = inventory.getHead();
@@ -177,15 +182,20 @@ void Character::unequipItem(ItemRegistry& registry)
         //std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
         current = current->next;
     }
+    if (current == nullptr || !current->item)
+    {
+        return;
+    }
     //unequip
-    if (current->itemID == 0)
+    int itemId = current->item->getId();
+    if (itemId == 0)
     {
         current->isEquipped = false;
         hasItemEquipped = false;
         AP -= 3;
     }
 
-    else if (current->itemID == 1)
+    else if (itemId == 1)
     {
         current->isEquipped = false;
         hasItemEquipped = false;
@@ -193,19 +203,19 @@ void Character::unequipItem(ItemRegistry& registry)
 
     }
 
-    else if (current->itemID == 2)
+    else if (itemId == 2)
     {
         current->isEquipped = false;
         hasItemEquipped = false;
 
     }
-    else if (current->itemID == 3)
+    else if (itemId == 3)
     {
         current->isEquipped = false;
         hasItemEquipped = false;
         Armor -= 2;
     }
-    else if (!hasItemEquipped && current->itemID == 4)
+    else if (!hasItemEquipped && itemId == 4)
     {
         // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -213,7 +223,7 @@ void Character::unequipItem(ItemRegistry& registry)
         AP -= 2;
         
     }
-    else if (!hasItemEquipped && current->itemID == 5)
+    else if (!hasItemEquipped && itemId == 5)
     {
         // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -222,7 +232,7 @@ void Character::unequipItem(ItemRegistry& registry)
         Armor -= 1;
 
     }
-    else if (!hasItemEquipped && current->itemID == 6)
+    else if (!hasItemEquipped && itemId == 6)
     {
         // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -232,12 +242,12 @@ void Character::unequipItem(ItemRegistry& registry)
     }
    
 }
-bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
+bool Character::equipItem(int equippedItemID)
 {
     
     InventoryNode* current = inventory.getHead();
 
-    while (current != nullptr && current->itemID != equippedItemID)
+    while (current != nullptr && (!current->item || current->item->getId() != equippedItemID))
     {
         current = current->next;
     }
@@ -249,11 +259,12 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
 
     if (hasItemEquipped)
     {
-        unequipItem(registry);
+        unequipItem();
     }
    
 
-    if (!hasItemEquipped && current->itemID == 0) {
+    int itemId = current->item ? current->item->getId() : -1;
+    if (!hasItemEquipped && itemId == 0) {
 
         //attach equipped item to a var or node******
         current->isEquipped = true;
@@ -261,7 +272,7 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
         AP += 3;
     }
 
-    else if (!hasItemEquipped && current->itemID == 1)
+    else if (!hasItemEquipped && itemId == 1)
     {
        // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -269,7 +280,7 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
         HP += 12;
     }
 
-    else if (!hasItemEquipped && current->itemID == 2)
+    else if (!hasItemEquipped && itemId == 2)
     {
        // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -277,7 +288,7 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
 
     }
 
-    else if (!hasItemEquipped && current->itemID == 3)
+    else if (!hasItemEquipped && itemId == 3)
     {
        // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -286,7 +297,7 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
 
     }
 
-    else if (!hasItemEquipped && current->itemID == 4)
+    else if (!hasItemEquipped && itemId == 4)
     {
         // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -294,7 +305,7 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
         AP += 2;
 
     }
-    else if (!hasItemEquipped && current->itemID == 5)
+    else if (!hasItemEquipped && itemId == 5)
     {
         // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -303,7 +314,7 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
         Armor += 1;
 
     }
-    else if (!hasItemEquipped && current->itemID == 6)
+    else if (!hasItemEquipped && itemId == 6)
     {
         // current->itemID = equippedItemID;
         current->isEquipped = true;
@@ -319,13 +330,17 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
 int Character::getEquippedItemID()
 {
     InventoryNode* current = inventory.getHead();
-    while (current->isEquipped == false)
+    while (current != nullptr && current->isEquipped == false)
     {
         //std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
         current = current->next;
     }
-    
-    return current->itemID;
+
+    if (current == nullptr || !current->item)
+    {
+        return -1;
+    }
+    return current->item->getId();
 }
 
 

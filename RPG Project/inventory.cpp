@@ -1,7 +1,6 @@
 #include "Inventory.h"
 #include <iostream>
 #include "player.h"
-#include "ItemRegistry.h"
 
 Inventory::Inventory() : head(nullptr), tail(nullptr), Size(0) {}
 
@@ -21,13 +20,17 @@ void Inventory::setSize(int size)
     Size = size;
 }
 
-void Inventory::addItem(int itemID, int quantity)
+void Inventory::addItem(const std::shared_ptr<Item>& item, int quantity)
 {
+    if (!item || quantity <= 0)
+    {
+        return;
+    }
     // check for existing item
     InventoryNode* current = head;
     while (current != nullptr)
     {
-        if (current->itemID == itemID)
+        if (current->item && current->item->getId() == item->getId())
         {
             current->quantity += quantity;
             return;
@@ -36,7 +39,7 @@ void Inventory::addItem(int itemID, int quantity)
     }
  
     // item not found, create new one
-    InventoryNode* newNode = new InventoryNode(itemID, quantity);
+    InventoryNode* newNode = new InventoryNode(item, quantity);
     // keeps track of how many item types there are
     Size += 1;
     
@@ -53,13 +56,13 @@ void Inventory::addItem(int itemID, int quantity)
 }
 
 
-bool Inventory::removeItem(int itemID, ItemRegistry registry, Character &p, int quantity)
+bool Inventory::removeItem(int itemID, Character &p, int quantity)
 {
     InventoryNode* current = head;
 
     while (current != nullptr)
     {
-        if (current->itemID == itemID)
+        if (current->item && current->item->getId() == itemID)
         {
             current->quantity -= quantity;
 
@@ -68,7 +71,7 @@ bool Inventory::removeItem(int itemID, ItemRegistry registry, Character &p, int 
             {
                 if (p.getHasItemEquipped() == true)
                 {
-                    p.unequipItem(registry);
+                    p.unequipItem();
                 }
                
                 if (current->prev != nullptr)
@@ -97,7 +100,7 @@ int Inventory::getQuantity(int itemID) const
 
     while (current != nullptr)
     {
-        if (current->itemID == itemID)
+        if (current->item && current->item->getId() == itemID)
             return current->quantity;
         current = current->next;
     }
@@ -110,7 +113,7 @@ bool Inventory::hasItem(int itemID) const
 }
 
 
-void Inventory::clear(ItemRegistry itemreg)
+void Inventory::clear()
 {
     while (head != nullptr)
     {
@@ -125,7 +128,7 @@ void Inventory::clear(ItemRegistry itemreg)
 
 
 
-void Inventory::printInventory(ItemRegistry& registry, Character &p) const
+void Inventory::printInventory(Character &p) const
 {
     if (head == nullptr)
     {
@@ -139,7 +142,19 @@ void Inventory::printInventory(ItemRegistry& registry, Character &p) const
 
     if (p.getHasItemEquipped() == true)
     {
-        std::cout << "\nEquipped: " << registry.getItemName(p.getEquippedItemID()) << std::endl << std::endl;
+        InventoryNode* equipped = head;
+        while (equipped != nullptr && equipped->isEquipped == false)
+        {
+            equipped = equipped->next;
+        }
+        if (equipped && equipped->item)
+        {
+            std::cout << "\nEquipped: " << equipped->item->getName() << std::endl << std::endl;
+        }
+        else
+        {
+            std::cout << "Equipped: N/A\n";
+        }
     }
     else
     {
@@ -149,7 +164,10 @@ void Inventory::printInventory(ItemRegistry& registry, Character &p) const
    
     while (current != nullptr)
     {
-        std::cout << current->itemID << ") " << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
+        if (current->item)
+        {
+            std::cout << current->item->getId() << ") " << current->item->getName() << " x" << current->quantity << "\n";
+        }
         current = current->next;
        
     }

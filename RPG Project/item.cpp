@@ -6,8 +6,8 @@ using std::cout;
 using std::endl;
 
 // item constructor
-Item::Item(const string& name, const string& description, int value, bool consumable)
-    : Entity(name, description), value(value), consumable(consumable) {
+Item::Item(int id, const string& name, const string& description, int value, bool consumable)
+    : Entity(name, description), id(id), value(value), consumable(consumable) {
 }
 
 // use item
@@ -20,6 +20,10 @@ void Item::use(const string& playerName) {
     if (consumable) {
         cout << name << " has been consumed." << endl;
     }
+}
+
+int Item::getId() const {
+    return id;
 }
 
 // get item value
