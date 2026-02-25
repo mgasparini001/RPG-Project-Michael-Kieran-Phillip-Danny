@@ -115,7 +115,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << "\aitems:\n";
 			registry.printRegistry();
 			cout << endl;
-			p1.getInventory().printInventory(registry, p1);
+			p1.getInventory().printInventory(p1);
 
 			int itemID, quantity;
 			cout << "enter item ID to remove: ";
@@ -123,7 +123,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << "enter quantity: ";
 			cin >> quantity;
 
-			if (p1.removeItemFromInventory(itemID, registry, p1, quantity))
+			if (p1.removeItemFromInventory(itemID, p1, quantity))
 			{
 				cout << "Removed " << quantity << " of " << registry.getItemName(itemID) << "!\n";
 			}
@@ -139,7 +139,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 		{
 			refreshScreen();
 			cout << "\n";
-			p1.getInventory().printInventory(registry, p1);
+			p1.getInventory().printInventory(p1);
 			cout << "press enter";
 			cin.ignore();
 			cin.get();
@@ -155,7 +155,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << "\aitems:\n";
 			registry.printRegistry();
 			cout << endl;
-			p1.getInventory().printInventory(registry, p1);
+			p1.getInventory().printInventory(p1);
 			int itemID;
 			
 			cout << "enter item ID: ";
@@ -173,13 +173,13 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 				cin >> itemID;
 			}
 
-			bool equip = p1.equipItem(itemID, registry);
+			bool equip = p1.equipItem(itemID);
 			if (equip == true)
 			{
 				if (itemID == 1)
 				{
 					cout << "Consumed " << registry.getItemName(itemID) << "!\n";
-					p1.removeItemFromInventory(itemID, registry, p1, 1); 
+					p1.removeItemFromInventory(itemID, p1, 1); 
 					
 				}
 				
