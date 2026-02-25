@@ -11,7 +11,7 @@
 #include "boss.h"
 #include "ItemRegistry.h"
 #include "inventory.h"
-//#include <SFML/Audio.hpp>
+#include <SFML/Audio.hpp>
 //#include <filesystem>
 using namespace std;
 
@@ -242,7 +242,7 @@ void refreshScreen() {
 // desc: displays enemy name and hp, and starts battle sequence loop, letting user either fight, rest, or flee. uses Character hp, stamina, dmg, and armor penetration (strength)
 // lets player decide on melee or ranged attack, with ranged having a chance to miss but taking less stamina
 void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv) {
-	//sf::Music Music;
+	sf::Music Music;
 	bool hasRun = false;
 
 	cout << "\nentered battle...\n\n";
@@ -255,11 +255,11 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 
 	refreshScreen();
 	
-//	Music.openFromFile("Placeholder_song.wav");
+	Music.openFromFile("Placeholder_song.wav");
 
-	//Music.setLooping(true);
+	Music.setLooping(true);
 
-	//Music.play();
+	Music.play();
 
 	int choice;
 
@@ -375,7 +375,9 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 		// ends once a party dies or escapes
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
 	
-	//Music.stop();
+	refreshScreen();
+	
+	Music.stop();
 
 }
 
@@ -413,7 +415,6 @@ int main(){
 	p1.addItemToInventory(4, itemRegistry, 1); // 1 watergun
 	p1.addItemToInventory(5, itemRegistry, 1); // 1 ice beam weapon
 	p1.addItemToInventory(6, itemRegistry, 1); // 1 Hyper Beam weapon
-
 	
 	//setting dice seed
 	srand(static_cast<unsigned int>(time(0)));
