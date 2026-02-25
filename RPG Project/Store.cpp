@@ -70,6 +70,6 @@ void store::enterStore(player& p, npc& o)
 
 	if (num == 1)
 	{
-		o.getInventory().printInventory();
+		o.getInventory().printInventory(o);
 	}
 }
