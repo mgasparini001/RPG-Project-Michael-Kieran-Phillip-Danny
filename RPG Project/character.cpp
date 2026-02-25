@@ -156,7 +156,7 @@ void Character::addItemToInventory(int itemID, ItemRegistry& registry, int quant
     inventory.addItem(item, quantity);
 }
 
-bool Character::removeItemFromInventory(int itemID, player &p, int quantity) {
+bool Character::removeItemFromInventory(int itemID, Character &p, int quantity) {
     return inventory.removeItem(itemID, p, quantity);
 }
 

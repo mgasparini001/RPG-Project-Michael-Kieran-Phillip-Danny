@@ -13,7 +13,7 @@ public:
 	int xpDrop;
 
 	// npc constructor
-	npc(const string& name, const string& description, int HP, int melee, int range, int Armor, int stamina, int damage, int ap, bool hasItem, int xpDrop);
+	npc(const string& name, const string& description, int HP, int melee, int range, int Armor, int stamina, int damage, int ap, bool hasItem, int xp);
 
 	// interact function
 	void interact();

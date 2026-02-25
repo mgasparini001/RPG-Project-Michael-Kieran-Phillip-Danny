@@ -58,6 +58,8 @@ public:
     void printInventory(Character &p) const;
 
     InventoryNode* getHead();
+
+    const std::shared_ptr<Item>& getItem(int id);
  
 };
 

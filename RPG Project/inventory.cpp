@@ -179,5 +179,16 @@ InventoryNode* Inventory::getHead() {
     return head;
 }
 
+const std::shared_ptr<Item>& Inventory::getItem(int id)
+{
+    InventoryNode* current = head;
+
+    while (current != nullptr)
+    {
+        if (current->item && current->item->getId() == id)
+            return current->item;
+        current = current->next;
+    }
+}
 
 //test commit

@@ -4,8 +4,11 @@ using std::cout;
 using std::endl;
 
 // npc constructor
-npc::npc(const string& name, const string& description, int HP, int melee, int range, int Armor, int stamina, int damage, int ap, bool hasItem, int xpDrop)
-   : Character(name, HP, melee, range, Armor, stamina, damage, ap, hasItem), Entity(name, description), xpDrop(xpDrop) {}
+npc::npc(const string& name, const string& description, int HP, int melee, int range, int Armor, int stamina, int damage, int ap, bool hasItem, int xp)
+    : Character(name, HP, melee, range, Armor, stamina, damage, ap, hasItem), Entity(name, description)
+{
+    xpDrop = xp;
+}
 
 // interact with player
 void npc::interact() {

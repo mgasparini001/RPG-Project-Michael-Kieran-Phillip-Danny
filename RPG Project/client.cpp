@@ -123,7 +123,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << "enter quantity: ";
 			cin >> quantity;
 
-			if (p1.removeItemFromInventory(itemID, registry, p1, quantity))
+			if (p1.removeItemFromInventory(itemID, p1, quantity))
 			{
 				cout << "Removed " << quantity << " of " << registry.getItemName(itemID) << "!\n";
 			}
@@ -243,6 +243,8 @@ void refreshScreen() {
 // lets player decide on melee or ranged attack, with ranged having a chance to miss but taking less stamina
 void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv) {
 	sf::Music Music;
+	sf::SoundBuffer buff;
+	sf::Sound e1(buff);
 	bool hasRun = false;
 
 	cout << "\nentered battle...\n\n";
