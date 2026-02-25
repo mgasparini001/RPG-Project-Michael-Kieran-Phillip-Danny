@@ -3,31 +3,38 @@
 
 ItemRegistry::ItemRegistry()
 {
-    // set all items as empty strings
+    // set all items as empty
     for (int i = 0; i < MAX_ITEMS; i++)
     {
-        itemNames[i] = "";
+        items[i] = nullptr;
     }
-    equippedItemName = "";
-    
 }
 
 // set item to ID
-void ItemRegistry::setItemName(int itemID, const std::string& name)
+void ItemRegistry::setItem(int itemID, const std::shared_ptr<Item>& item)
 {
     if (itemID >= 0 && itemID < MAX_ITEMS)
     {
-        itemNames[itemID] = name;
-        
+        items[itemID] = item;
     }
+}
+
+std::shared_ptr<Item> ItemRegistry::getItem(int itemID) const
+{
+    if (itemID >= 0 && itemID < MAX_ITEMS)
+    {
+        return items[itemID];
+    }
+    return nullptr;
 }
 
 // get the item by ID
 std::string ItemRegistry::getItemName(int itemID) const
 {
-    if (itemID >= 0 && itemID < MAX_ITEMS)
+    std::shared_ptr<Item> item = getItem(itemID);
+    if (item)
     {
-        return itemNames[itemID];
+        return item->getName();
     }
     return "Unknown Item";
 }
@@ -37,18 +44,9 @@ void ItemRegistry::printRegistry() const
 {
     for (int i = 0; i < MAX_ITEMS; i++)
     {
-        if (itemNames[i] != "")
+        if (items[i])
         {
-            std::cout << "ID " << i << ": " << itemNames[i] << "\n";
+            std::cout << "ID " << i << ": " << items[i]->getName() << "\n";
         }
     }
 }
-
-
-void ItemRegistry::setEquippedItemName(int itemID, std::string& name)
-{
-    equippedItemName = name;
-}
-
-
-//test commit

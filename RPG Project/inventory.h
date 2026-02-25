@@ -1,23 +1,24 @@
 #pragma once
 
+#include <memory>
+#include "item.h"
 
 //forward declare so it can be used in inventory declaration
 class Character;
 class player;
-class ItemRegistry;
 
 // node for dll in inventory
 struct InventoryNode
 {
-    int itemID;      // id
+    std::shared_ptr<Item> item; // item object
     int quantity;  // how much we has   
     InventoryNode* next;
     InventoryNode* prev;
     bool isEquipped;
      //how many different items you have in your inventory
 
-    InventoryNode(int id, int qty = 1)
-        : itemID(id), quantity(qty), next(nullptr), prev(nullptr), isEquipped(false) {
+    InventoryNode(const std::shared_ptr<Item>& item, int qty = 1)
+        : item(item), quantity(qty), next(nullptr), prev(nullptr), isEquipped(false) {
     }
 };
 
@@ -39,10 +40,10 @@ public:
     int getSize();
     void setSize(int size);
     // add or increase
-    void addItem(int itemID, int quantity = 1);
+    void addItem(const std::shared_ptr<Item>& item, int quantity = 1);
 
     // remove or decrease
-    bool removeItem(int itemID, ItemRegistry registry, Character &p, int quantity = 1);
+    bool removeItem(int itemID, Character &p, int quantity = 1);
 
     // get amount of specific item
     int getQuantity(int itemID) const;
@@ -51,10 +52,10 @@ public:
     bool hasItem(int itemID) const;
 
     // clear entire inventory
-    void clear(ItemRegistry itemreg);
+    void clear();
 
     // print inventory contents with item names
-    void printInventory(ItemRegistry& registry, Character &p) const;
+    void printInventory(Character &p) const;
 
     InventoryNode* getHead();
  
