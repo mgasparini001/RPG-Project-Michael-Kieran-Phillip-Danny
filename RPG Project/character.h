@@ -37,7 +37,7 @@ public:
     virtual void attackMessage(Character& target) = 0;
 
 	// basic attack function (virtual so derived classes can override if neccessary)
-    void attack(Character& target, bool attackType);
+    bool attack(Character& target, bool attackType);
 
 	// random dice roll function for various uses
 	int diceRoll(int x);

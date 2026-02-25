@@ -11,6 +11,7 @@
 #include "boss.h"
 #include "ItemRegistry.h"
 #include "inventory.h"
+#include "Store.h"
 #include <SFML/Audio.hpp>
 //#include <filesystem>
 using namespace std;
@@ -115,7 +116,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << "\aitems:\n";
 			registry.printRegistry();
 			cout << endl;
-			p1.getInventory().printInventory(registry, p1);
+			p1.getInventory().printInventory(p1);
 
 			int itemID, quantity;
 			cout << "enter item ID to remove: ";
@@ -139,7 +140,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 		{
 			refreshScreen();
 			cout << "\n";
-			p1.getInventory().printInventory(registry, p1);
+			p1.getInventory().printInventory(p1);
 			cout << "press enter";
 			cin.ignore();
 			cin.get();
@@ -155,7 +156,7 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << "\aitems:\n";
 			registry.printRegistry();
 			cout << endl;
-			p1.getInventory().printInventory(registry, p1);
+			p1.getInventory().printInventory(p1);
 			int itemID;
 			
 			cout << "enter item ID: ";
@@ -173,13 +174,13 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 				cin >> itemID;
 			}
 
-			bool equip = p1.equipItem(itemID, registry);
+			bool equip = p1.equipItem(itemID);
 			if (equip == true)
 			{
 				if (itemID == 1)
 				{
 					cout << "Consumed " << registry.getItemName(itemID) << "!\n";
-					p1.removeItemFromInventory(itemID, registry, p1, 1); 
+					p1.removeItemFromInventory(itemID, p1, 1); 
 					
 				}
 				
@@ -208,8 +209,8 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 	refreshScreen();
 }
 
-void enterShop() {
-	cout << "entered shop\n";
+void enterShop(store s, player& p1, npc& p) {
+	s.enterStore(p1, p);
 }
 
 void chat() {
@@ -243,8 +244,15 @@ void refreshScreen() {
 // lets player decide on melee or ranged attack, with ranged having a chance to miss but taking less stamina
 void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv) {
 	sf::Music Music;
-	sf::SoundBuffer buff;
-	sf::Sound e1(buff);
+	sf::Music sound;
+	sf::Music sound2;
+	sf::Music sound3;
+	sound.openFromFile("Attack.wav");
+	sound2.openFromFile("eppy.wav");
+	sound3.openFromFile("Scream.wav");
+	sound.setLooping(false);
+	sound2.setLooping(false);
+	sound3.setLooping(false);
 	bool hasRun = false;
 
 	cout << "\nentered battle...\n\n";
@@ -258,7 +266,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 	refreshScreen();
 	
 	Music.openFromFile("Placeholder_song.wav");
-
+	Music.setVolume(50.f);
 	Music.setLooping(true);
 
 	Music.play();
@@ -297,15 +305,22 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 				}
 				if (choice == 1)
 				{
-					p1.attack(enemy, true);
+					if (p1.attack(enemy, true))
+					{
+						sound.play();
+					}
 				}
 				else
 				{
-					p1.attack(enemy, false);
+					if(p1.attack(enemy, false))
+					{
+						sound.play();
+					}
 				}
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				refreshScreen();
+				sound.stop();
 				break;
 			}
 			//case where the player decides to rest
@@ -313,8 +328,10 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 			{
 				cout << p1.getName() << " rests and restores some stamina!" << endl;
 				p1.rest();
+				sound2.play();
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
+				sound2.stop();
 				refreshScreen();
 				break;
 			}
@@ -326,8 +343,10 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 				{
 					hasRun = true;
 				}
+				sound3.play();
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
+				sound3.stop();
 				refreshScreen();
 				break;
 			}
@@ -349,8 +368,10 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 			if (eRoll <= 6)
 			{
 				enemy.attack(p1, true);
+				sound.play();
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
+				sound.stop();
 				refreshScreen();
 			}
 			//case where the enemy tries to rest
@@ -358,8 +379,10 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 			{
 				cout << enemy.getName() << " rests and restores some stamina!" << endl;
 				enemy.rest();
+				sound2.play();
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
+				sound2.stop();
 				refreshScreen();
 			}
 			// case where enemy attempts to flee
@@ -369,8 +392,10 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 				{
 					hasRun = true;
 				}
+				sound3.play();
 				cout << "Enter anything to proceed";
 				cin >> anything;
+				sound3.stop();
 				refreshScreen();
 			}
 		}
@@ -389,7 +414,7 @@ int main(){
 	//cout << filesystem::current_path() << endl;
 	// the users player
 	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7, 1000, 1000);
-	
+	npc person("Bob", "Hes just bob", 50, 8, 4, 3, 1000, 6, 7, 1000, 1000);
 	// 3 enemy types that can be fought
 	fodder zombie("zombie", 50, 3, 4, 3, 1000, 6, 7);
 
@@ -400,15 +425,33 @@ int main(){
 	// really basic item registry for testing
 	ItemRegistry itemRegistry;
 	Inventory inventory;
-
-	itemRegistry.setItemName(0, "Iron Sword");
+	auto i1 = std::make_shared<Item>(0, "Iron Sword", "Sword of Iron", 50, false);
+	auto i2= std::make_shared<Item>(1, "Health Potion", "Potion of Health", 10, true);
+	auto i3 = std::make_shared<Item>(2, "Gold Coins", "Coins of gold", 0, false);
+	auto i4 = std::make_shared<Item>(3, "Shield", "Blocks stuff IDK", 100, false);
+	auto i5 = std::make_shared<Item>(4, "Water Gun", "Gun of Water", 5000, false);
+	auto i6 = std::make_shared<Item>(5, "Ice beam", "Beam of ice", 2, false);
+	auto i7 = std::make_shared<Item>(6, "Hyper Beam", "Beam of Hyper", 500000000, false);
+	
+	/*itemRegistry.setItemName(0, "Iron Sword");
 	itemRegistry.setItemName(1, "Health Potion");
 	itemRegistry.setItemName(2, "Gold Coins");
 	itemRegistry.setItemName(3, "Shield");
 	itemRegistry.setItemName(4, "Water Gun");
 	itemRegistry.setItemName(5, "Ice Beam");
-	itemRegistry.setItemName(6, "Hyper Beam");
+	itemRegistry.setItemName(6, "Hyper Beam");*/
 	
+	itemRegistry.setItem(0, i1);
+	itemRegistry.setItem(1, i2);
+	itemRegistry.setItem(2, i3);
+	itemRegistry.setItem(3, i4);
+	itemRegistry.setItem(4, i5);
+	itemRegistry.setItem(5, i6);
+	itemRegistry.setItem(6, i7);
+
+	store test("Danny's stuff", itemRegistry);
+
+
 	// add some items to the player for testing
 	p1.addItemToInventory(0, itemRegistry, 1);  // 1 sword
 	p1.addItemToInventory(1, itemRegistry, 5);  // 5 health potions
@@ -418,6 +461,13 @@ int main(){
 	p1.addItemToInventory(5, itemRegistry, 1); // 1 ice beam weapon
 	p1.addItemToInventory(6, itemRegistry, 1); // 1 Hyper Beam weapon
 	
+	person.addItemToInventory(0, itemRegistry, 1);
+	person.addItemToInventory(1, itemRegistry, 5);
+	person.addItemToInventory(2, itemRegistry, 50);
+	person.addItemToInventory(3, itemRegistry, 1);
+	person.addItemToInventory(4, itemRegistry, 1);
+	person.addItemToInventory(5, itemRegistry, 1);
+	person.addItemToInventory(6, itemRegistry, 1);
 	//setting dice seed
 	srand(static_cast<unsigned int>(time(0)));
 	//test commit
@@ -499,7 +549,7 @@ int main(){
 			manageInventory(p1, itemRegistry);
 			break;
 		case 4:
-			enterShop();
+			enterShop(test, p1, person);
 			break;
 		case 5:
 			chat();

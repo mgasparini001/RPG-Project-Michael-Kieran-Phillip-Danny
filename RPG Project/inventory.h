@@ -57,6 +57,8 @@ public:
     // print inventory contents with item names
     void printInventory(Character &p) const;
 
+    void printInventoryStore(Character& p) const;
+
     InventoryNode* getHead();
 
     const std::shared_ptr<Item>& getItem(int id);

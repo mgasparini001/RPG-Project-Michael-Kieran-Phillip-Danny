@@ -26,7 +26,7 @@ int Character::getArmor() {
     return Armor;
 }
 //input: Address of character object and boolean represnting attack type, Output: void, does an attack
-void Character::attack(Character& target, bool attackType){
+bool Character::attack(Character& target, bool attackType){
     // attackType
     if (attackType) {
         if (Stamina > 100) {
@@ -35,14 +35,17 @@ void Character::attack(Character& target, bool attackType){
             if (diceRoll(Melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
                 attackMessage(target);
                 target.takeDamage(diceRoll(Melee) + Dmg);
+                return true;
             }
             else
             {
                 std::cout << "Qwaping, the attack did nothing";
+                return false;
             }
         }
         else {
             std::cout << Name << "is too exhuasted to make the attack!";
+            return false;
         }
     }
     else {
@@ -52,15 +55,18 @@ void Character::attack(Character& target, bool attackType){
             if (diceRoll(AP) > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for dmg, AP for AP)
                 attackMessage(target);
                 target.takeDamage(diceRoll(Range) + Dmg);
+                return true;
             }
             else
             {
                 std::cout << "The attack missed!" << std::endl;
+                return false;
             }
         }
         else
         {
             std::cout << Name << "is too exhuasted to make the attack!";
+            return false;
         }
     }
 }

@@ -191,4 +191,52 @@ const std::shared_ptr<Item>& Inventory::getItem(int id)
     }
 }
 
+
+void Inventory::printInventoryStore(Character& p) const
+{
+    if (head == nullptr)
+    {
+        std::cout << "Inventory is empty.\n";
+        return;
+    }
+
+    InventoryNode* current = head;
+
+    std::cout << "=== Inventory ===\n";
+
+    if (p.getHasItemEquipped() == true)
+    {
+        InventoryNode* equipped = head;
+        while (equipped != nullptr && equipped->isEquipped == false)
+        {
+            equipped = equipped->next;
+        }
+        if (equipped && equipped->item)
+        {
+            std::cout << "\nEquipped: " << equipped->item->getName() << std::endl << std::endl;
+        }
+        else
+        {
+            std::cout << "Equipped: N/A\n";
+        }
+    }
+    else
+    {
+        std::cout << "Equipped: N/A\n";
+    }
+
+
+    while (current != nullptr)
+    {
+        if (current->item)
+        {
+            std::cout << current->item->getId() << ") " << current->item->getName() << " x" << current->quantity << "Price for one: " << current->item->getValue() << "\n";
+        }
+        current = current->next;
+
+    }
+    std::cout << "\t\tCHOOSE AN ITEM TO LOOK AT ITS STATS (WIP/not req)\n";
+    std::cout << "==================\n";
+}
+
 //test commit
