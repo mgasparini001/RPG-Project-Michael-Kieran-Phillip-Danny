@@ -367,8 +367,10 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, Inventory inv)
 			//case where the enemy attacks
 			if (eRoll <= 6)
 			{
-				enemy.attack(p1, true);
-				sound.play();
+				if (enemy.attack(p1, true))
+				{
+					sound.play();
+				}
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
 				sound.stop();
