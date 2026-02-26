@@ -64,7 +64,8 @@ public:
 
     const std::shared_ptr<Item>& getItem(int id);
  
-    void manageInventory(player& p1, ItemRegistry& registry);
+    void manageInventory(player& p1, ItemRegistry& registry, bool inBattle);
+    void inventoryDebug(player& p1, ItemRegistry& registry);
 };
 
 //test commit

@@ -223,7 +223,214 @@ void Inventory::printInventoryStore(Character &o, player& p) const
 }
 
 
-void Inventory::manageInventory(player& p1, ItemRegistry& registry)
+void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattle)
+{
+
+    bool inInv = true;
+    bool isEquipped = false;
+    while (inInv)
+    {
+        //WIP inv screen
+        refreshScreen();
+        cout << "\n    INVENTORY    ";
+        cout << "\n  Player: " << p1.getName() << "\n\n";
+
+        // manage inv in battle
+
+        if (inBattle == true)
+        {
+              
+            cout << R"(
+============================
+|  1. View Inventory       |
+|  2. Equip/Use Item       |
+|  3. Exit                 |
+============================
+)";
+
+            if (p1.getHasItemEquipped() == true)
+            {
+                std::cout << "\n\t\t\tEquipped: " << registry.getItemName(p1.getEquippedItemID()) << std::endl << std::endl;
+            }
+            int choice;
+            cin >> choice;
+
+            if (choice == 1)
+            {
+                refreshScreen();
+                cout << "\n";
+                p1.getInventory().printInventory(p1);
+                cout << "press enter";
+                cin.ignore();
+                cin.get();
+            }
+          
+            else if (choice == 2)
+            {
+                refreshScreen();
+                p1.getInventory().printInventory(p1);
+                int itemID;
+
+                cout << "enter item ID: ";
+                cin >> itemID;
+                while (!(p1.hasItem(itemID)))
+                {
+                    cout << "Outside input range, womp womp\n";
+                    cout << "enter a valid ID: ";
+                    cin >> itemID;
+                }
+
+                bool equip = p1.equipItem(itemID);
+                if (equip == true)
+                {
+                    if (registry.getItemisConsumable(itemID) == true)
+                    {
+                        cout << "Consumed " << registry.getItemName(itemID) << "!\n";
+                        p1.removeItemFromInventory(itemID, p1, 1);
+
+                    }
+
+                    else
+                    {
+                        isEquipped = true;
+                        cout << "Equipped " << registry.getItemName(itemID) << "!\n";
+                    }
+
+                }
+                else
+                {
+                    cout << "you cant equip an item you dont have, dingus\n";
+                }
+
+                cout << "press enter";
+                cin.ignore();
+                cin.get();
+
+            }
+            else if (choice == 3)
+            {
+                inInv = false;
+                refreshScreen();
+            }
+            else
+            {
+                cout << "invalid option womp womp\n";
+            }
+        }
+
+        // manage inv outside battle
+
+        else
+        {
+
+
+            cout << R"(
+============================
+|  1. Drop Item            |
+|  2. View Inventory       |
+|  3. Equip/Use Item       |
+|  4. Exit                 |
+============================
+)";
+
+            if (p1.getHasItemEquipped() == true)
+            {
+                std::cout << "\n\t\t\tEquipped: " << registry.getItemName(p1.getEquippedItemID()) << std::endl << std::endl;
+            }
+            int choice;
+            cin >> choice;
+
+           if (choice == 1)
+            {
+                refreshScreen();
+                cout << "\n";
+                p1.getInventory().printInventory(p1);
+
+                int itemID, quantity;
+                cout << "enter item ID to remove: ";
+                cin >> itemID;
+                cout << "enter quantity: ";
+                cin >> quantity;
+
+                if (p1.removeItemFromInventory(itemID, p1, quantity))
+                {
+                    cout << "Removed " << quantity << " of " << registry.getItemName(itemID) << "!\n";
+                }
+                else
+                {
+                    cout << "Item not found!\n";
+                }
+                cout << "press enter";
+                cin.ignore();
+                cin.get();
+            }
+            else if (choice == 2)
+            {
+                refreshScreen();
+                cout << "\n";
+                p1.getInventory().printInventory(p1);
+                cout << "press enter";
+                cin.ignore();
+                cin.get();
+            }
+           
+            else if (choice == 3)
+            {
+                refreshScreen();
+                p1.getInventory().printInventory(p1);
+                int itemID;
+
+                cout << "enter item ID: ";
+                cin >> itemID;
+                while (!(p1.hasItem(itemID)))
+                {
+                    cout << "Outside input range, womp womp\n";
+                    cout << "enter a valid ID: ";
+                    cin >> itemID;
+                }
+
+                bool equip = p1.equipItem(itemID);
+                if (equip == true)
+                {
+                    if (registry.getItemisConsumable(itemID) == true)
+                    {
+                        cout << "Consumed " << registry.getItemName(itemID) << "!\n";
+                        p1.removeItemFromInventory(itemID, p1, 1);
+
+                    }
+
+                    else
+                    {
+                        isEquipped = true;
+                        cout << "Equipped " << registry.getItemName(itemID) << "!\n";
+                    }
+
+                }
+                else
+                {
+                    cout << "you cant equip an item you dont have, dingus\n";
+                }
+
+                cout << "press enter";
+                cin.ignore();
+                cin.get();
+
+            }
+            else if (choice == 4)
+           {
+               inInv = false;
+               refreshScreen();
+           }
+            else
+            {
+                cout << "invalid option womp womp\n";
+            }
+        }
+    }
+    refreshScreen();
+}
+
+void Inventory::inventoryDebug(player& p1, ItemRegistry& registry)
 {
 
     bool inInv = true;
@@ -322,7 +529,7 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry)
 
             cout << "enter item ID: ";
             cin >> itemID;
-            while (itemID > (p1.getInventory().getSize() - 1) || itemID < 0)
+            while (!(p1.hasItem(itemID)))
             {
                 cout << "Outside input range, womp womp\n";
                 cout << "enter a valid ID: ";

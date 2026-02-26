@@ -5,11 +5,52 @@
 #include "character.h"
 #include "enemy.h"
 #include "player.h"
+#include "ItemRegistry.h"
 using namespace std;
 
 //forward declare
 void refreshScreen();
-void printBattleDisplay(enemy& enemy, player& p1, const ItemRegistry& registry);
+
+
+// Input: an enemy and a player     Output: Player and enemy stats
+// desc: prints out player and enemy in battle and an action prompt for player
+
+void printBattleDisplay(enemy& enemy, player& p1, const ItemRegistry& registry)
+{
+	cout << endl << "ENEMY:" << endl;
+	cout << enemy.getName() << endl;
+	cout << "\nHP: " << enemy.getHp() << endl;
+	cout << R"(
+
+
+
+---------------------------------------------
+)";
+
+	cout << "\n\t\t\t" << "PLAYER:";
+	cout << "\n\t\t\t" << p1.getName() << endl << endl;
+	cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
+	cout << "\t\t\t" << "SP: " << p1.getStamina() << endl;
+	cout << "\t\t\t" << "AP: " << p1.getAp() << endl;
+	cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
+
+	// WIP player stats display 
+	//cout << "\t\t\t" << "TOUGH: " << p1.getArmor() << endl;
+	// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
+	// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
+	// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
+	cout <<
+		R"(
+                       ---------------------
+		      | 1. FIGHT   3. RUN   |
+		      | 2. REST    4. ITEM  |
+                       ---------------------
+)";
+	if (p1.getHasItemEquipped() == true)
+	{
+		std::cout << "\t\t\tEquipped: " << registry.getItemName(p1.getEquippedItemID()) << std::endl << std::endl;
+	}
+}
 
 
 void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv) {
@@ -123,7 +164,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 		//case where player uses an item (WIP-still need to make item stats and implement that to equip/attack method)
 		case 4:
 		{
-			inv.manageInventory(p1, registry);
+			inv.manageInventory(p1, registry, true);
 			break;
 		}
 		}
