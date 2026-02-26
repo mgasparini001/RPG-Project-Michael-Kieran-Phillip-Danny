@@ -22,47 +22,6 @@ void refreshScreen() {
 	system("cls");
 }
 
-
-// Input: an enemy and a player     Output: Player and enemy stats
-// desc: prints out player and enemy in battle and an action prompt for player
-
-void printBattleDisplay(enemy& enemy, player& p1, const ItemRegistry& registry)
-{
-	cout << endl << "ENEMY:" << endl;
-	cout << enemy.getName() << endl;
-	cout << "\nHP: " << enemy.getHp() << endl;
-	cout << R"(
-
-
-
------------------------------------------
-)";
-
-	cout << "\n\t\t\t" << "PLAYER:";
-	cout << "\n\t\t\t" << p1.getName() << endl << endl;
-	cout << "\t\t\t" << "HP: " << p1.getHp() << endl;
-	cout << "\t\t\t" << "SP: " << p1.getStamina() << endl;
-	cout << "\t\t\t" << "AP: " << p1.getAp() << endl;
-	cout << "\t\t\t" << "DMG: " << p1.getDmg() << endl;
-
-	// WIP player stats display 
-	//cout << "\t\t\t" << "TOUGH: " << p1.getArmor() << endl;
-	// cout << "\t\t\t" << "MOVE: " << p1.getMove() << endl;
-	// cout << "\t\t\t" << "DEX: " << p1.getDex() << endl;
-	// cout << "\t\t\t" << "WITS: " << p1.getWits() << endl;
-	cout <<
-		R"(
-                       ---------------------
-		      | 1. FIGHT   3. RUN   |
-		      | 2. REST    4. ITEM  |
-                       ---------------------
-)";
-	if (p1.getHasItemEquipped() == true)
-	{
-		std::cout << "\t\t\tEquipped: " << registry.getItemName(p1.getEquippedItemID()) << std::endl << std::endl;
-	}
-}
-
 void returnToOverworld() {
 	cout << "returned to overworld\n";
 
@@ -153,8 +112,9 @@ int main(){
 	sf::Music m;
 	m.openFromFile("Main Menu.wav");
 	m.setLooping(true);
+	m.play();
 	while (!hasQuit) {
-		m.play();
+		
 	string menu = R"(OVERWORLD
                         =======================  |
                         | 1. Return to Game   |  |
@@ -197,7 +157,7 @@ int main(){
 
 		case 1:
 			returnToOverworld();
-			m.stop();
+			//m.stop();
 			break;
 
 		case 2:
@@ -227,15 +187,15 @@ int main(){
 			
 		}
 		case 3:
-			m.stop();
-			inventory.manageInventory(p1, itemRegistry);
+			//m.stop();
+			inventory.manageInventory(p1, itemRegistry, false);
 			break;
 		case 4:
-			m.stop();
+			//m.stop();
 			enterShop(store1, p1, owner1);
 			break;
 		case 5:
-			m.stop();
+			//m.stop();
 			chat();
 			break;
 		case 6:
@@ -243,7 +203,7 @@ int main(){
 			hasQuit = true;
 			m.stop();
 			break;
-
+		
 
 		}
 	}
