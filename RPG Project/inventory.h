@@ -58,7 +58,7 @@ public:
     void printInventory(Character &p) const;
 
     //variation of the printInventory method that is used for the store
-    void printInventoryStore(Character& p) const;
+    void printInventoryStore(Character& o, player& p) const;
 
     InventoryNode* getHead();
 
