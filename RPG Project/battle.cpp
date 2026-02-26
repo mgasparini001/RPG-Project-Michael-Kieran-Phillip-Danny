@@ -65,14 +65,19 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 	sound2.setLooping(false);
 	sound3.setLooping(false);
 	bool hasRun = false;
-
+	sf::Music encounter;
+	encounter.openFromFile("Encounter.wav");
+	encounter.setLooping(false);
+	encounter.setVolume(50.f);
+	encounter.play();
 	cout << "\nentered battle...\n\n";
 
 	cout << "A wild " << enemy.getName() << " appears!" << endl;
-
+	
 	string anything = "";
 	cout << "Enter anything to proceed\n";
 	cin >> anything;
+	encounter.stop();
 
 	refreshScreen();
 

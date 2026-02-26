@@ -56,7 +56,7 @@ int main(){
 	// the users player
 	player p1("Ash", 50, 8, 4, 3, 1000, 6, 7, 1000, 1000);
 
-	npc owner1("Bob", "Hes just bob", 50, 8, 4, 3, 1000, 6, 7, 1000, 1000);
+	npc owner1("Bob", "Hes just bob", 50, 8, 4, 3, 1000, 6, 7, false, 1000);
 
 	// 3 enemy types that can be fought
 	fodder zombie("zombie", 50, 3, 4, 3, 1000, 6, 7);
