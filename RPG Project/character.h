@@ -4,6 +4,9 @@
 #include "Inventory.h"
 
 
+
+
+
 //forward declare so it can be used in character declaration
 struct InventoryNode;
 class ItemRegistry;

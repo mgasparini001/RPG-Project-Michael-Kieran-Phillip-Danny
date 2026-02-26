@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="battle.h" />
     <ClInclude Include="boss.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="DLL.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="battle.cpp" />
     <ClCompile Include="boss.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="DLL.cpp" />

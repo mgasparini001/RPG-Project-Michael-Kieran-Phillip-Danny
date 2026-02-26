@@ -1,14 +1,18 @@
 #include "Inventory.h"
 #include <iostream>
 #include "player.h"
+#include "ItemRegistry.h"
+using namespace std;
+
+//forward declare
+void refreshScreen();
 
 Inventory::Inventory() : head(nullptr), tail(nullptr), Size(0) {}
 
 Inventory::~Inventory()
 {
-   //sorry, i changed clear params trying to keep track of inv size so user cant add item outside id range
-   // -mike 
-   //clear();
+   
+   clear();
 }
 int Inventory::getSize()
 {
@@ -192,45 +196,24 @@ const std::shared_ptr<Item>& Inventory::getItem(int id)
 }
 
 
-void Inventory::printInventoryStore(Character& p) const
+void Inventory::printInventoryStore(Character &o, player& p) const
 {
     if (head == nullptr)
     {
-        std::cout << "Inventory is empty.\n";
+        std::cout << "The store is empty.\n";
         return;
     }
 
     InventoryNode* current = head;
 
-    std::cout << "=== Inventory ===\n";
-
-    if (p.getHasItemEquipped() == true)
-    {
-        InventoryNode* equipped = head;
-        while (equipped != nullptr && equipped->isEquipped == false)
-        {
-            equipped = equipped->next;
-        }
-        if (equipped && equipped->item)
-        {
-            std::cout << "\nEquipped: " << equipped->item->getName() << std::endl << std::endl;
-        }
-        else
-        {
-            std::cout << "Equipped: N/A\n";
-        }
-    }
-    else
-    {
-        std::cout << "Equipped: N/A\n";
-    }
-
+    std::cout << "=== Store ===\n";
+    std::cout << "Gold: " << p.getGold() << std::endl << std::endl;
 
     while (current != nullptr)
     {
         if (current->item)
         {
-            std::cout << current->item->getId() << ") " << current->item->getName() << " x" << current->quantity << "Price for one: " << current->item->getValue() << "\n";
+            std::cout << current->item->getId() << ") " << current->item->getName() << " x" << current->quantity << " | Price for one: " << current->item->getValue() << "\n";
         }
         current = current->next;
 
@@ -239,4 +222,144 @@ void Inventory::printInventoryStore(Character& p) const
     std::cout << "==================\n";
 }
 
-//test commit
+
+void Inventory::manageInventory(player& p1, ItemRegistry& registry)
+{
+
+    bool inInv = true;
+    bool isEquipped = false;
+    while (inInv)
+    {
+        //WIP inv screen
+        refreshScreen();
+        cout << "\n    INVENTORY    ";
+        cout << "\n  Player: " << p1.getName() << "\n\n";
+
+        cout << R"(
+============================
+|  1. Add Item             |
+|  2. Remove Item          |
+|  3. View Inventory       |
+|  4. Equip/Use Item       |
+|  5. Exit                 |
+============================
+)";
+
+        if (p1.getHasItemEquipped() == true)
+        {
+            std::cout << "\n\t\t\tEquipped: " << registry.getItemName(p1.getEquippedItemID()) << std::endl << std::endl;
+        }
+        int choice;
+        cin >> choice;
+
+        if (choice == 1)
+        {
+            refreshScreen();
+            cout << "\aitems:\n";
+            registry.printRegistry();
+
+            int itemID, quantity;
+            cout << "enter item ID: ";
+            cin >> itemID;
+            cout << "enter quantity: ";
+            cin >> quantity;
+
+            p1.addItemToInventory(itemID, registry, quantity);
+            cout << "Added " << quantity << " of " << registry.getItemName(itemID) << "!\n";
+            cout << "press enter";
+            cin.ignore();
+            cin.get();
+        }
+        else if (choice == 2)
+        {
+            refreshScreen();
+            cout << "\n";
+            cout << "\aitems:\n";
+            registry.printRegistry();
+            cout << endl;
+            p1.getInventory().printInventory(p1);
+
+            int itemID, quantity;
+            cout << "enter item ID to remove: ";
+            cin >> itemID;
+            cout << "enter quantity: ";
+            cin >> quantity;
+
+            if (p1.removeItemFromInventory(itemID, p1, quantity))
+            {
+                cout << "Removed " << quantity << " of " << registry.getItemName(itemID) << "!\n";
+            }
+            else
+            {
+                cout << "Item not found!\n";
+            }
+            cout << "press enter";
+            cin.ignore();
+            cin.get();
+        }
+        else if (choice == 3)
+        {
+            refreshScreen();
+            cout << "\n";
+            p1.getInventory().printInventory(p1);
+            cout << "press enter";
+            cin.ignore();
+            cin.get();
+        }
+        else if (choice == 5)
+        {
+            inInv = false;
+            refreshScreen();
+        }
+        else if (choice == 4)
+        {
+            refreshScreen();
+            cout << "\aitems:\n";
+            registry.printRegistry();
+            cout << endl;
+            p1.getInventory().printInventory(p1);
+            int itemID;
+
+            cout << "enter item ID: ";
+            cin >> itemID;
+            while (itemID > (p1.getInventory().getSize() - 1) || itemID < 0)
+            {
+                cout << "Outside input range, womp womp\n";
+                cout << "enter a valid ID: ";
+                cin >> itemID;
+            }
+
+            bool equip = p1.equipItem(itemID);
+            if (equip == true)
+            {
+                if (registry.getItemisConsumable(itemID) == true)
+                {
+                    cout << "Consumed " << registry.getItemName(itemID) << "!\n";
+                    p1.removeItemFromInventory(itemID, p1, 1);
+
+                }
+
+                else
+                {
+                    isEquipped = true;
+                    cout << "Equipped " << registry.getItemName(itemID) << "!\n";
+                }
+
+            }
+            else
+            {
+                cout << "you cant equip an item you dont have, dingus\n";
+            }
+
+            cout << "press enter";
+            cin.ignore();
+            cin.get();
+
+        }
+        else
+        {
+            cout << "invalid option womp womp\n";
+        }
+    }
+    refreshScreen();
+}

@@ -39,6 +39,15 @@ std::string ItemRegistry::getItemName(int itemID) const
     return "Unknown Item";
 }
 
+bool ItemRegistry::getItemisConsumable(int itemID) const
+{
+    std::shared_ptr<Item> item = getItem(itemID);
+    if (item)
+    {
+        return item->isConsumable();
+    }
+    return "Unknown Item";
+}
 // print all registered items
 void ItemRegistry::printRegistry() const
 {

@@ -8,6 +8,7 @@ using std :: string;
 using std::cout;
 using std::endl;
 
+
 // character constructor
 Character::Character(const string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap, bool itemEquipped) {
     Name = name;
@@ -74,12 +75,14 @@ bool Character::attack(Character& target, bool attackType){
 
 
 //Input: int represnting the sided die that is to be rolled, Output: int, Rolls a dice
-int Character::diceRoll(int x){
+int Character::diceRoll(int x)
+{
     return (rand() % x) + 1;
 }
 
 //Input: int representing a specfic amount of damage to be taken, Output: void, reduces hp by the given amount
-void Character::takeDamage(int amount){
+void Character::takeDamage(int amount)
+{
     HP -= amount;
     if (HP < 0){
         HP = 0;
@@ -87,17 +90,20 @@ void Character::takeDamage(int amount){
 }
 
 //Output: bool, check to see if the character is alive
-bool Character::isAlive() const{
+bool Character::isAlive() const
+{
     return HP > 0;
 }
 
 //hp getter
-int Character::getHp() const{
+int Character::getHp() const
+{
     return HP;
 }
 
 // get character name
-string Character::getName() const{
+string Character::getName() const
+{
     return Name;
 }
 
@@ -272,7 +278,7 @@ bool Character::equipItem(int equippedItemID)
     int itemId = current->item ? current->item->getId() : -1;
     if (!hasItemEquipped && itemId == 0) {
 
-        //attach equipped item to a var or node******
+        
         current->isEquipped = true;
         hasItemEquipped = true;
         AP += 3;
