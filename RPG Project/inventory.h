@@ -6,7 +6,7 @@
 //forward declare so it can be used in inventory declaration
 class Character;
 class player;
-
+class ItemRegistry;
 // node for dll in inventory
 struct InventoryNode
 {
@@ -64,6 +64,7 @@ public:
 
     const std::shared_ptr<Item>& getItem(int id);
  
+    void manageInventory(player& p1, ItemRegistry& registry);
 };
 
 //test commit

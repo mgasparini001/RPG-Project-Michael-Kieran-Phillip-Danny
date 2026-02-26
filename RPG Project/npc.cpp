@@ -20,7 +20,10 @@ int npc::lootDrop() const {
     return xpDrop;
 }
 
-
+string npc::getName()
+{
+    return Name;
+}
 
 
 

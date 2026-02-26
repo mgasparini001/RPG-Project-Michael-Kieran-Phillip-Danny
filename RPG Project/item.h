@@ -10,6 +10,7 @@ protected:
     int value; // prob in gold
     bool consumable; // whether its consumable (apple or potion or smthn)
 
+
 public:
     // item constructor
     Item(int id, const std::string& name, const std::string& description, int value, bool consumable);

@@ -6,6 +6,9 @@
 #include "Store.h"
 #include "player.h"
 
+//forward declare
+void refreshScreen();
+
 store::store(string n, ItemRegistry i)
 {
 	storeName = n;
@@ -17,29 +20,36 @@ void store :: buySomething(player& buyer, npc& seller, int id, int quanity)
 	buyer.setGold((buyer.getGold() - (seller.getInventory().getItem(id)->getValue() * quanity)));
 	seller.removeItemFromInventory(id, seller, quanity);
 	buyer.addItemToInventory(id, stock, quanity);
-	std::cout << "Thanks for doing business" << std::endl;
+	refreshScreen();
+	std::cout << "Hehe, thank you!" << std::endl;
 }
 
 void store::sellSomething(player& seller, npc& buyer, int id, int quanity)
 {
 	seller.setGold((seller.getGold()) + (seller.getInventory().getItem(id)->getValue() * quanity));
 	seller.removeItemFromInventory(id, seller, quanity);
-	std::cout << "Thanks for doing business" << std::endl;
+	refreshScreen();
+	std::cout << "Hehe, thank you!" << std::endl;
 }
 
 void store::enterStore(player& p, npc& o)
 {
+	refreshScreen();
 	int num;
-	std::cout << "1. Buy\n2. Sell\n3. Exit" << std::endl;
+	std::cout << o.getName() << ": " << p.getName() << "! It's been a while, how can I help you?\n";
+	std::cout << p.getName() << ": Hey " << o.getName() << std::endl;
+	std::cout << "\n1. Buy\n2. Sell\n3. Exit" << std::endl;
 	std::cin >> num;
+
 	while (num != 3)
 	{
 		if (num == 1)
 		{
+			refreshScreen();
 			int i;
 			int q;
-			o.getInventory().printInventoryStore(o);
-			std::cout << "What item would you like to buy " << p.getName() << "? You have " << p.getGold() << std::endl;
+			o.getInventory().printInventoryStore(o, p);
+			std::cout << o.getName() << ": What item would you like to buy " << p.getName() << "?\n";
 			std::cin >> i;
 			std::cout << "How much do you want?: ";
 			std::cin >> q;
@@ -52,7 +62,7 @@ void store::enterStore(player& p, npc& o)
 					if(p.getGold() >= price)
 					{
 						int c;
-						std::cout << "Are you sure?(enter 1 if you want to back out): ";
+						std::cout << "Are you sure? (enter 1 to quit): ";
 						std::cin >> c;
 						if (c == 1)
 						{
@@ -70,20 +80,20 @@ void store::enterStore(player& p, npc& o)
 				}
 				else
 				{
-					std::cout << "I do not have that much bro, the max number I have is listed im my store" << std::endl;
+					std::cout << "I do not have that much bro, the max number I have is listed in front of your face!" << std::endl;
 				}
 			}
 			else
 			{
-				std::cout << "Is this item in the room with us?" << std::endl;
+				std::cout << "Is this item in the room with us? Am I going insane?" << std::endl;
 			}
 		}
 		else
 		{
 			int i;
 			int q;
-			p.getInventory().printInventoryStore(p);
-			std::cout << "What item would you like to sell " << p.getName() << "? You have " << p.getGold() << " Gold";
+			p.getInventory().printInventoryStore(o, p);
+			std::cout << o.getName() << ": Whatcha got for me, " << p.getName() << "?\n";
 			std::cin >> i;
 			std::cout << "How much do you want to sell?: ";
 			std::cin >> q;
@@ -94,7 +104,7 @@ void store::enterStore(player& p, npc& o)
 					int price = p.getInventory().getItem(i)->getValue() * q;
 					std::cout << "I can give you " << price << " gold for that" << std::endl;
 					int c;
-					std::cout << "Are you sure?(enter 1 if you want to back out): ";
+					std::cout << "Are you sure? (enter 1 to quit): ";
 					std::cin >> c;
 					if (c == 1)
 					{
@@ -112,10 +122,13 @@ void store::enterStore(player& p, npc& o)
 			}
 			else
 			{
-				std::cout << "Why are you trying to sell me something you do not have?" << std::endl;
+				std::cout << "Why are you trying to sell me something you do not have? What do you take me for?" << std::endl;
 			}
 		}
-		std::cout << "1. Buy\n2. Sell\n3. Exit" << std::endl;
+		
+		std::cout << "\n1. Buy\n2. Sell\n3. Exit" << std::endl;
 		std::cin >> num;
+		
 	}
+	refreshScreen();
 }

@@ -22,6 +22,7 @@ public:
     // Get item name by ID
     std::string getItemName(int itemID) const;
     
+    bool getItemisConsumable(int itemID) const;
     // Print all registered items
     void printRegistry() const;
 };

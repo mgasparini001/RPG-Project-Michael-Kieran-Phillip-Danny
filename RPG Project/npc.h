@@ -17,7 +17,7 @@ public:
 
 	// interact function
 	void interact();
-
+	string getName();
 	// loot drop funct
 	int lootDrop() const;
 
