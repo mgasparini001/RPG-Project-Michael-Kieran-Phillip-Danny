@@ -475,9 +475,11 @@ int main(){
 	//test commit
 	
 	bool hasQuit = false;
-
+	sf::Music m;
+	m.openFromFile("Main Menu.wav");
+	m.setLooping(true);
 	while (!hasQuit) {
-		
+		m.play();
 	string menu = R"(OVERWORLD
                         =======================  |
                         | 1. Return to Game   |  |
@@ -520,10 +522,12 @@ int main(){
 
 		case 1:
 			returnToOverworld();
+			m.stop();
 			break;
 
 		case 2:
 		{
+			m.stop();
 			//roll decides which enemy to enter battle with
 			int roll = diceRoll(3);
 			if (roll == 3)
@@ -548,24 +552,24 @@ int main(){
 			
 		}
 		case 3:
+			m.stop();
 			manageInventory(p1, itemRegistry);
 			break;
 		case 4:
+			m.stop();
 			enterShop(test, p1, person);
 			break;
 		case 5:
+			m.stop();
 			chat();
 			break;
 		case 6:
 			quitGame();
 			hasQuit = true;
+			m.stop();
 			break;
 
-
-
-
 		}
-
 	}
 
 
