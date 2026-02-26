@@ -24,7 +24,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 	sound2.setLooping(false);
 	sound3.setLooping(false);
 	bool hasRun = false;
-
+	refreshScreen();
 	cout << "\nentered battle...\n\n";
 
 	cout << "A wild " << enemy.getName() << " appears!" << endl;
