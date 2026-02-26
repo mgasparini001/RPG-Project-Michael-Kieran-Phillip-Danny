@@ -67,6 +67,10 @@ void store::enterStore(player& p, npc& o)
 						if (c == 1)
 						{
 							std::cout << "No deal I guess then, these items may be important you know" << std::endl;
+							std::cout << "Press enter to proceed";
+							std::cin.ignore();
+							std::cin.get();
+							refreshScreen();
 						}
 						else
 						{
@@ -75,21 +79,35 @@ void store::enterStore(player& p, npc& o)
 					}
 					else
 					{
+						
 						std::cout << "You do not have enough gold, maybe go get a job or something";
+						std::cout << "Press enter to proceed";
+						std::cin.ignore();
+						std::cin.get();
+						refreshScreen();
 					}
 				}
 				else
 				{
 					std::cout << "I do not have that much bro, the max number I have is listed in front of your face!" << std::endl;
+					std::cout << "Press enter to proceed";
+					std::cin.ignore();
+					std::cin.get();
+					refreshScreen();
 				}
 			}
 			else
 			{
 				std::cout << "Is this item in the room with us? Am I going insane?" << std::endl;
+				std::cout << "Press enter to proceed";
+				std::cin.ignore();
+				std::cin.get();
+				refreshScreen();
 			}
 		}
 		else
 		{
+			refreshScreen();
 			int i;
 			int q;
 			p.getInventory().printInventoryStore(o, p);
@@ -109,6 +127,10 @@ void store::enterStore(player& p, npc& o)
 					if (c == 1)
 					{
 						std::cout << "No deal I guess then, the gold may be important you know" << std::endl;
+						std::cout << "Press enter to proceed";
+						std::cin.ignore();
+						std::cin.get();
+						refreshScreen();
 					}
 					else
 					{
@@ -118,11 +140,19 @@ void store::enterStore(player& p, npc& o)
 				else
 				{
 					std::cout << "I would buy that much if you actually had that much bro" << std::endl;
+					std::cout << "Press enter to proceed";
+					std::cin.ignore();
+					std::cin.get();
+					refreshScreen();
 				}
 			}
 			else
 			{
 				std::cout << "Why are you trying to sell me something you do not have? What do you take me for?" << std::endl;
+				std::cout << "Press enter to proceed";
+				std::cin.ignore();
+				std::cin.get();
+				refreshScreen();
 			}
 		}
 		
