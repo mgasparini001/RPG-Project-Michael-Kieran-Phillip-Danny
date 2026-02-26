@@ -57,6 +57,7 @@ public:
     // print inventory contents with item names
     void printInventory(Character &p) const;
 
+    //variation of the printInventory method that is used for the store
     void printInventoryStore(Character& p) const;
 
     InventoryNode* getHead();

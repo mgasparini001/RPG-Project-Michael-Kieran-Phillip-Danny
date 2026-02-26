@@ -478,6 +478,7 @@ int main(){
 	sf::Music m;
 	m.openFromFile("Main Menu.wav");
 	m.setLooping(true);
+	m.setVolume(50.f);
 	while (!hasQuit) {
 		m.play();
 	string menu = R"(OVERWORLD
@@ -521,8 +522,8 @@ int main(){
 		switch (num) {
 
 		case 1:
-			returnToOverworld();
 			m.stop();
+			returnToOverworld();
 			break;
 
 		case 2:
