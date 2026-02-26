@@ -67,7 +67,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 	bool hasRun = false;
 	sf::Music encounter;
 	encounter.openFromFile("Encounter.wav");
-	encounter.setLooping(false);
+	encounter.setLooping(true);
 	encounter.setVolume(50.f);
 	encounter.play();
 	refreshScreen();
