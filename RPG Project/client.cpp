@@ -75,7 +75,7 @@ int main(){
 	auto i5 = std::make_shared<Item>(4, "Ice beam", "Beam of ice", 2, false);
 	auto i6 = std::make_shared<Item>(5, "Hyper Beam", "Beam of Hyper", 500000000, false);
 	
-	
+
 	itemRegistry.setItem(0, i1);
 	itemRegistry.setItem(1, i2);
 	itemRegistry.setItem(2, i3);
