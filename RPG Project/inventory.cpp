@@ -253,7 +253,19 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
                 std::cout << "\n\t\t\tEquipped: " << registry.getItemName(p1.getEquippedItemID()) << std::endl << std::endl;
             }
             int choice;
-            cin >> choice;
+            bool valid = false;
+            while (!valid)
+            {
+                while (!(cin >> choice))
+                {
+                    cout << "Invalid input, please enter a number\n";
+                    cin.clear();
+                    cin.ignore(1000, '\n');
+                }
+                cin.clear();
+                cin.ignore(1000, '\n');
+                valid = true;
+            }
 
             if (choice == 1)
             {

@@ -94,13 +94,25 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 	do
 	{
 		printBattleDisplay(enemy, p1, registry);
-		cin >> choice;
-
-		//valid input checker
-		while (choice < 1 || choice > 4)
+		bool valid = false;
+		while (!valid)
 		{
-			cout << "Invalid option, please enter a valid input\n";
-			cin >> choice;
+			while (!(cin >> choice))
+			{
+				cout << "Invalid input, please enter a number\n";
+				cin.clear();
+				cin.ignore(1000, '\n');
+			}
+			cin.clear();
+			cin.ignore(1000, '\n');
+			if (choice < 1 || choice > 4)
+			{
+				cout << "Invalid number please enter a valid number\n";
+			}
+			else
+			{
+				valid = true;
+			}
 		}
 
 
@@ -114,11 +126,25 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 			int choice;
 			cout << "\n1. Melee Attack (Costs 100 stamina)" << endl;
 			cout << "2. Ranged Attack (Costs 50 stamina)" << endl;
-			cin >> choice;
-			while (choice < 1 || choice > 2)
+			bool valid = false;
+			while (!valid)
 			{
-				cout << "Invalid option, please enter a valid input";
-				cin >> choice;
+				while (!(cin >> choice))
+				{
+					cout << "Invalid input, please enter a number\n";
+					cin.clear();
+					cin.ignore(1000, '\n');
+				}
+				cin.clear();
+				cin.ignore(1000, '\n');
+				if (choice < 1 || choice > 2)
+				{
+					cout << "Invalid number please enter a valid number\n";
+				}
+				else
+				{
+					valid = true;
+				}
 			}
 			if (choice == 1)
 			{

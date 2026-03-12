@@ -146,13 +146,27 @@ int main(){
 
 		cout << menu;
 		int num;
-		cin >> num;
-
-		while (num < 1 || num > 6)
+		bool valid = false;
+		while (!valid)
 		{
-			cout << "Invalid option, please enter a valid input\n";
-			cin >> num;
+			while (!(cin >> num))
+			{
+				cout << "Invalid input, please enter a number\n";
+				cin.clear();
+				cin.ignore(1000, '\n');
+			}
+			cin.clear();
+			cin.ignore(1000, '\n');
+			if (num < 1 || num > 6)
+			{
+				cout << "Invalid number please enter a valid number\n";
+			}
+			else
+			{
+				valid = true;
+			}
 		}
+
 
 		switch (num) {
 
@@ -205,7 +219,6 @@ int main(){
 			hasQuit = true;
 			m.stop();
 			break;
-		
 
 		}
 	}
