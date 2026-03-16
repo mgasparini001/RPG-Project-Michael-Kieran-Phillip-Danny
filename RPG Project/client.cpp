@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <random>
-#include <string>
 #include "npc.h"
 #include "character.h"
 #include "player.h"
@@ -149,26 +148,22 @@ int main(){
 		bool valid = false;
 		while (!valid)
 		{
-			while (!(cin >> num))
+			string test = getValidInput();
+			if (test != "fail")
 			{
-				cout << "Invalid input, please enter a number\n";
-				cin.clear();
-				cin.ignore(1000, '\n');
-			}
-			cin.clear();
-			cin.ignore(1000, '\n');
-			if (num < 1 || num > 6)
-			{
-				cout << "Invalid number please enter a valid number\n";
-			}
-			else
-			{
-				valid = true;
+				num = stoi(test);
+				if (num < 1 || num > 6)
+				{
+					cout << "Invalid input. Please enter one of the numbers on screen" << endl;
+				}
+				else
+				{
+					valid = true;
+				}
 			}
 		}
-
-
-		switch (num) {
+		
+	switch (num) {
 
 		case 1:
 			m.stop();

@@ -1,10 +1,6 @@
-#include "ItemRegistry.h"
-#include "Inventory.h"
-#include <iostream>
-#include <string>
-#include "npc.h"
 #include "Store.h"
-#include "player.h"
+
+
 
 //forward declare
 void refreshScreen();
@@ -39,7 +35,23 @@ void store::enterStore(player& p, npc& o)
 	std::cout << o.getName() << ": " << p.getName() << "! It's been a while, how can I help you?\n";
 	std::cout << p.getName() << ": Hey " << o.getName() << std::endl;
 	std::cout << "\n1. Buy\n2. Sell\n3. Exit" << std::endl;
-	std::cin >> num;
+	bool valid = false;
+	while (!valid)
+	{
+		string test = getValidInput();
+		if (test != "fail")
+		{
+			num = stoi(test);
+			if (num < 1 || num > 3)
+			{
+				std::cout << "Invalid input. Please enter one of the numbers on screen" << std::endl;
+			}
+			else
+			{
+				valid = true;
+			}
+		}
+	}
 
 	while (num != 3)
 	{
@@ -50,21 +62,39 @@ void store::enterStore(player& p, npc& o)
 			int q;
 			o.getInventory().printInventoryStore(o, p);
 			std::cout << o.getName() << ": What item would you like to buy " << p.getName() << "?\n";
-			std::cin >> i;
-			std::cout << "How much do you want?: ";
-			std::cin >> q;
+			bool valid = false;
+			while (!valid)
+			{
+				string test = getValidInput();
+				if (test != "fail")
+				{
+					i = stoi(test);
+					valid = true;
+				}
+			}
 			if (o.hasItem(i))
 			{
+				std::cout << "How much do you want?" << std::endl;
+				bool valid = false;
+				while (!valid)
+				{
+					string test = getValidInput();
+					if (test != "fail")
+					{
+						q = stoi(test);
+						valid = true;
+					}
+				}
 				if (q <= o.getInventory().getQuantity(i))
 				{
 					int price = (o.getInventory().getItem(i)->getValue() * q);
 					std::cout << "That will be " << price << " gold" << std::endl;
 					if(p.getGold() >= price)
 					{
-						int c;
-						std::cout << "Are you sure? (enter 1 to quit): ";
-						std::cin >> c;
-						if (c == 1)
+						string response;
+						std::cout << "Are you sure? (enter yes to go through with your purchase): ";
+						std::cin >> response;
+						if (response != "yes")
 						{
 							std::cout << "No deal I guess then, these items may be important you know" << std::endl;
 							std::cout << "Press enter to proceed";
@@ -112,19 +142,37 @@ void store::enterStore(player& p, npc& o)
 			int q;
 			p.getInventory().printInventoryStore(o, p);
 			std::cout << o.getName() << ": Whatcha got for me, " << p.getName() << "?\n";
-			std::cin >> i;
-			std::cout << "How much do you want to sell?: ";
-			std::cin >> q;
+			bool valid = false;
+			while (!valid)
+			{
+				string test = getValidInput();
+				if (test != "fail")
+				{
+					i = stoi(test);
+					valid = true;
+				}
+			}
 			if (p.hasItem(i))
 			{
+				std::cout << "How much do you want to sell?";
+				bool valid = false;
+				while (!valid)
+				{
+					string test = getValidInput();
+					if (test != "fail")
+					{
+						q = stoi(test);
+						valid = true;
+					}
+				}
 				if (q <= p.getInventory().getQuantity(i))
 				{
 					int price = p.getInventory().getItem(i)->getValue() * q;
 					std::cout << "I can give you " << price << " gold for that" << std::endl;
-					int c;
-					std::cout << "Are you sure? (enter 1 to quit): ";
-					std::cin >> c;
-					if (c == 1)
+					string response;
+					std::cout << "Are you sure? (enter yes to continue with your selling): ";
+					std::cin >> response;
+					if (response != "yes")
 					{
 						std::cout << "No deal I guess then, the gold may be important you know" << std::endl;
 						std::cout << "Press enter to proceed";
@@ -157,8 +205,23 @@ void store::enterStore(player& p, npc& o)
 		}
 		
 		std::cout << "\n1. Buy\n2. Sell\n3. Exit" << std::endl;
-		std::cin >> num;
-		
+		bool valid = false;
+		while (!valid)
+		{
+			string test = getValidInput();
+			if (test != "fail")
+			{
+				num = stoi(test);
+				if (num < 1 || num > 3)
+				{
+					std::cout << "Invalid input. Please enter one of the numbers on screen" << std::endl;
+				}
+				else
+				{
+					valid = true;
+				}
+			}
+		}
 	}
 	refreshScreen();
 }

@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "item.h"
-
+#include "errorChecking.h"
 //forward declare so it can be used in inventory declaration
 class Character;
 class player;

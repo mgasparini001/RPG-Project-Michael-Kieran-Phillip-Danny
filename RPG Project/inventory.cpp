@@ -256,15 +256,13 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
             bool valid = false;
             while (!valid)
             {
-                while (!(cin >> choice))
+                string test = getValidInput();
+                if (test != "fail")
                 {
-                    cout << "Invalid input, please enter a number\n";
-                    cin.clear();
-                    cin.ignore(1000, '\n');
+                    choice = stoi(test);
+                    valid = true;
+                   
                 }
-                cin.clear();
-                cin.ignore(1000, '\n');
-                valid = true;
             }
 
             if (choice == 1)
@@ -284,12 +282,30 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
                 int itemID;
 
                 cout << "enter item ID: ";
-                cin >> itemID;
+                valid = false;
+                while (!valid)
+                {
+                    string test = getValidInput();
+                    if (test != "fail")
+                    {
+                        itemID = stoi(test);
+                        valid = true;
+                    }
+                }
                 while (!(p1.hasItem(itemID)))
                 {
                     cout << "Outside input range, womp womp\n";
                     cout << "enter a valid ID: ";
-                    cin >> itemID;
+                    valid = false;
+                    while (!valid)
+                    {
+                        string test = getValidInput();
+                        if (test != "fail")
+                        {
+                            itemID = stoi(test);
+                            valid = true;
+                        }
+                    }
                 }
 
                 bool equip = p1.equipItem(itemID);
@@ -311,7 +327,7 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
                 }
                 else
                 {
-                    cout << "you cant equip an item you dont have, dingus\n";
+                    cout << "you cant equip an item you dont have, dingus\nPlease enter one of the numbers on screen";
                 }
 
                 cout << "press enter";
@@ -327,6 +343,9 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
             else
             {
                 cout << "invalid option womp womp\n";
+                cout << "press enter";
+                cin.ignore();
+                cin.get();
             }
         }
 
@@ -350,7 +369,17 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
                 std::cout << "\n\t\t\tEquipped: " << registry.getItemName(p1.getEquippedItemID()) << std::endl << std::endl;
             }
             int choice;
-            cin >> choice;
+            bool valid = false;
+            while (!valid)
+            {
+                string test = getValidInput();
+                if (test != "fail")
+                {
+                    choice = stoi(test);
+                    valid = true;
+
+                }
+            }
 
            if (choice == 1)
             {
@@ -360,9 +389,27 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
 
                 int itemID, quantity;
                 cout << "enter item ID to remove: ";
-                cin >> itemID;
+                valid = false;
+                while (!valid)
+                {
+                    string test = getValidInput();
+                    if (test != "fail")
+                    {
+                        itemID = stoi(test);
+                        valid = true;
+                    }
+                }
                 cout << "enter quantity: ";
-                cin >> quantity;
+                valid = false;
+                while (!valid)
+                {
+                    string test = getValidInput();
+                    if (test != "fail")
+                    {
+                        quantity = stoi(test);
+                        valid = true;
+                    }
+                }
 
                 if (p1.removeItemFromInventory(itemID, p1, quantity))
                 {
@@ -393,12 +440,30 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
                 int itemID;
 
                 cout << "enter item ID: ";
-                cin >> itemID;
+                valid = false;
+                while (!valid)
+                {
+                    string test = getValidInput();
+                    if (test != "fail")
+                    {
+                        itemID = stoi(test);
+                        valid = true;
+                    }
+                }
                 while (!(p1.hasItem(itemID)))
                 {
                     cout << "Outside input range, womp womp\n";
                     cout << "enter a valid ID: ";
-                    cin >> itemID;
+                    valid = false;
+                    while (!valid)
+                    {
+                        string test = getValidInput();
+                        if (test != "fail")
+                        {
+                            itemID = stoi(test);
+                            valid = true;
+                        }
+                    }
                 }
 
                 bool equip = p1.equipItem(itemID);
@@ -436,6 +501,9 @@ void Inventory::manageInventory(player& p1, ItemRegistry& registry, bool inBattl
             else
             {
                 cout << "invalid option womp womp\n";
+                cout << "press enter";
+                cin.ignore();
+                cin.get();
             }
         }
     }

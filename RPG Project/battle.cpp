@@ -6,6 +6,7 @@
 #include "enemy.h"
 #include "player.h"
 #include "ItemRegistry.h"
+#include "errorChecking.h"
 using namespace std;
 
 //forward declare
@@ -54,16 +55,12 @@ void printBattleDisplay(enemy& enemy, player& p1, const ItemRegistry& registry)
 
 
 void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv) {
-	sf::Music Music;
-	sf::Music sound;
-	sf::Music sound2;
-	sf::Music sound3;
-	sound.openFromFile("Attack.wav");
-	sound2.openFromFile("eppy.wav");
-	sound3.openFromFile("Scream.wav");
-	sound.setLooping(false);
-	sound2.setLooping(false);
-	sound3.setLooping(false);
+	sf::SoundBuffer buff1("Attack.wav");
+	sf::SoundBuffer buff2("eppy.wav");
+	sf::SoundBuffer buff3("Scream.wav");
+	sf::Sound sound1(buff1);
+	sf::Sound sound2(buff2);
+	sf::Sound sound3(buff3);
 	bool hasRun = false;
 	sf::Music encounter;
 	encounter.openFromFile("Encounter.wav");
@@ -82,6 +79,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 
 	refreshScreen();
 
+	sf::Music Music;
 	Music.openFromFile("Placeholder_song.wav");
 	Music.setVolume(50.f);
 	Music.setLooping(true);
@@ -97,28 +95,22 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 		bool valid = false;
 		while (!valid)
 		{
-			while (!(cin >> choice))
+			string test = getValidInput();
+			if (test != "fail")
 			{
-				cout << "Invalid input, please enter a number\n";
-				cin.clear();
-				cin.ignore(1000, '\n');
-			}
-			cin.clear();
-			cin.ignore(1000, '\n');
-			if (choice < 1 || choice > 4)
-			{
-				cout << "Invalid number please enter a valid number\n";
-			}
-			else
-			{
-				valid = true;
+				choice = stoi(test);
+				if (choice < 1 || choice > 4)
+				{
+					cout << "Invalid input. Please enter one of the numbers on screen" << endl;
+				}
+				else
+				{
+					valid = true;
+				}
 			}
 		}
 
-
-
-
-		switch (choice)
+	switch (choice)
 		{
 			//case where the player decides to attack
 		case 1:
@@ -129,41 +121,38 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 			bool valid = false;
 			while (!valid)
 			{
-				while (!(cin >> choice))
+				string test = getValidInput();
+				if (test != "fail")
 				{
-					cout << "Invalid input, please enter a number\n";
-					cin.clear();
-					cin.ignore(1000, '\n');
-				}
-				cin.clear();
-				cin.ignore(1000, '\n');
-				if (choice < 1 || choice > 2)
-				{
-					cout << "Invalid number please enter a valid number\n";
-				}
-				else
-				{
-					valid = true;
+					choice = stoi(test);
+					if (choice < 1 || choice > 2)
+					{
+						cout << "Invalid input. Please enter one of the numbers on screen" << endl;
+					}
+					else
+					{
+						valid = true;
+					}
 				}
 			}
 			if (choice == 1)
 			{
 				if (p1.attack(enemy, true))
 				{
-					sound.play();
+					sound1.play();
 				}
 			}
 			else
 			{
 				if (p1.attack(enemy, false))
 				{
-					sound.play();
+					sound1.play();
 				}
 			}
 			cout << "Enter anything to proceed\n";
 			cin >> anything;
 			refreshScreen();
-			sound.stop();
+			sound1.stop();
 			break;
 		}
 		//case where the player decides to rest
@@ -211,10 +200,10 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 			if (eRoll <= 6)
 			{
 				enemy.attack(p1, true);
-				sound.play();
+				sound1.play();
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
-				sound.stop();
+				sound1.stop();
 				refreshScreen();
 			}
 			//case where the enemy tries to rest

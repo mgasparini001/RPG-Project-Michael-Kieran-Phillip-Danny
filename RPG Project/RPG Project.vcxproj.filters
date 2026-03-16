@@ -60,6 +60,9 @@
     <ClInclude Include="battle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="errorChecking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="battle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="errorChecking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

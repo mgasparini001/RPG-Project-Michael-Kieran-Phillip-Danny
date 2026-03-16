@@ -1,9 +1,9 @@
 #pragma once
 #include "ItemRegistry.h"
 #include "Inventory.h"
-#include <iostream>
-#include <string>
+#include "errorChecking.h"
 #include "npc.h"
+#include "player.h"
 class store
 {
 private:

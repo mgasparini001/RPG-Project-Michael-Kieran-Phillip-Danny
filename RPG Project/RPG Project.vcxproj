@@ -158,6 +158,7 @@
     <ClInclude Include="DLL.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="entity.h" />
+    <ClInclude Include="errorChecking.h" />
     <ClInclude Include="fodder.h" />
     <ClInclude Include="heavy.h" />
     <ClInclude Include="inventory.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="DLL.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="entity.cpp" />
+    <ClCompile Include="errorChecking.cpp" />
     <ClCompile Include="fodder.cpp" />
     <ClCompile Include="heavy.cpp" />
     <ClCompile Include="inventory.cpp" />
