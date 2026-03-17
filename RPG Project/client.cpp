@@ -26,8 +26,6 @@ void returnToOverworld() {
 
 }
 
-
-
 void enterShop(store s, player& p1, npc& o) {
 	s.enterStore(p1, o);
 }
@@ -217,11 +215,6 @@ int main(){
 
 		}
 	}
-
-
-		 
-
-
 
 	return 0;
 }
