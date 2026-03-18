@@ -30,9 +30,34 @@ void enterShop(store s, player& p1, npc& o) {
 	s.enterStore(p1, o);
 }
 
-void chat() {
-	cout << "Talked to someone\n";
+void chat(npc npc1, npc npc2 )
+{
+	int choice;
+	cout << "Talk with:\n";
+	cout << R"(
+-------------------------------
+| 1. )"; cout << npc1.getName(); cout << R"(                |
+| 2. )"; cout << npc2.getName(); cout << R"(          |
+|                             |
+-------------------------------
+)";
+	cin >> choice;
+	while (choice < 1 || choice > 2)
+	{
+		cout << "Invalid option, please enter a valid input\n";
+		cin >> choice;
+	}
+	//if (choice == 1)
+	//{
+
+	//}
+	//else
+	//{
+
+	//}
+	
 }
+
 void quitGame() {
 	cout << "quit\n";
 }
@@ -55,6 +80,8 @@ int main(){
 
 	npc owner1("Bob", "Hes just bob", 50, 8, 4, 3, 1000, 6, 7, false, 1000);
 
+	npc npc1("Bartender", "tends the bar", 50, 8, 4, 3, 1000, 6, 7, false, 1000);
+	npc npc2("The Goblin King", "hes a goblin and a king", 50, 8, 4, 3, 1000, 6, 7, false, 1000);
 	// 3 enemy types that can be fought
 	fodder zombie("zombie", 50, 3, 4, 3, 1000, 6, 7);
 
@@ -205,7 +232,8 @@ int main(){
 			break;
 		case 5:
 			//m.stop();
-			chat();
+			refreshScreen();
+			chat(npc1, npc2);
 			break;
 		case 6:
 			quitGame();
