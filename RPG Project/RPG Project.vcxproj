@@ -187,6 +187,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="client.cpp" />
     <ClCompile Include="Store.cpp" />
+    <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="toDo.txt" />
