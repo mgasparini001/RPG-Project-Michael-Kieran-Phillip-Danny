@@ -41,11 +41,22 @@ void chat(npc npc1, npc npc2 )
 |                             |
 -------------------------------
 )";
-	cin >> choice;
-	while (choice < 1 || choice > 2)
+	bool valid = false;
+	while (!valid)
 	{
-		cout << "Invalid option, please enter a valid input\n";
-		cin >> choice;
+		string test = getValidInput();
+		if (test != "fail")
+		{
+			choice = stoi(test);
+			if (choice < 1 || choice > 2)
+			{
+				cout << "Invalid input. Please enter one of the numbers on screen" << endl;
+			}
+			else
+			{
+				valid = true;
+			}
+		}
 	}
 	//if (choice == 1)
 	//{

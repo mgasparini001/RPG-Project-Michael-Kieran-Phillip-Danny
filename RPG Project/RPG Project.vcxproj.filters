@@ -63,6 +63,9 @@
     <ClInclude Include="errorChecking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TalkingNPC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp">
