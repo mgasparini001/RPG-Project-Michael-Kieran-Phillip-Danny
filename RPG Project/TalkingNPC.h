@@ -11,7 +11,9 @@ protected:
 	std::string name;
 	vector<dialogueNode*> dialogueTree;
 public:
+	//constructor
 	talkingNPC(int treeSize);
+	//recursive function thats takes the player through a conversation
 	void printDialouge(int currentDialogue);
 
 };

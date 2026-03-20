@@ -14,6 +14,7 @@
 #include <SFML/Audio.hpp>
 #include "battle.h"
 #include "Bartender.h"
+#include "GoblinKing.h"
 //#include <filesystem>
 using namespace std;
 
@@ -43,7 +44,7 @@ void chat(npc npc1, npc npc2 )
 -------------------------------
 )";
 	bartender guy1(9);
-	
+	goblinKing guy2(10);
 	bool valid = false;
 	while (!valid)
 	{
@@ -65,10 +66,10 @@ void chat(npc npc1, npc npc2 )
 	{
 		guy1.printDialouge(0);
 	}
-	//else
-	//{
-
-	//}
+	else
+	{
+		guy2.printDialouge(0);
+	}
 	
 }
 

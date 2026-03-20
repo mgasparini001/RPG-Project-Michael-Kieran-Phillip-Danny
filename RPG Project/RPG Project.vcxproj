@@ -162,6 +162,7 @@
     <ClInclude Include="entity.h" />
     <ClInclude Include="errorChecking.h" />
     <ClInclude Include="fodder.h" />
+    <ClInclude Include="GoblinKing.h" />
     <ClInclude Include="heavy.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="errorChecking.cpp" />
     <ClCompile Include="fodder.cpp" />
+    <ClCompile Include="goblinKing.cpp" />
     <ClCompile Include="heavy.cpp" />
     <ClCompile Include="inventory.cpp" />
     <ClCompile Include="item.cpp" />

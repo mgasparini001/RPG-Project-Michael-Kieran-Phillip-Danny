@@ -72,6 +72,9 @@
     <ClInclude Include="Bartender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GoblinKing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp">
@@ -132,6 +135,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="bartender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="goblinKing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
