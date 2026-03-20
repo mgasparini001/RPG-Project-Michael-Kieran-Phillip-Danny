@@ -14,4 +14,9 @@ private:
 
 public:
 	dialogueNode(string npcTalk, string playerChoiceList, vector<int> nextList);
+
+	// Getters
+	string getNPCDialogue() const;
+	string getPlayerChoices() const;
+	vector<int> getNextDialogues() const;
 };
