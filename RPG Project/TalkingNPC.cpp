@@ -19,7 +19,7 @@ void talkingNPC::printDialouge(int currentDialogue)
 	std::cout << name << ":" << std::endl;
 	std::cout << current->getNPCDialogue() << std::endl;
 	std::cout << current->getPlayerChoices() << std::endl;
-	if (current->getPlayerChoices() == "Press enter to continue")
+	if (current->getNextDialogues().size() == 0)
 	{
 		std::cin.ignore();
 		std::cin.get();
