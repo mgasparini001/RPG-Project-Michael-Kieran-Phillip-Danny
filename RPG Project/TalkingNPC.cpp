@@ -16,9 +16,29 @@ void talkingNPC::printDialouge(int currentDialogue)
 	refreshScreen();
 	dialogueNode* current = dialogueTree.at(currentDialogue);
 	int choice;
-	std::cout << name << ":" << std::endl;
-	std::cout << current->getNPCDialogue() << std::endl;
-	std::cout << current->getPlayerChoices() << std::endl;
+	string dialogue = R"(
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                                                                                                         
+                                                                                                                                                          
+   )" + name + R"(:                                                                                                                                        
+   )" + current->getNPCDialogue() + R"(                                                                                                                    
+   )" +  + R"(                                                                                                                                             
+                                                                                                                                                           
+                                                                                                               
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+)";
+	string choices = R"(
+----------------------------------------------------------------------------------------------------------|
+                                                                              
+)" + current->getPlayerChoices() + R"(  
+                                                                              
+                                                                              
+                                                                              
+                                                                              
+----------------------------------------------------------------------------------------------------------|
+)";
+	cout << dialogue;
+	cout << choices;
 	if (current->getNextDialogues().size() == 0)
 	{
 		std::cin.ignore();
@@ -44,6 +64,7 @@ void talkingNPC::printDialouge(int currentDialogue)
 				}
 			}
 		}
+
 		printDialouge(current->getNextDialogues().at(choice) - 1);
 	}
 	

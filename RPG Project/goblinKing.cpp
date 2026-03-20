@@ -13,7 +13,10 @@ goblinKing::goblinKing(int treeSize) : talkingNPC(treeSize)
 	vector<int> choices8;
 	vector<int> choices9 = { 10,1 };
 	vector<int> choices10;
-	dialogueNode* n1 = new dialogueNode("Ello, wut do we ave ere?", "0) ...... (Say Nothing)\n1) You stupid goblin! Free me at once and I'll show you what I'm made of!\n2) WAHHH (Start crying)\n3) I am definetly not trying to break out and grab my sword to kill you! (30% chance of success WIP)", choices1);
+
+		
+		
+	dialogueNode* n1 = new dialogueNode("Ello, wut do we ave ere ?", "0) ...... (Say Nothing)\n1) You stupid goblin!Free me at once and I'll show you what I'm made of!\n2) WAHHH(Start crying)\n3) I am definetly not trying to break out and grab my sword to kill you!(30 % chance of success WIP))", choices1);
 	dialogueTree.at(0) = n1;
 	dialogueNode* n2 = new dialogueNode("A umie eh? I ain't ever seen one uv dem so scrawny.", "0) ...... (Say Nothing)\n1) The only reason you think I am skinny is because you're so fat!\n2) WAHHH (Start crying)\n3) I am definetly not trying to break out and grab my sword to kill you! (30% chance of success WIP)", choices2);
 	dialogueTree.at(1) = n2;
