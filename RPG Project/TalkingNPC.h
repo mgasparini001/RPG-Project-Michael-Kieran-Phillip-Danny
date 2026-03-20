@@ -1,13 +1,17 @@
 #pragma once
+#include "dialogueNode.h"
+#include "errorChecking.h"
+#include <iostream>
 #include <string>
+#include <vector>
 
 class talkingNPC
 {
-private:
+protected:
 	std::string name;
-	//vector<diaglougeNode> dialouges
+	vector<dialogueNode*> dialogueTree;
 public:
-	talkingNPC(int size);
-	void printDialouge(int currentDialouge);
-	void setName(std::string n);
+	talkingNPC(int treeSize);
+	void printDialouge(int currentDialogue);
+
 };

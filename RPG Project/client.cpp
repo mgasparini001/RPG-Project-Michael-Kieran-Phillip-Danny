@@ -13,6 +13,7 @@
 #include "Store.h"
 #include <SFML/Audio.hpp>
 #include "battle.h"
+#include "Bartender.h"
 //#include <filesystem>
 using namespace std;
 
@@ -41,6 +42,8 @@ void chat(npc npc1, npc npc2 )
 |                             |
 -------------------------------
 )";
+	bartender guy1(9);
+	
 	bool valid = false;
 	while (!valid)
 	{
@@ -58,10 +61,10 @@ void chat(npc npc1, npc npc2 )
 			}
 		}
 	}
-	//if (choice == 1)
-	//{
-
-	//}
+	if (choice == 1)
+	{
+		guy1.printDialouge(0);
+	}
 	//else
 	//{
 

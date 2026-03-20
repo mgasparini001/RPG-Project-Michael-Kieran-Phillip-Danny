@@ -152,9 +152,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Bartender.h" />
     <ClInclude Include="battle.h" />
     <ClInclude Include="boss.h" />
     <ClInclude Include="character.h" />
+    <ClInclude Include="dialogueNode.h" />
     <ClInclude Include="DLL.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="entity.h" />
@@ -171,9 +173,11 @@
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bartender.cpp" />
     <ClCompile Include="battle.cpp" />
     <ClCompile Include="boss.cpp" />
     <ClCompile Include="character.cpp" />
+    <ClCompile Include="dialogueNode.cpp" />
     <ClCompile Include="DLL.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="entity.cpp" />
@@ -187,6 +191,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="client.cpp" />
     <ClCompile Include="Store.cpp" />
+    <ClCompile Include="TalkingNPC.cpp" />
     <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
