@@ -54,7 +54,7 @@ void printBattleDisplay(enemy& enemy, player& p1, const ItemRegistry& registry)
 }
 
 
-void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv) {
+void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv, bool canRun) {
 	sf::SoundBuffer buff1("Attack.wav");
 	sf::SoundBuffer buff2("eppy.wav");
 	sf::SoundBuffer buff3("Scream.wav");
@@ -170,17 +170,28 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 		//case where the player tries to run away
 		case 3:
 		{
-			bool check = p1.flee();
-			if (check)
+			if (canRun)
 			{
-				hasRun = true;
+				bool check = p1.flee();
+				if (check)
+				{
+					hasRun = true;
+				}
+				sound3.play();
+				cout << "Enter anything to proceed\n";
+				cin >> anything;
+				sound3.stop();
+				refreshScreen();
+				break;
 			}
-			sound3.play();
-			cout << "Enter anything to proceed\n";
-			cin >> anything;
-			sound3.stop();
-			refreshScreen();
-			break;
+			else
+			{
+				cout << "You can't run from a fight like this!\n";
+				cout << "Enter anything to proceed\n";
+				cin >> anything;
+				refreshScreen();
+				break;
+			}
 		}
 		//case where player uses an item (WIP-still need to make item stats and implement that to equip/attack method)
 		case 4:

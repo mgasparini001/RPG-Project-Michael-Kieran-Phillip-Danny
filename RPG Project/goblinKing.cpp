@@ -15,6 +15,8 @@ goblinKing::goblinKing(int treeSize) : talkingNPC(treeSize)
 	vector<int> choices8;
 	vector<int> choices9 = { 10,1 };
 	vector<int> choices10;
+	vector<int> choices11;
+	vector<int> choices12;
 
 		
 		
@@ -38,6 +40,11 @@ goblinKing::goblinKing(int treeSize) : talkingNPC(treeSize)
 	dialogueTree.at(8) = n9;
 	dialogueNode* n10 = new dialogueNode("Alroight den, oi guess dis iz it. u may 'ave 'urt me a bit, but ull neva win cuz oi 'as moi 'uge choppa!", "Press enter to continue", choices10);
 	dialogueTree.at(9) = n10;
+	dialogueNode* n11 = new dialogueNode("HAHAHAHAHAHAHHAHAHAHAHAHAHAHAHAHAHAHAH", "Press enter to continue", choices11);
+	dialogueTree.at(10) = n11;
+	dialogueNode* n12 = new dialogueNode("NOOOOOOOOOOOOOOOOOOOOOOOOOOO........... (dies)", "Press enter to continue", choices12);
+	dialogueTree.at(11) = n12;
+
 }
 
 void goblinKing::printDialogueG(int currentDialogue, player& p1, boss& b1, ItemRegistry& registry, Inventory Inv)
@@ -74,11 +81,22 @@ void goblinKing::printDialogueG(int currentDialogue, player& p1, boss& b1, ItemR
 		{
 			std::cin.ignore();
 			std::cin.get();
-			enterBattle(b1, p1, registry, Inv);
+			enterBattle(b1, p1, registry, Inv, false);
+			if (p1.getHp() == 0)
+			{
+				printDialogueG(10, p1, b1, registry, Inv);
+			}
+			else
+			{
+				printDialogueG(11, p1, b1, registry, Inv);
+			}
 		}
-		std::cin.ignore();
-		std::cin.get();
-		refreshScreen();
+		else
+		{
+			std::cin.ignore();
+			std::cin.get();
+			refreshScreen();
+		}
 	}
 	else
 	{

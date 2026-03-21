@@ -44,7 +44,7 @@ void chat(npc npc1, npc npc2, player& p1, ItemRegistry& registry, Inventory Inv)
 -------------------------------
 )";
 	bartender guy1(9);
-	goblinKing guy2(10);
+	goblinKing guy2(12);
 	boss goblin("Goblin King", 50, 5, 4, 10, 1000, 9, 6);
 	bool valid = false;
 	while (!valid)
@@ -219,17 +219,17 @@ int main(){
 			int roll = diceRoll(3);
 			if (roll == 3)
 			{
-				enterBattle(zombie, p1, itemRegistry, inventory);
+				enterBattle(zombie, p1, itemRegistry, inventory, true);
 			}
 
 			else if (roll == 2)
 			{
-				enterBattle(dragon, p1, itemRegistry, inventory);
+				enterBattle(dragon, p1, itemRegistry, inventory, true);
 			}
 
 			else
 			{
-				enterBattle(shrek, p1, itemRegistry, inventory);
+				enterBattle(shrek, p1, itemRegistry, inventory, true);
 			}
 			
 			//after battle ends, refreshes and goes back to menu
