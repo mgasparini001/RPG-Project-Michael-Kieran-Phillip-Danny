@@ -1,5 +1,7 @@
 #include "GoblinKing.h"
 
+void refreshScreen();
+
 goblinKing::goblinKing(int treeSize) : talkingNPC(treeSize)
 {
 	name = "The Goblin King";
@@ -36,4 +38,68 @@ goblinKing::goblinKing(int treeSize) : talkingNPC(treeSize)
 	dialogueTree.at(8) = n9;
 	dialogueNode* n10 = new dialogueNode("Alroight den, oi guess dis iz it. u may 'ave 'urt me a bit, but ull neva win cuz oi 'as moi 'uge choppa!", "Press enter to continue", choices10);
 	dialogueTree.at(9) = n10;
-}   
+}
+
+void goblinKing::printDialogueG(int currentDialogue, player& p1, boss& b1, ItemRegistry& registry, Inventory Inv)
+{
+	refreshScreen();
+	dialogueNode* current = dialogueTree.at(currentDialogue);
+	int choice;
+	string dialogue = R"(
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                                                                                                                                         
+                                                                                                                                                          
+   )" + name + R"(:                                                                                                                                        
+   )" + current->getNPCDialogue() + R"(                                                                                                                    
+   )" + +R"(                                                                                                                                             
+                                                                                                                                                           
+                                                                                                               
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+)";
+	string choices = R"(
+----------------------------------------------------------------------------------------------------------|
+                                                                              
+)" + current->getPlayerChoices() + R"(  
+                                                                              
+                                                                              
+                                                                              
+                                                                              
+----------------------------------------------------------------------------------------------------------|
+)";
+	cout << dialogue;
+	cout << choices;
+	if (current->getNextDialogues().size() == 0)
+	{
+		if (currentDialogue == 5 || currentDialogue == 9)
+		{
+			std::cin.ignore();
+			std::cin.get();
+			enterBattle(b1, p1, registry, Inv);
+		}
+		std::cin.ignore();
+		std::cin.get();
+		refreshScreen();
+	}
+	else
+	{
+		bool valid = false;
+		while (!valid)
+		{
+			string test = getValidInput();
+			if (test != "fail")
+			{
+				choice = stoi(test);
+				if (choice < 0 || choice > current->getNextDialogues().size() - 1)
+				{
+					std::cout << "Could you repeat that?" << std::endl;
+				}
+				else
+				{
+					valid = true;
+				}
+			}
+		}
+
+		printDialogueG(current->getNextDialogues().at(choice) - 1, p1, b1, registry, Inv);
+	}
+}

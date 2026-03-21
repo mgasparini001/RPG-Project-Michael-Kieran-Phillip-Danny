@@ -32,7 +32,7 @@ void enterShop(store s, player& p1, npc& o) {
 	s.enterStore(p1, o);
 }
 
-void chat(npc npc1, npc npc2 )
+void chat(npc npc1, npc npc2, player& p1, ItemRegistry& registry, Inventory Inv)
 {
 	int choice;
 	cout << "Talk with:\n";
@@ -45,6 +45,7 @@ void chat(npc npc1, npc npc2 )
 )";
 	bartender guy1(9);
 	goblinKing guy2(10);
+	boss goblin("Goblin King", 50, 5, 4, 10, 1000, 9, 6);
 	bool valid = false;
 	while (!valid)
 	{
@@ -68,7 +69,7 @@ void chat(npc npc1, npc npc2 )
 	}
 	else
 	{
-		guy2.printDialouge(0);
+		guy2.printDialogueG(0, p1, goblin, registry, Inv);
 	}
 	
 }
@@ -246,9 +247,9 @@ int main(){
 			enterShop(store1, p1, owner1);
 			break;
 		case 5:
-			//m.stop();
+			m.stop();
 			refreshScreen();
-			chat(npc1, npc2);
+			chat(npc1, npc2, p1, itemRegistry, inventory);
 			break;
 		case 6:
 			quitGame();
