@@ -66,6 +66,7 @@ public:
  
     void manageInventory(player& p1, ItemRegistry& registry, bool inBattle);
     void inventoryDebug(player& p1, ItemRegistry& registry);
+    
 };
 
 //test commit

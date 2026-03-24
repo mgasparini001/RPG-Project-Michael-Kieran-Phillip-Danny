@@ -167,6 +167,7 @@
     <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="ItemRegistry.h" />
+    <ClInclude Include="stats.h" />
     <ClInclude Include="npc.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="Store.h" />

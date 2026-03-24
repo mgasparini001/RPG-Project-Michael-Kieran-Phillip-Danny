@@ -72,9 +72,9 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 
 	cout << "A wild " << enemy.getName() << " appears!" << endl;
 	
-	string anything = "";
-	cout << "Enter anything to proceed\n";
-	cin >> anything;
+	cout << "\npress enter";
+	cin.ignore();
+	cin.get();
 	encounter.stop();
 
 	refreshScreen();
@@ -149,8 +149,9 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 					sound1.play();
 				}
 			}
-			cout << "Enter anything to proceed\n";
-			cin >> anything;
+			cout << "\npress enter";
+			cin.ignore();
+			cin.get();
 			refreshScreen();
 			sound1.stop();
 			break;
@@ -161,8 +162,9 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 			cout << p1.getName() << " rests and restores some stamina!" << endl;
 			p1.rest();
 			sound2.play();
-			cout << "Enter anything to proceed\n";
-			cin >> anything;
+			cout << "\npress enter";
+			cin.ignore();
+			cin.get();
 			sound2.stop();
 			refreshScreen();
 			break;
@@ -223,8 +225,9 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 				cout << enemy.getName() << " rests and restores some stamina!" << endl;
 				enemy.rest();
 				sound2.play();
-				cout << "Enter anything to proceed\n";
-				cin >> anything;
+				cout << "\npress enter";
+				cin.ignore();
+				cin.get();
 				sound2.stop();
 				refreshScreen();
 			}
@@ -246,8 +249,9 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 					hasRun = true;
 				}
 				sound3.play();
-				cout << "Enter anything to proceed";
-				cin >> anything;
+				cout << "\npress enter";
+				cin.ignore();
+				cin.get();
 				sound3.stop();
 				refreshScreen();
 			}

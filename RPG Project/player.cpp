@@ -5,7 +5,7 @@ using std::endl;
 
 // player constructor
 player::player(const std::string& name, int hp, int melee, int range, int armor, int stamina, int dmg, int ap, int x, int g)
-    : Character(name, hp, melee, range, armor, stamina, dmg, ap, false) {
+    : Character(name, melee, range, false) {
     gold = g;
     XP = x;
 }

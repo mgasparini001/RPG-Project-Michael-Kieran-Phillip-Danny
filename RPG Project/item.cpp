@@ -1,12 +1,14 @@
 #include "item.h"
 #include <iostream>
 #include <string>
+#include <memory>
 using std::string;
 using std::cout;
 using std::endl;
 
+
 // item constructor
-Item::Item(int id, const string& name, const string& description, int value, bool consumable)
+Item::Item(int id, const string& name, const string& description, int value, bool consumable, stats itemstats)
     : Entity(name, description), id(id), value(value), consumable(consumable) {
 }
 
@@ -34,4 +36,9 @@ int Item::getValue() const {
 // see if edible lol
 bool Item::isConsumable() const {
     return consumable;
+}
+
+stats Item::getStats()
+{
+    return itemStats;
 }
