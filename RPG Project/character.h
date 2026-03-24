@@ -83,6 +83,7 @@ public:
     void unequipItem();
     bool equipItem(int equippedItemID);
     int getEquippedItemID();
-    //bool hasItemEquipped(bool isEquipped);
+    
+    void heal();
    
     };
