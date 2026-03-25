@@ -54,7 +54,7 @@ void printBattleDisplay(enemy& enemy, player& p1, const ItemRegistry& registry)
 }
 
 
-void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv, bool canRun) {
+void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv, bool canRun, bool isWild) {
 	sf::SoundBuffer buff1("Attack.wav");
 	sf::SoundBuffer buff2("eppy.wav");
 	sf::SoundBuffer buff3("Scream.wav");
@@ -69,12 +69,20 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 	encounter.play();
 	refreshScreen();
 	cout << "\nentered battle...\n\n";
-
-	cout << "A wild " << enemy.getName() << " appears!" << endl;
+	if (isWild)
+	{
+		cout << "A wild " << enemy.getName() << " appears!" << endl;
+	}
+	else
+	{
+		cout << enemy.getName() << " challenges you to a duel!" << endl;
+	}
 	
 	string anything = "";
-	cout << "Enter anything to proceed\n";
-	cin >> anything;
+	cout << "Press enter to proceed\n";
+	std::cin.clear();
+	std::cin.ignore(1000, '\n');
+	std::cin.get();
 	encounter.stop();
 
 	refreshScreen();
@@ -149,8 +157,9 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 					sound1.play();
 				}
 			}
-			cout << "Enter anything to proceed\n";
-			cin >> anything;
+			cout << "Press enter to proceed\n";
+			std::cin.ignore();
+			std::cin.get();
 			refreshScreen();
 			sound1.stop();
 			break;
@@ -161,8 +170,9 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 			cout << p1.getName() << " rests and restores some stamina!" << endl;
 			p1.rest();
 			sound2.play();
-			cout << "Enter anything to proceed\n";
-			cin >> anything;
+			cout << "Press enter to proceed\n";
+			std::cin.ignore();
+			std::cin.get();
 			sound2.stop();
 			refreshScreen();
 			break;
@@ -179,7 +189,8 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 				}
 				sound3.play();
 				cout << "Enter anything to proceed\n";
-				cin >> anything;
+				std::cin.ignore();
+				std::cin.get();
 				sound3.stop();
 				refreshScreen();
 				break;
@@ -188,7 +199,8 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 			{
 				cout << "You can't run from a fight like this!\n";
 				cout << "Enter anything to proceed\n";
-				cin >> anything;
+				std::cin.ignore();
+				std::cin.get();
 				refreshScreen();
 				break;
 			}

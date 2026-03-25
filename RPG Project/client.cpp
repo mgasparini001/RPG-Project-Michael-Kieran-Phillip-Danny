@@ -219,17 +219,17 @@ int main(){
 			int roll = diceRoll(3);
 			if (roll == 3)
 			{
-				enterBattle(zombie, p1, itemRegistry, inventory, true);
+				enterBattle(zombie, p1, itemRegistry, inventory, true, true);
 			}
 
 			else if (roll == 2)
 			{
-				enterBattle(dragon, p1, itemRegistry, inventory, true);
+				enterBattle(dragon, p1, itemRegistry, inventory, true, true);
 			}
 
 			else
 			{
-				enterBattle(shrek, p1, itemRegistry, inventory, true);
+				enterBattle(shrek, p1, itemRegistry, inventory, true, true);
 			}
 			
 			//after battle ends, refreshes and goes back to menu
