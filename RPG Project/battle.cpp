@@ -220,7 +220,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 
 			int eRoll = enemy.diceRoll(10);
 			//case where the enemy attacks
-			if (eRoll <= 6)
+			if (eRoll <= 5)
 			{
 				enemy.attack(p1, true);
 				sound1.play();
@@ -230,10 +230,20 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 				refreshScreen();
 			}
 			//case where the enemy tries to rest
-			else if (eRoll <= 9)
+			else if (eRoll <= 7)
 			{
 				cout << enemy.getName() << " rests and restores some stamina!" << endl;
 				enemy.rest();
+				sound2.play();
+				cout << "Enter anything to proceed\n";
+				cin >> anything;
+				sound2.stop();
+				refreshScreen();
+			}
+			else if (eRoll <= 9)
+			{
+				cout << enemy.getName() << " rests and restores some health!" << endl;
+				enemy.heal();
 				sound2.play();
 				cout << "Enter anything to proceed\n";
 				cin >> anything;

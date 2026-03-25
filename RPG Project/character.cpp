@@ -355,7 +355,10 @@ int Character::getEquippedItemID()
     return current->item->getId();
 }
 
-
+void Character::heal()
+{
+    HP += 10;
+}
 
     
 
