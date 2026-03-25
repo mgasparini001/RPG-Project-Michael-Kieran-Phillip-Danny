@@ -95,6 +95,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 	Music.play();
 
 	int choice;
+	int healRuns = 1;
 
 	// Gameplay loop 
 	do
@@ -213,20 +214,21 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 		}
 		}
 		printBattleDisplay(enemy, p1, registry);
-
+		
 		if (enemy.getHp() > 0 && !hasRun)
 		{
 			// Enemy Action Engine:
-			int healRuns = 0;
+			//int healRuns = 0;
 			int eRoll = enemy.diceRoll(10);
 			//case where the enemy attacks
 			if (eRoll <= 5)
 			{
-				enemy.attack(p1, true);
-				sound1.play();
+				if (enemy.attack(p1, true))
+				{
+					sound1.play();
+				}
 				cout << "Enter anything to proceed\n";
 				cin >> anything;
-				sound1.stop();
 				refreshScreen();
 			}
 			//case where the enemy tries to rest
