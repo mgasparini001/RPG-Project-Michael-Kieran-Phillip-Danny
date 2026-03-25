@@ -205,7 +205,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 		if (enemy.getHp() > 0 && !hasRun)
 		{
 			// Enemy Action Engine:
-
+			int healRuns = 0;
 			int eRoll = enemy.diceRoll(10);
 			//case where the enemy attacks
 			if (eRoll <= 5)
@@ -228,7 +228,8 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 				sound2.stop();
 				refreshScreen();
 			}
-			else if (eRoll <= 9)
+			// enemy heals case
+			else if (eRoll <= 9 && healRuns <= 3)
 			{
 				cout << enemy.getName() << " rests and restores some health!" << endl;
 				enemy.heal();
@@ -237,6 +238,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 				cin >> anything;
 				sound2.stop();
 				refreshScreen();
+				healRuns++;
 			}
 			// case where enemy attempts to flee
 			else {
