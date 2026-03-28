@@ -96,7 +96,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system-d.lib;sfml-audio-d.lib;sfml-window-d.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-system-d.lib;sfml-audio-d.lib;sfml-window-d.lib;sfml-graphics-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -114,7 +114,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system.lib;sfml-audio.lib;sfml-window.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-system.lib;sfml-audio.lib;sfml-window.lib;sfml-graphics.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -130,7 +130,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system-d.lib;sfml-audio-d.lib;sfml-window-d.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-system-d.lib;sfml-audio-d.lib;sfml-window-d.lib;sfml-graphics-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,7 +148,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system.lib;sfml-audio.lib;sfml-window.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-system.lib;sfml-audio.lib;sfml-window.lib;sfml-graphics.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -166,12 +166,17 @@
     <ClInclude Include="heavy.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
-    <ClInclude Include="ItemRegistry.h" />
+    <ClInclude Include="itemRegistry.h" />
+    <ClInclude Include="gameState.h" />
     <ClInclude Include="npc.h" />
+    <ClInclude Include="overworldMap.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="Store.h" />
     <ClInclude Include="TalkingNPC.h" />
     <ClInclude Include="weapon.h" />
+    <ClInclude Include="gameManager.h" />
+    <ClInclude Include="MapController.h" />
+    <ClInclude Include="TileRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bartender.cpp" />
@@ -190,11 +195,15 @@
     <ClCompile Include="item.cpp" />
     <ClCompile Include="ItemRegistry.cpp" />
     <ClCompile Include="npc.cpp" />
+    <ClCompile Include="overworldMap.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="client.cpp" />
     <ClCompile Include="Store.cpp" />
     <ClCompile Include="TalkingNPC.cpp" />
     <ClCompile Include="weapon.cpp" />
+    <ClCompile Include="gameManager.cpp" />
+    <ClCompile Include="MapController.cpp" />
+    <ClCompile Include="TileRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="toDo.txt" />
