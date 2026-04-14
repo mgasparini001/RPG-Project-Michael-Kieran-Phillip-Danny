@@ -54,7 +54,7 @@ void printBattleDisplay(enemy& enemy, player& p1, const ItemRegistry& registry)
 }
 
 
-void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv, bool canRun, bool isWild) {
+int enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv, bool canRun, bool isWild) {
 	sf::SoundBuffer buff1("Attack.wav");
 	sf::SoundBuffer buff2("eppy.wav");
 	sf::SoundBuffer buff3("Scream.wav");
@@ -274,5 +274,29 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory inv
 	refreshScreen();
 
 	Music.stop();
+
+	if (p1.getHp() == 0)
+	{
+		cout << "GAME OVER" << endl;
+		cout << "Press enter to proceed\n";
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin.get();
+		p1.setHp(50);
+		return 0;
+	}
+	else if (!hasRun)
+	{
+		cout << "YOU WIN!" << endl;
+		cout << "Press enter to proceed\n";
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin.get();
+		return 1;
+	}
+	else
+	{
+		return 2;
+	}
 
 }

@@ -81,8 +81,8 @@ void goblinKing::printDialogueG(int currentDialogue, player& p1, boss& b1, ItemR
 		{
 			std::cin.ignore();
 			std::cin.get();
-			enterBattle(b1, p1, registry, Inv, false, false);
-			if (p1.getHp() == 0)
+			int check = enterBattle(b1, p1, registry, Inv, false, false);
+			if (check == 0)
 			{
 				printDialogueG(10, p1, b1, registry, Inv);
 			}
