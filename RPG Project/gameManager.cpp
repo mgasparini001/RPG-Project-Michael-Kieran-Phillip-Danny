@@ -108,13 +108,12 @@ bool GameManager::initialize()
 
     initializeBackgroundMusic();
     initializeMapGameplayState();
+    mapController.initialize(&map);
+
     if (!initializeMapFromSaveFile())
     {
         return false;
     }
-
-    // Initialize map controller
-    mapController.initialize(&map);
 
     return true;
 }
@@ -136,9 +135,92 @@ void GameManager::run()
             }
             else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
-                if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+                if (runPhase == RunPhase::SaveSelection)
                 {
-                    window.close();
+                    if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+                    {
+                        window.close();
+                    }
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Up)
+                    {
+                        if (!availableSaveFiles.empty())
+                        {
+                            selectedSaveIndex = (selectedSaveIndex - 1 + static_cast<int>(availableSaveFiles.size())) %
+                                                static_cast<int>(availableSaveFiles.size());
+                        }
+                    }
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Down)
+                    {
+                        if (!availableSaveFiles.empty())
+                        {
+                            selectedSaveIndex = (selectedSaveIndex + 1) % static_cast<int>(availableSaveFiles.size());
+                        }
+                    }
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Enter)
+                    {
+                        if (loadSelectedSaveFile())
+                        {
+                            runPhase = RunPhase::Playing;
+                            showPopup("Loaded save: " + selectedSaveFile.filename().string(), 1.4f);
+                            saveSelectionMessage.clear();
+                        }
+                        else
+                        {
+                            saveSelectionMessage = "Failed to load selected save file.";
+                        }
+                    }
+                }
+                else if (runPhase == RunPhase::ConfirmExitSave)
+                {
+                    if (keyPressed->scancode == sf::Keyboard::Scancode::Y)
+                    {
+                        if (saveCurrentGameToSelectedFile())
+                        {
+                            window.close();
+                        }
+                        else
+                        {
+                            exitPromptMessage = "Save failed. Press N to quit without saving or Esc to return.";
+                        }
+                    }
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::N)
+                    {
+                        window.close();
+                    }
+                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+                    {
+                        runPhase = RunPhase::Playing;
+                        exitPromptMessage.clear();
+                    }
+                }
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+                {
+                    if (inventoryOpen)
+                    {
+                        inventoryOpen = false;
+                        showPopup("Inventory closed", 0.9f);
+                    }
+                    else if (shopOpen)
+                    {
+                        shopOpen = false;
+                        showPopup("Shop closed", 0.9f);
+                    }
+                    else
+                    {
+                        runPhase = RunPhase::ConfirmExitSave;
+                        exitPromptMessage = "Save before exiting? Y = save and quit, N = quit, Esc = cancel";
+                    }
+                }
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::F5)
+                {
+                    if (saveCurrentGameToSelectedFile())
+                    {
+                        showPopup("Game saved", 0.9f);
+                    }
+                    else
+                    {
+                        showPopup("Save failed", 1.1f);
+                    }
                 }
                 else if (keyPressed->scancode == sf::Keyboard::Scancode::E)
                 {
@@ -194,8 +276,10 @@ void GameManager::run()
             }
         }
 
-        // Update
-        handleInput();
+        if (runPhase == RunPhase::Playing)
+        {
+            handleInput();
+        }
         update(deltaTime);
 
         // Render
@@ -264,6 +348,20 @@ void GameManager::update(float deltaTime)
 
 void GameManager::render()
 {
+    if (runPhase == RunPhase::SaveSelection)
+    {
+        renderSaveSelectionScreen();
+        return;
+    }
+
+    if (runPhase == RunPhase::ConfirmExitSave)
+    {
+        renderMapViewport();
+        renderClientViewport();
+        renderExitPrompt();
+        return;
+    }
+
     renderMapViewport();
     renderClientViewport();
     renderPopup();
@@ -295,7 +393,7 @@ void GameManager::renderClientViewport()
     }
 
     sf::Text controls(font,
-        "Move: WASD/Arrows  |  Interact: F  |  Inventory: E  |  Equip: Enter",
+        "Move: WASD/Arrows  |  Interact: F  |  Inventory: E  |  Equip: Enter  |  Save: F5",
         18);
     controls.setFillColor(sf::Color(220, 228, 238));
     controls.setPosition({20.0f, panelTop + 10.0f});
@@ -318,6 +416,90 @@ void GameManager::renderClientViewport()
     {
         renderShopPanel(panelTop, panelHeight);
     }
+}
+
+void GameManager::renderSaveSelectionScreen()
+{
+    sf::RectangleShape bg({static_cast<float>(WINDOW_WIDTH), static_cast<float>(WINDOW_HEIGHT)});
+    bg.setFillColor(sf::Color(17, 25, 35));
+    window.draw(bg);
+
+    if (font.getInfo().family.empty())
+    {
+        return;
+    }
+
+    sf::Text title(font, "Select Save File", 42);
+    title.setFillColor(sf::Color(236, 244, 255));
+    title.setPosition({54.0f, 42.0f});
+    window.draw(title);
+
+    sf::Text help(font, "Use Up/Down to choose, Enter to load, Esc to quit", 22);
+    help.setFillColor(sf::Color(198, 214, 233));
+    help.setPosition({54.0f, 96.0f});
+    window.draw(help);
+
+    float y = 160.0f;
+    for (int i = 0; i < static_cast<int>(availableSaveFiles.size()); ++i)
+    {
+        const bool selected = (i == selectedSaveIndex);
+        sf::RectangleShape rowBg({static_cast<float>(WINDOW_WIDTH) - 108.0f, 40.0f});
+        rowBg.setPosition({54.0f, y - 6.0f});
+        rowBg.setFillColor(selected ? sf::Color(46, 72, 100) : sf::Color(28, 40, 55));
+        rowBg.setOutlineColor(selected ? sf::Color(154, 198, 255) : sf::Color(68, 92, 120));
+        rowBg.setOutlineThickness(1.0f);
+        window.draw(rowBg);
+
+        const std::string label = std::to_string(i + 1) + ". " + availableSaveFiles[static_cast<std::size_t>(i)].filename().string();
+        sf::Text fileName(font, label, 22);
+        fileName.setFillColor(selected ? sf::Color::White : sf::Color(214, 227, 243));
+        fileName.setPosition({68.0f, y});
+        window.draw(fileName);
+        y += 52.0f;
+    }
+
+    if (!saveSelectionMessage.empty())
+    {
+        sf::Text message(font, saveSelectionMessage, 20);
+        message.setFillColor(sf::Color(255, 187, 187));
+        message.setPosition({54.0f, static_cast<float>(WINDOW_HEIGHT) - 56.0f});
+        window.draw(message);
+    }
+}
+
+void GameManager::renderExitPrompt()
+{
+    if (font.getInfo().family.empty())
+    {
+        return;
+    }
+
+    sf::RectangleShape overlay({static_cast<float>(WINDOW_WIDTH), static_cast<float>(WINDOW_HEIGHT)});
+    overlay.setFillColor(sf::Color(0, 0, 0, 110));
+    window.draw(overlay);
+
+    sf::RectangleShape panel({720.0f, 220.0f});
+    panel.setOrigin({panel.getSize().x * 0.5f, panel.getSize().y * 0.5f});
+    panel.setPosition({static_cast<float>(WINDOW_WIDTH) * 0.5f, static_cast<float>(WINDOW_HEIGHT) * 0.5f});
+    panel.setFillColor(sf::Color(18, 24, 34, 245));
+    panel.setOutlineColor(sf::Color(220, 230, 240));
+    panel.setOutlineThickness(2.0f);
+    window.draw(panel);
+
+    sf::Text title(font, "Exit Game", 36);
+    title.setFillColor(sf::Color::White);
+    title.setPosition({panel.getPosition().x - 320.0f, panel.getPosition().y - 76.0f});
+    window.draw(title);
+
+    sf::Text message(font, exitPromptMessage, 22);
+    message.setFillColor(sf::Color(220, 228, 238));
+    message.setPosition({panel.getPosition().x - 320.0f, panel.getPosition().y - 20.0f});
+    window.draw(message);
+
+    sf::Text actions(font, "Y: save and quit    N: quit without saving    Esc: cancel", 20);
+    actions.setFillColor(sf::Color(190, 205, 222));
+    actions.setPosition({panel.getPosition().x - 320.0f, panel.getPosition().y + 42.0f});
+    window.draw(actions);
 }
 
 void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
@@ -518,13 +700,68 @@ void GameManager::initializeMapGameplayState()
     itemRegistry.setItem(1, potion);
     itemRegistry.setItem(2, shield);
 
-    mapPlayer.addItemToInventory(0, itemRegistry, 1);
-    mapPlayer.addItemToInventory(1, itemRegistry, 3);
-    mapPlayer.addItemToInventory(2, itemRegistry, 1);
-
     mapShop = std::make_unique<store>("Map Shop", itemRegistry);
     shopNpc = std::make_unique<npc>("Shopkeeper", "A local merchant", 50, 8, 4, 3, 1000, 6, 7, false, 0);
     shopNpc->addItemToInventory(1, itemRegistry, 30);
+}
+
+void GameManager::applyDefaultPlayerState()
+{
+    mapPlayer.setHp(50);
+    mapPlayer.setGold(100);
+    mapPlayer.setXp(0);
+    mapPlayer.getInventory().clear();
+
+    mapPlayer.addItemToInventory(0, itemRegistry, 1);
+    mapPlayer.addItemToInventory(1, itemRegistry, 3);
+    mapPlayer.addItemToInventory(2, itemRegistry, 1);
+}
+
+OverworldMap::PlayerState GameManager::buildPlayerStateForSave()
+{
+    OverworldMap::PlayerState state;
+    state.hasData = true;
+    state.hp = mapPlayer.getHp();
+    state.gold = mapPlayer.getGold();
+    state.xp = mapPlayer.getXp();
+    state.equippedItemId = mapPlayer.getEquippedItemID();
+
+    InventoryNode* current = mapPlayer.getInventory().getHead();
+    while (current != nullptr)
+    {
+        if (current->item && current->quantity > 0)
+        {
+            OverworldMap::PlayerInventoryEntry entry;
+            entry.id = current->item->getId();
+            entry.quantity = current->quantity;
+            entry.equipped = current->isEquipped;
+            state.inventory.push_back(entry);
+        }
+        current = current->next;
+    }
+
+    return state;
+}
+
+void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
+{
+    mapPlayer.setHp(state.hp);
+    mapPlayer.setGold(state.gold);
+    mapPlayer.setXp(state.xp);
+
+    mapPlayer.getInventory().clear();
+    for (const auto& entry : state.inventory)
+    {
+        if (entry.quantity > 0)
+        {
+            mapPlayer.addItemToInventory(entry.id, itemRegistry, entry.quantity);
+        }
+    }
+
+    if (state.equippedItemId >= 0 && mapPlayer.hasItem(state.equippedItemId))
+    {
+        mapPlayer.equipItem(state.equippedItemId);
+    }
 }
 
 bool GameManager::initializeMapFromSaveFile()
@@ -534,74 +771,73 @@ bool GameManager::initializeMapFromSaveFile()
     std::filesystem::create_directories(mapsDir, ec);
     if (ec)
     {
-        std::cerr << "Failed to create maps directory: " << mapsDir << std::endl;
+        saveSelectionMessage = "Failed to create Maps directory.";
         return false;
     }
 
-    std::vector<std::filesystem::path> mapFiles = getMapFiles(mapsDir);
-    if (mapFiles.empty())
+    availableSaveFiles = getMapFiles(mapsDir);
+    if (availableSaveFiles.empty())
     {
-        // Convert the current in-memory map into the first save file.
+        applyDefaultPlayerState();
         spawnStartAreaShopNpc();
+        map.setPlayerState(buildPlayerStateForSave());
+
         const std::filesystem::path defaultMapPath = mapsDir / "default.json";
         if (!map.saveToFile(defaultMapPath.string()))
         {
-            std::cerr << "Failed to create default map save: " << defaultMapPath << std::endl;
+            saveSelectionMessage = "Failed to create default save file.";
             return false;
         }
 
-        std::cout << "Created default map save: " << defaultMapPath.filename().string() << std::endl;
-        mapFiles.push_back(defaultMapPath);
+        availableSaveFiles.push_back(defaultMapPath);
     }
 
-    std::cout << "\nAvailable map save files:\n";
-    for (int i = 0; i < static_cast<int>(mapFiles.size()); ++i)
+    selectedSaveIndex = std::clamp(selectedSaveIndex, 0, static_cast<int>(availableSaveFiles.size()) - 1);
+    saveSelectionMessage = "Select a save file to start.";
+    return true;
+}
+
+bool GameManager::loadSelectedSaveFile()
+{
+    if (availableSaveFiles.empty())
     {
-        std::cout << "  [" << i + 1 << "] " << mapFiles[i].filename().string() << "\n";
+        return false;
     }
 
-    while (true)
+    selectedSaveFile = availableSaveFiles[static_cast<std::size_t>(selectedSaveIndex)];
+    return loadSaveFile(selectedSaveFile);
+}
+
+bool GameManager::loadSaveFile(const std::filesystem::path& path)
+{
+    if (!map.loadFromFile(path.string()))
     {
-        std::cout << "Select a map file (1-" << mapFiles.size() << "): ";
-        std::string input;
-        if (!std::getline(std::cin, input))
-        {
-            return false;
-        }
-
-        if (input.empty())
-        {
-            std::cout << "Please choose a map number before starting.\n";
-            continue;
-        }
-
-        int selectedIndex = -1;
-        try
-        {
-            selectedIndex = std::stoi(input) - 1;
-        }
-        catch (...)
-        {
-            std::cout << "Invalid selection. Enter a number from 1 to " << mapFiles.size() << ".\n";
-            continue;
-        }
-
-        if (selectedIndex < 0 || selectedIndex >= static_cast<int>(mapFiles.size()))
-        {
-            std::cout << "Invalid selection. Enter a number from 1 to " << mapFiles.size() << ".\n";
-            continue;
-        }
-
-        const std::filesystem::path selectedFile = mapFiles[static_cast<std::size_t>(selectedIndex)];
-        if (!map.loadFromFile(selectedFile.string()))
-        {
-            std::cerr << "Failed to load selected map: " << selectedFile << std::endl;
-            return false;
-        }
-
-        std::cout << "Loaded map: " << selectedFile.filename().string() << std::endl;
-        return true;
+        return false;
     }
+
+    const OverworldMap::PlayerState* loadedPlayerState = map.getPlayerState();
+    if (loadedPlayerState && loadedPlayerState->hasData)
+    {
+        applyLoadedPlayerState(*loadedPlayerState);
+    }
+    else
+    {
+        applyDefaultPlayerState();
+    }
+
+    selectedSaveFile = path;
+    return true;
+}
+
+bool GameManager::saveCurrentGameToSelectedFile()
+{
+    if (selectedSaveFile.empty())
+    {
+        return false;
+    }
+
+    map.setPlayerState(buildPlayerStateForSave());
+    return map.saveToFile(selectedSaveFile.string());
 }
 
 void GameManager::spawnStartAreaShopNpc()
