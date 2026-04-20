@@ -631,6 +631,20 @@ int OverworldMap::checkEntityAtPosition(int chunkX, int chunkY, int tileX, int t
     return -1;
 }
 
+const OverworldMap::MapEntity* OverworldMap::getEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const
+{
+    for (const auto& entity : m_entities)
+    {
+        if (entity.chunkX == chunkX && entity.chunkY == chunkY &&
+            entity.tileX == tileX && entity.tileY == tileY)
+        {
+            return &entity;
+        }
+    }
+
+    return nullptr;
+}
+
 const std::vector<OverworldMap::MapEntity>& OverworldMap::getEntities() const
 {
     return m_entities;

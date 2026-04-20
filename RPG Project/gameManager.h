@@ -97,7 +97,6 @@ private:
     bool loadSelectedSaveFile();
     bool loadSaveFile(const std::filesystem::path& path);
     bool saveCurrentGameToSelectedFile();
-    void spawnStartAreaShopNpc();
     std::vector<int> getInventoryItemIds();
     void equipSelectedInventoryItem();
     bool getShopListing(int& itemId, std::string& itemName, int& itemPrice) const;
