@@ -334,10 +334,17 @@ void GameManager::handleInput()
     
     if (dx != 0 || dy != 0)
     {
-        mapController.movePlayer(dx, dy);
-        timeSinceLastMove = 0.0f;
+        if (mapController.movePlayer(dx, dy))
+        {
+            timeSinceLastMove = 0.0f;
+
+            if (mapPlayer.diceRoll(8) == 1)
+            {
+                fodder slime("Slime", 18, 3, 1, 1, 10, 4, 1);
+                enterBattle(slime, mapPlayer, itemRegistry, mapPlayer.getInventory(), true, true);
+            }
+        }
     }
-    enterBattle(*fod, mapPlayer, itemRegistry, mapPlayer.getInventory(), true, true);
 }
 
 void GameManager::update(float deltaTime)
