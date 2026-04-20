@@ -339,8 +339,7 @@ void GameManager::handleInput()
         mapController.movePlayer(dx, dy);
         timeSinceLastMove = 0.0f;
     }
-    Inventory empty;
-    enterBattle(*fod, mapPlayer, itemRegistry, empty, true, true);
+    enterBattle(*fod, mapPlayer, itemRegistry, mapPlayer.getInventory(), true, true);
 }
 
 void GameManager::update(float deltaTime)
