@@ -280,7 +280,7 @@ int enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory& inv
 		cout << "GAME OVER" << endl;
 		cout << "Press enter to proceed\n";
 		std::cin.clear();
-		std::cin.ignore();
+		std::cin.ignore(1000, '\n');
 		std::cin.get();
 		p1.setHp(50);
 		return 0;
@@ -290,6 +290,7 @@ int enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory& inv
 		cout << "YOU WIN!" << endl;
 		cout << "Press enter to proceed\n";
 		std::cin.clear();
+		std::cin.ignore(1000, '\n');
 		std::cin.get();
 		return 1;
 	}
