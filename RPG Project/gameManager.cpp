@@ -6,6 +6,7 @@
 
 #include "item.h"
 
+// helper functions for asset paths, map file discovery, and JSON parsing
 namespace
 {
 std::filesystem::path resolveAssetPath(const std::string& fileName)
@@ -30,6 +31,7 @@ std::filesystem::path resolveAssetPath(const std::string& fileName)
     return cwd / fileName;
 }
 
+//checks a couple different places for the Maps directory
 std::filesystem::path resolveMapsDirectory()
 {
     const std::filesystem::path cwd = std::filesystem::current_path();
@@ -51,6 +53,8 @@ std::filesystem::path resolveMapsDirectory()
     return cwd / "RPG Project" / "Maps";
 }
 
+
+// get all .json files
 std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& mapsDir)
 {
     std::vector<std::filesystem::path> files;
@@ -79,6 +83,7 @@ std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& maps
 }
 }
 
+// writes string to json
 GameManager::GameManager()
     : window(sf::VideoMode(sf::Vector2u(WINDOW_WIDTH, WINDOW_HEIGHT)), "RPG Game"),
       mapPlayer("Ash", 50, 8, 4, 3, 1000, 6, 7, 0, 100),
@@ -87,6 +92,7 @@ GameManager::GameManager()
     window.setFramerateLimit(60);
 }
 
+// i forget what this is for
 GameManager::~GameManager()
 {
 }
@@ -328,8 +334,16 @@ void GameManager::handleInput()
     
     if (dx != 0 || dy != 0)
     {
-        mapController.movePlayer(dx, dy);
-        timeSinceLastMove = 0.0f;
+        if (mapController.movePlayer(dx, dy))
+        {
+            timeSinceLastMove = 0.0f;
+
+            if (mapPlayer.diceRoll(8) == 1)
+            {
+                fodder slime("Slime", 18, 3, 1, 1, 10, 4, 1);
+                enterBattle(slime, mapPlayer, itemRegistry, mapPlayer.getInventory(), true, true);
+            }
+        }
     }
 }
 
@@ -701,6 +715,7 @@ void GameManager::initializeMapGameplayState()
     itemRegistry.setItem(1, potion);
     itemRegistry.setItem(2, shield);
 
+    fod = std::make_unique<fodder>("zombie", 50, 3, 4, 3, 1000, 6, 7);
     mapShop = std::make_unique<store>("Map Shop", itemRegistry);
     shopNpc = std::make_unique<npc>("Shopkeeper", "A local merchant", 50, 8, 4, 3, 1000, 6, 7, false, 0);
     shopNpc->addItemToInventory(1, itemRegistry, 30);
