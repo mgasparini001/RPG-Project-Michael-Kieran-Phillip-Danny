@@ -92,12 +92,10 @@ GameManager::GameManager()
     window.setFramerateLimit(60);
 }
 
-// i forget what this is for but i think its important
+// i forget what this is for
 GameManager::~GameManager()
 {
-//i think its a destructor but i dont have anything to clean up yet so its empty
 }
-
 
 bool GameManager::initialize()
 {
