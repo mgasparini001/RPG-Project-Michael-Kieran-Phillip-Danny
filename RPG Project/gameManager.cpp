@@ -6,6 +6,7 @@
 
 #include "item.h"
 
+// helper functions for asset paths, map file discovery, and JSON parsing
 namespace
 {
 std::filesystem::path resolveAssetPath(const std::string& fileName)
@@ -30,6 +31,7 @@ std::filesystem::path resolveAssetPath(const std::string& fileName)
     return cwd / fileName;
 }
 
+//checks a couple different places for the Maps directory
 std::filesystem::path resolveMapsDirectory()
 {
     const std::filesystem::path cwd = std::filesystem::current_path();
@@ -51,6 +53,8 @@ std::filesystem::path resolveMapsDirectory()
     return cwd / "RPG Project" / "Maps";
 }
 
+
+// get all .json files
 std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& mapsDir)
 {
     std::vector<std::filesystem::path> files;
@@ -79,6 +83,7 @@ std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& maps
 }
 }
 
+// writes string to json
 GameManager::GameManager()
     : window(sf::VideoMode(sf::Vector2u(WINDOW_WIDTH, WINDOW_HEIGHT)), "RPG Game"),
       mapPlayer("Ash", 50, 8, 4, 3, 1000, 6, 7, 0, 100),
@@ -87,9 +92,12 @@ GameManager::GameManager()
     window.setFramerateLimit(60);
 }
 
+// i forget what this is for but i think its important
 GameManager::~GameManager()
 {
+//i think its a destructor but i dont have anything to clean up yet so its empty
 }
+
 
 bool GameManager::initialize()
 {
@@ -626,17 +634,17 @@ void GameManager::tryInteraction()
     const int tileX = map.getPlayerTileX();
     const int tileY = map.getPlayerTileY();
 
-    const int onTile = map.checkEntityAtPosition(chunkX, chunkY, tileX, tileY);
-    if (onTile >= 0)
+    const OverworldMap::MapEntity* onTile = map.getEntityAtPosition(chunkX, chunkY, tileX, tileY);
+    if (onTile)
     {
-        if (onTile == SHOP_NPC_ID)
+        if (onTile->type == "shop")
         {
             shopOpen = true;
             showPopup("Shop opened: Press Enter to buy", 1.6f);
         }
         else
         {
-            showPopup("You interact with entity #" + std::to_string(onTile));
+            showPopup("You interact with " + onTile->type + " #" + std::to_string(onTile->id));
         }
         return;
     }
@@ -650,17 +658,18 @@ void GameManager::tryInteraction()
 
     for (const auto& offset : offsets)
     {
-        const int entityId = map.checkEntityAtPosition(chunkX, chunkY, tileX + offset[0], tileY + offset[1]);
-        if (entityId >= 0)
+        const OverworldMap::MapEntity* entity =
+            map.getEntityAtPosition(chunkX, chunkY, tileX + offset[0], tileY + offset[1]);
+        if (entity)
         {
-            if (entityId == SHOP_NPC_ID)
+            if (entity->type == "shop")
             {
                 shopOpen = true;
                 showPopup("Shop opened: Press Enter to buy", 1.6f);
             }
             else
             {
-                showPopup("You interact with entity #" + std::to_string(entityId));
+                showPopup("You interact with " + entity->type + " #" + std::to_string(entity->id));
             }
             return;
         }
@@ -782,7 +791,6 @@ bool GameManager::initializeMapFromSaveFile()
     if (availableSaveFiles.empty())
     {
         applyDefaultPlayerState();
-        spawnStartAreaShopNpc();
         map.setPlayerState(buildPlayerStateForSave());
 
         const std::filesystem::path defaultMapPath = mapsDir / "default.json";
@@ -841,12 +849,6 @@ bool GameManager::saveCurrentGameToSelectedFile()
 
     map.setPlayerState(buildPlayerStateForSave());
     return map.saveToFile(selectedSaveFile.string());
-}
-
-void GameManager::spawnStartAreaShopNpc()
-{
-    // Place a shop NPC in the starting chunk on a guaranteed passable path tile.
-    map.addEntity(SHOP_NPC_ID, 0, 0, OverworldMap::ChunkWidth / 2, 1, "shop");
 }
 
 std::vector<int> GameManager::getInventoryItemIds()

@@ -57,6 +57,7 @@ public:
 
     void addEntity(int id, int chunkX, int chunkY, int tileX, int tileY, const std::string& type);
     [[nodiscard]] int checkEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
+    [[nodiscard]] const MapEntity* getEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
     [[nodiscard]] const std::vector<MapEntity>& getEntities() const;
 
     void setPlayerState(const PlayerState& playerState);
