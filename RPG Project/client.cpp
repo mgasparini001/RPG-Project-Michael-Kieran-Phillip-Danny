@@ -1,6 +1,10 @@
 #include <iostream>
 #include "gameManager.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 void refreshScreen()
 {
 	// clear screen (probably will be removed later).
@@ -29,3 +33,10 @@ int main()
 
 	return 0;
 }
+
+#ifdef _WIN32
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+{
+	return main();
+}
+#endif

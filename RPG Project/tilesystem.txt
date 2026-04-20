@@ -1,0 +1,38 @@
+Tile System and how they work
+
+client.cpp - main entry point, creates GameManager, calls initialize, runs main loop
+
+GameManager - main coordinator for the whole script. Owns main window, map object, map controller, player/shop/inventory state
+Initializes map systems and map controller
+Runs the game loop, input, update, render
+Sends movement input to MapController
+Renders map viewport via MapController and a separate UI panel for controls/inventory/shop
+Handles interact key logic by checking entities on/next to the player tile
+Finds map save files in Maps, lets user pick one in console, loads it, or creates default if none exists
+
+MapController - bridge between game logic and map rendering
+Stores a pointer to OverworldMap
+For rendering, computes tile size and centering offsets, then calls TileRenderer to draw chunk, entities, and player
+For movement, forwards dx/dy to OverworldMap::tryMovePlayer
+
+OverworldMap - This is the actual map data model and map rules
+Defines world size as 12x12 chunks, each chunk 16x12 tiles
+Stores tile passability, player chunk/tile position, and map entities.
+Handles movement with chunk transitions at edges and collision checks
+Saves/loads all files in JSON format using a JSON reader/writer
+
+Tile Renderer -
+Visual drawing layer for the map (does not manage movement rules)
+Draws the current chunk tile grid to the map viewport
+Draws entities in the current chunk and colors them by type
+Draws the player marker at the current tile position
+
+Maps/default.json - map save file generated/loaded by the map system
+Stores map version, player chunk/tile position, tile passability data, and entity list
+Used by GameManager + OverworldMap when creating/loading map saves
+
+
+
+Where to find stuff:
+Main map flow files: client.cpp, gameManager.h/.cpp, MapController.h/.cpp, overworldMap.h/.cpp, TileRenderer.h/.cpp
+Map save data: Maps/default.json

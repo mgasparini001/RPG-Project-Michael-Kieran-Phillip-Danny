@@ -9,8 +9,7 @@ class OverworldMap
 public:
     struct Tile
     {
-        // World is currently all grass, but we keep passable so collision can be
-        // reintroduced later without changing the tile API.
+        // World is currently all grass, but we keep passable for later
         bool passable = true;
     };
 
@@ -22,6 +21,23 @@ public:
         int tileX = 0;
         int tileY = 0;
         std::string type; // "npc" or "enemy"
+    };
+
+    struct PlayerInventoryEntry
+    {
+        int id = -1;
+        int quantity = 0;
+        bool equipped = false;
+    };
+
+    struct PlayerState
+    {
+        bool hasData = false;
+        int hp = 0;
+        int gold = 0;
+        int xp = 0;
+        int equippedItemId = -1;
+        std::vector<PlayerInventoryEntry> inventory;
     };
 
     static constexpr int ChunkWidth = 16;
@@ -41,7 +57,12 @@ public:
 
     void addEntity(int id, int chunkX, int chunkY, int tileX, int tileY, const std::string& type);
     [[nodiscard]] int checkEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
+    [[nodiscard]] const MapEntity* getEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
     [[nodiscard]] const std::vector<MapEntity>& getEntities() const;
+
+    void setPlayerState(const PlayerState& playerState);
+    void clearPlayerState();
+    [[nodiscard]] const PlayerState* getPlayerState() const;
 
     [[nodiscard]] int getPlayerChunkX() const;
     [[nodiscard]] int getPlayerChunkY() const;
@@ -58,6 +79,7 @@ private:
 
     WorldChunks m_chunks{};
     std::vector<MapEntity> m_entities;
+    PlayerState m_playerState;
 
     int m_playerChunkX = 0;
     int m_playerChunkY = 0;

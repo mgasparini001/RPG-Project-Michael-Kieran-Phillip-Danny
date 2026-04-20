@@ -357,7 +357,36 @@ bool OverworldMap::saveToFile(const std::string& filePath) const
     {
         file << "\n  ";
     }
+    file << "],\n";
+
+    file << "  \"playerState\": {\n";
+    file << "    \"hasData\": " << (m_playerState.hasData ? "true" : "false") << ",\n";
+    file << "    \"hp\": " << m_playerState.hp << ",\n";
+    file << "    \"gold\": " << m_playerState.gold << ",\n";
+    file << "    \"xp\": " << m_playerState.xp << ",\n";
+    file << "    \"equippedItemId\": " << m_playerState.equippedItemId << ",\n";
+    file << "    \"inventory\": [";
+
+    for (std::size_t i = 0; i < m_playerState.inventory.size(); ++i)
+    {
+        const PlayerInventoryEntry& entry = m_playerState.inventory[i];
+        if (i > 0)
+        {
+            file << ",";
+        }
+
+        file << "\n      {\"id\": " << entry.id
+             << ", \"quantity\": " << entry.quantity
+             << ", \"equipped\": " << (entry.equipped ? "true" : "false")
+             << "}";
+    }
+
+    if (!m_playerState.inventory.empty())
+    {
+        file << "\n    ";
+    }
     file << "]\n";
+    file << "  }\n";
     file << "}\n";
 
     return file.good();
@@ -482,6 +511,70 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
             }
         }
 
+        PlayerState loadedPlayerState{};
+        if (reader.tryConsume(','))
+        {
+            reader.expectKey("playerState");
+            reader.expect('{');
+
+            reader.expectKey("hasData");
+            loadedPlayerState.hasData = reader.parseBool();
+            reader.expect(',');
+
+            reader.expectKey("hp");
+            loadedPlayerState.hp = reader.parseInt();
+            reader.expect(',');
+
+            reader.expectKey("gold");
+            loadedPlayerState.gold = reader.parseInt();
+            reader.expect(',');
+
+            reader.expectKey("xp");
+            loadedPlayerState.xp = reader.parseInt();
+            reader.expect(',');
+
+            reader.expectKey("equippedItemId");
+            loadedPlayerState.equippedItemId = reader.parseInt();
+            reader.expect(',');
+
+            reader.expectKey("inventory");
+            reader.expect('[');
+            if (!reader.tryConsume(']'))
+            {
+                while (true)
+                {
+                    PlayerInventoryEntry entry{};
+                    reader.expect('{');
+                    reader.expectKey("id");
+                    entry.id = reader.parseInt();
+                    reader.expect(',');
+                    reader.expectKey("quantity");
+                    entry.quantity = reader.parseInt();
+                    reader.expect(',');
+                    reader.expectKey("equipped");
+                    entry.equipped = reader.parseBool();
+                    reader.expect('}');
+
+                    if (entry.quantity < 0)
+                    {
+                        return false;
+                    }
+
+                    loadedPlayerState.inventory.push_back(entry);
+
+                    if (reader.tryConsume(','))
+                    {
+                        continue;
+                    }
+
+                    reader.expect(']');
+                    break;
+                }
+            }
+
+            reader.expect('}');
+        }
+
         reader.expect('}');
         reader.ensureFullyConsumed();
 
@@ -491,6 +584,7 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
         m_playerChunkY = loadedPlayerChunkY;
         m_playerTileX = loadedPlayerTileX;
         m_playerTileY = loadedPlayerTileY;
+        m_playerState = std::move(loadedPlayerState);
         return true;
     }
     catch (...)
@@ -537,9 +631,38 @@ int OverworldMap::checkEntityAtPosition(int chunkX, int chunkY, int tileX, int t
     return -1;
 }
 
+const OverworldMap::MapEntity* OverworldMap::getEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const
+{
+    for (const auto& entity : m_entities)
+    {
+        if (entity.chunkX == chunkX && entity.chunkY == chunkY &&
+            entity.tileX == tileX && entity.tileY == tileY)
+        {
+            return &entity;
+        }
+    }
+
+    return nullptr;
+}
+
 const std::vector<OverworldMap::MapEntity>& OverworldMap::getEntities() const
 {
     return m_entities;
+}
+
+void OverworldMap::setPlayerState(const PlayerState& playerState)
+{
+    m_playerState = playerState;
+}
+
+void OverworldMap::clearPlayerState()
+{
+    m_playerState = PlayerState{};
+}
+
+const OverworldMap::PlayerState* OverworldMap::getPlayerState() const
+{
+    return m_playerState.hasData ? &m_playerState : nullptr;
 }
 
 int OverworldMap::tileIndexFor(int x, int y)

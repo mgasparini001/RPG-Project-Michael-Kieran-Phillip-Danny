@@ -8,6 +8,7 @@
 #include "ItemRegistry.h"
 #include "Store.h"
 #include "npc.h"
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -34,6 +35,13 @@ public:
     sf::RenderWindow& getWindow() { return window; }
 
 private:
+    enum class RunPhase
+    {
+        SaveSelection,
+        Playing,
+        ConfirmExitSave
+    };
+
     // Window and rendering
     sf::RenderWindow window;
     sf::Font font;
@@ -59,6 +67,13 @@ private:
     bool shopOpen = false;
     int selectedInventoryIndex = 0;
 
+    RunPhase runPhase = RunPhase::SaveSelection;
+    std::vector<std::filesystem::path> availableSaveFiles;
+    std::filesystem::path selectedSaveFile;
+    int selectedSaveIndex = 0;
+    std::string saveSelectionMessage;
+    std::string exitPromptMessage;
+
     bool musicReady = false;
 
     static constexpr int SHOP_NPC_ID = 900;
@@ -69,12 +84,19 @@ private:
     void renderPopup();
     void renderInventoryPanel(float panelTop, float panelHeight);
     void renderShopPanel(float panelTop, float panelHeight);
+    void renderSaveSelectionScreen();
+    void renderExitPrompt();
     void tryInteraction();
     void showPopup(const std::string& message, float seconds = 2.2f);
     bool initializeBackgroundMusic();
     void initializeMapGameplayState();
+    void applyDefaultPlayerState();
+    OverworldMap::PlayerState buildPlayerStateForSave();
+    void applyLoadedPlayerState(const OverworldMap::PlayerState& state);
     bool initializeMapFromSaveFile();
-    void spawnStartAreaShopNpc();
+    bool loadSelectedSaveFile();
+    bool loadSaveFile(const std::filesystem::path& path);
+    bool saveCurrentGameToSelectedFile();
     std::vector<int> getInventoryItemIds();
     void equipSelectedInventoryItem();
     bool getShopListing(int& itemId, std::string& itemName, int& itemPrice) const;
