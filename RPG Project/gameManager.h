@@ -8,6 +8,9 @@
 #include "ItemRegistry.h"
 #include "Store.h"
 #include "npc.h"
+#include "fodder.h"
+#include "battle.h"
+#include "inventory.h"
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -52,6 +55,7 @@ private:
     MapController mapController;
     player mapPlayer;
     ItemRegistry itemRegistry;
+    std::unique_ptr<fodder> fod;
     std::unique_ptr<store> mapShop;
     std::unique_ptr<npc> shopNpc;
 

@@ -337,6 +337,7 @@ void GameManager::handleInput()
         mapController.movePlayer(dx, dy);
         timeSinceLastMove = 0.0f;
     }
+    enterBattle(*fod, mapPlayer, itemRegistry, mapPlayer.getInventory(), true, true);
 }
 
 void GameManager::update(float deltaTime)
@@ -707,6 +708,7 @@ void GameManager::initializeMapGameplayState()
     itemRegistry.setItem(1, potion);
     itemRegistry.setItem(2, shield);
 
+    fod = std::make_unique<fodder>("zombie", 50, 3, 4, 3, 1000, 6, 7);
     mapShop = std::make_unique<store>("Map Shop", itemRegistry);
     shopNpc = std::make_unique<npc>("Shopkeeper", "A local merchant", 50, 8, 4, 3, 1000, 6, 7, false, 0);
     shopNpc->addItemToInventory(1, itemRegistry, 30);
