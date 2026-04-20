@@ -6,6 +6,7 @@
 
 #include "item.h"
 
+// helper functions for asset paths, map file discovery, and JSON parsing
 namespace
 {
 std::filesystem::path resolveAssetPath(const std::string& fileName)
@@ -30,6 +31,7 @@ std::filesystem::path resolveAssetPath(const std::string& fileName)
     return cwd / fileName;
 }
 
+//checks a couple different places for the Maps directory
 std::filesystem::path resolveMapsDirectory()
 {
     const std::filesystem::path cwd = std::filesystem::current_path();
@@ -51,6 +53,8 @@ std::filesystem::path resolveMapsDirectory()
     return cwd / "RPG Project" / "Maps";
 }
 
+
+// get all .json files
 std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& mapsDir)
 {
     std::vector<std::filesystem::path> files;
@@ -79,6 +83,7 @@ std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& maps
 }
 }
 
+// writes string to json
 GameManager::GameManager()
     : window(sf::VideoMode(sf::Vector2u(WINDOW_WIDTH, WINDOW_HEIGHT)), "RPG Game"),
       mapPlayer("Ash", 50, 8, 4, 3, 1000, 6, 7, 0, 100),
@@ -87,9 +92,12 @@ GameManager::GameManager()
     window.setFramerateLimit(60);
 }
 
+// i forget what this is for but i think its important
 GameManager::~GameManager()
 {
+//i think its a destructor but i dont have anything to clean up yet so its empty
 }
+
 
 bool GameManager::initialize()
 {
