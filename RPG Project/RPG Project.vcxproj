@@ -164,6 +164,7 @@
     <ClInclude Include="ItemRegistry.h" />
     <ClInclude Include="npc.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="Store.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <ItemGroup>
