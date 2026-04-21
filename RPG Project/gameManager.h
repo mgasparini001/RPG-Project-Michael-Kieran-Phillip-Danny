@@ -41,6 +41,9 @@ private:
 
     enum class EditorBrush
     {
+        Grass,
+        Water,
+        Sand,
         Rock,
         Wall,
         Store,
@@ -73,7 +76,7 @@ private:
     bool shopOpen = false;
     int selectedInventoryIndex = 0;
     bool mapEditorEnabled = false;
-    EditorBrush activeEditorBrush = EditorBrush::Rock;
+    EditorBrush activeEditorBrush = EditorBrush::Grass;
 
     RunPhase runPhase = RunPhase::SaveSelection;
     std::vector<std::filesystem::path> availableSaveFiles;
