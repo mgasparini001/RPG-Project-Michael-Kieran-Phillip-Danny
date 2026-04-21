@@ -21,5 +21,10 @@
       {"id": 1, "quantity": 3, "equipped": false},
       {"id": 2, "quantity": 1, "equipped": false}
     ]
-  }
+  },
+  "enemySpawnTiles": [
+    {"chunkX": 0, "chunkY": 0, "tileX": 9, "tileY": 4},
+    {"chunkX": 0, "chunkY": 0, "tileX": 10, "tileY": 4},
+    {"chunkX": 0, "chunkY": 0, "tileX": 9, "tileY": 5}
+  ]
 }

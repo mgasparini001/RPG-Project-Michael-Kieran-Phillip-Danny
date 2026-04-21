@@ -387,6 +387,28 @@ bool OverworldMap::saveToFile(const std::string& filePath) const
     }
     file << "]\n";
     file << "  }\n";
+
+    file << ",\n";
+    file << "  \"enemySpawnTiles\": [";
+    for (std::size_t i = 0; i < m_enemySpawnTiles.size(); ++i)
+    {
+        const EnemySpawnTile& spawnTile = m_enemySpawnTiles[i];
+        if (i > 0)
+        {
+            file << ",";
+        }
+
+        file << "\n    {\"chunkX\": " << spawnTile.chunkX
+             << ", \"chunkY\": " << spawnTile.chunkY
+             << ", \"tileX\": " << spawnTile.tileX
+             << ", \"tileY\": " << spawnTile.tileY << "}";
+    }
+
+    if (!m_enemySpawnTiles.empty())
+    {
+        file << "\n  ";
+    }
+    file << "]\n";
     file << "}\n";
 
     return file.good();
@@ -575,6 +597,50 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
             reader.expect('}');
         }
 
+        std::vector<EnemySpawnTile> loadedEnemySpawnTiles;
+        if (reader.tryConsume(','))
+        {
+            reader.expectKey("enemySpawnTiles");
+            reader.expect('[');
+            if (!reader.tryConsume(']'))
+            {
+                while (true)
+                {
+                    EnemySpawnTile spawnTile{};
+                    reader.expect('{');
+                    reader.expectKey("chunkX");
+                    spawnTile.chunkX = reader.parseInt();
+                    reader.expect(',');
+                    reader.expectKey("chunkY");
+                    spawnTile.chunkY = reader.parseInt();
+                    reader.expect(',');
+                    reader.expectKey("tileX");
+                    spawnTile.tileX = reader.parseInt();
+                    reader.expect(',');
+                    reader.expectKey("tileY");
+                    spawnTile.tileY = reader.parseInt();
+                    reader.expect('}');
+
+                    if (!isChunkInBounds(spawnTile.chunkX, spawnTile.chunkY) ||
+                        spawnTile.tileX < 0 || spawnTile.tileX >= ChunkWidth ||
+                        spawnTile.tileY < 0 || spawnTile.tileY >= ChunkHeight)
+                    {
+                        return false;
+                    }
+
+                    loadedEnemySpawnTiles.push_back(spawnTile);
+
+                    if (reader.tryConsume(','))
+                    {
+                        continue;
+                    }
+
+                    reader.expect(']');
+                    break;
+                }
+            }
+        }
+
         reader.expect('}');
         reader.ensureFullyConsumed();
 
@@ -585,6 +651,7 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
         m_playerTileX = loadedPlayerTileX;
         m_playerTileY = loadedPlayerTileY;
         m_playerState = std::move(loadedPlayerState);
+        m_enemySpawnTiles = std::move(loadedEnemySpawnTiles);
         return true;
     }
     catch (...)
@@ -618,19 +685,6 @@ void OverworldMap::addEntity(int id, int chunkX, int chunkY, int tileX, int tile
     m_entities.push_back({id, chunkX, chunkY, tileX, tileY, type});
 }
 
-int OverworldMap::checkEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const
-{
-    for (const auto& entity : m_entities)
-    {
-        if (entity.chunkX == chunkX && entity.chunkY == chunkY &&
-            entity.tileX == tileX && entity.tileY == tileY)
-        {
-            return entity.id;
-        }
-    }
-    return -1;
-}
-
 const OverworldMap::MapEntity* OverworldMap::getEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const
 {
     for (const auto& entity : m_entities)
@@ -650,14 +704,28 @@ const std::vector<OverworldMap::MapEntity>& OverworldMap::getEntities() const
     return m_entities;
 }
 
+void OverworldMap::addEnemySpawnTile(int chunkX, int chunkY, int tileX, int tileY)
+{
+    m_enemySpawnTiles.push_back({chunkX, chunkY, tileX, tileY});
+}
+
+bool OverworldMap::isEnemySpawnTileAtPosition(int chunkX, int chunkY, int tileX, int tileY) const
+{
+    for (const auto& spawnTile : m_enemySpawnTiles)
+    {
+        if (spawnTile.chunkX == chunkX && spawnTile.chunkY == chunkY &&
+            spawnTile.tileX == tileX && spawnTile.tileY == tileY)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void OverworldMap::setPlayerState(const PlayerState& playerState)
 {
     m_playerState = playerState;
-}
-
-void OverworldMap::clearPlayerState()
-{
-    m_playerState = PlayerState{};
 }
 
 const OverworldMap::PlayerState* OverworldMap::getPlayerState() const

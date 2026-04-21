@@ -3,6 +3,7 @@
 namespace
 {
 const sf::Color kGrassColor(78, 153, 68);
+const sf::Color kEnemySpawnColor(237, 213, 77);
 }
 
 void TileRenderer::renderChunk(sf::RenderWindow& window,
@@ -21,7 +22,7 @@ void TileRenderer::renderChunk(sf::RenderWindow& window,
 
             sf::RectangleShape tileRect({tileSize - 1.f, tileSize - 1.f});
             tileRect.setPosition({tileX, tileY});
-            tileRect.setFillColor(kGrassColor);
+            tileRect.setFillColor(map.isEnemySpawnTileAtPosition(chunkX, chunkY, x, y) ? kEnemySpawnColor : kGrassColor);
             window.draw(tileRect);
         }
     }
