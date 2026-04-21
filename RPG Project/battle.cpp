@@ -7,10 +7,39 @@
 #include "player.h"
 #include "ItemRegistry.h"
 #include "errorChecking.h"
+#include <filesystem>
 using namespace std;
 
 //forward declare
 void refreshScreen();
+
+
+//copy pasted fix from client.cpp since the music and everything needs to be reloaded
+
+namespace
+{
+std::filesystem::path resolveBattleAssetPath(const std::string& fileName)
+{
+	const std::filesystem::path cwd = std::filesystem::current_path();
+	const std::filesystem::path candidates[] = {
+		cwd / fileName,
+		cwd / "RPG Project" / fileName,
+		cwd / "x64" / "Debug" / fileName,
+		cwd.parent_path() / "RPG Project" / fileName,
+		cwd.parent_path() / fileName
+	};
+
+	for (const auto& candidate : candidates)
+	{
+		if (std::filesystem::exists(candidate))
+		{
+			return candidate;
+		}
+	}
+
+	return cwd / fileName;
+}
+}
 
 
 // Input: an enemy and a player     Output: Player and enemy stats
@@ -55,15 +84,35 @@ void printBattleDisplay(enemy& enemy, player& p1, const ItemRegistry& registry)
 
 
 void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory& inv, bool canRun, bool isWild) {
-	sf::SoundBuffer buff1("Attack.wav");
-	sf::SoundBuffer buff2("eppy.wav");
-	sf::SoundBuffer buff3("Scream.wav");
+	const auto attackPath = resolveBattleAssetPath("Attack.wav");
+	const auto restPath = resolveBattleAssetPath("eppy.wav");
+	const auto fleePath = resolveBattleAssetPath("Scream.wav");
+	const auto encounterPath = resolveBattleAssetPath("Encounter.wav");
+	const auto menuPath = resolveBattleAssetPath("Main Menu.wav");
+
+	sf::SoundBuffer buff1;
+	sf::SoundBuffer buff2;
+	sf::SoundBuffer buff3;
+	if (!buff1.loadFromFile(attackPath.string()) ||
+		!buff2.loadFromFile(restPath.string()) ||
+		!buff3.loadFromFile(fleePath.string()))
+	{
+		std::cerr << "Battle audio failed to load from the expected asset paths." << std::endl;
+		std::cerr << "Attack: " << attackPath << std::endl;
+		std::cerr << "Rest: " << restPath << std::endl;
+		std::cerr << "Flee: " << fleePath << std::endl;
+		return;
+	}
 	sf::Sound sound1(buff1);
 	sf::Sound sound2(buff2);
 	sf::Sound sound3(buff3);
 	bool hasRun = false;
 	sf::Music encounter;
-	encounter.openFromFile("Encounter.wav");
+	if (!encounter.openFromFile(encounterPath.string()))
+	{
+		std::cerr << "Battle encounter music failed to load from " << encounterPath << std::endl;
+		return;
+	}
 	encounter.setLooping(true);
 	encounter.setVolume(50.f);
 	encounter.play();
@@ -88,7 +137,11 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory& in
 	refreshScreen();
 
 	sf::Music Music;
-	Music.openFromFile("Main Menu.wav");
+	if (!Music.openFromFile(menuPath.string()))
+	{
+		std::cerr << "Battle menu music failed to load from " << menuPath << std::endl;
+		return;
+	}
 	Music.setVolume(50.f);
 	Music.setLooping(true);
 
