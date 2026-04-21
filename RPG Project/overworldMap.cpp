@@ -1,6 +1,7 @@
 #include "overworldMap.h"
 
 #include <cassert>
+#include <algorithm>
 #include <cctype>
 #include <fstream>
 #include <limits>
@@ -244,6 +245,20 @@ const OverworldMap::Tile& OverworldMap::getTile(int chunkX, int chunkY, int tile
 
     const ChunkTiles& chunk = m_chunks[static_cast<std::size_t>(chunkIndexFor(chunkX, chunkY))];
     return chunk[static_cast<std::size_t>(tileIndexFor(tileX, tileY))];
+}
+
+bool OverworldMap::setTilePassable(int chunkX, int chunkY, int tileX, int tileY, bool passable)
+{
+    if (!isChunkInBounds(chunkX, chunkY) ||
+        tileX < 0 || tileX >= ChunkWidth ||
+        tileY < 0 || tileY >= ChunkHeight)
+    {
+        return false;
+    }
+
+    ChunkTiles& chunk = m_chunks[static_cast<std::size_t>(chunkIndexFor(chunkX, chunkY))];
+    chunk[static_cast<std::size_t>(tileIndexFor(tileX, tileY))].passable = passable;
+    return true;
 }
 
 bool OverworldMap::tryMovePlayer(int dx, int dy)
@@ -683,6 +698,61 @@ int OverworldMap::getPlayerTileY() const
 void OverworldMap::addEntity(int id, int chunkX, int chunkY, int tileX, int tileY, const std::string& type)
 {
     m_entities.push_back({id, chunkX, chunkY, tileX, tileY, type});
+}
+
+bool OverworldMap::placeOrReplaceEntity(int chunkX, int chunkY, int tileX, int tileY, const std::string& type)
+{
+    if (!isChunkInBounds(chunkX, chunkY) ||
+        tileX < 0 || tileX >= ChunkWidth ||
+        tileY < 0 || tileY >= ChunkHeight)
+    {
+        return false;
+    }
+
+    std::string normalizedType = type;
+    for (char& c : normalizedType)
+    {
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    }
+
+    if (normalizedType.empty())
+    {
+        return false;
+    }
+
+    int nextEntityId = 1;
+    for (const auto& entity : m_entities)
+    {
+        nextEntityId = std::max(nextEntityId, entity.id + 1);
+    }
+
+    for (auto& entity : m_entities)
+    {
+        if (entity.chunkX == chunkX && entity.chunkY == chunkY &&
+            entity.tileX == tileX && entity.tileY == tileY)
+        {
+            entity.type = normalizedType;
+            return true;
+        }
+    }
+
+    m_entities.push_back({nextEntityId, chunkX, chunkY, tileX, tileY, normalizedType});
+    return true;
+}
+
+bool OverworldMap::removeEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY)
+{
+    const auto originalSize = m_entities.size();
+    m_entities.erase(
+        std::remove_if(m_entities.begin(), m_entities.end(),
+            [chunkX, chunkY, tileX, tileY](const MapEntity& entity)
+            {
+                return entity.chunkX == chunkX && entity.chunkY == chunkY &&
+                       entity.tileX == tileX && entity.tileY == tileY;
+            }),
+        m_entities.end());
+
+    return m_entities.size() != originalSize;
 }
 
 const OverworldMap::MapEntity* OverworldMap::getEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const

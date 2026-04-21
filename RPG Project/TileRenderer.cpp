@@ -65,6 +65,14 @@ void TileRenderer::renderEntities(sf::RenderWindow& window,
             {
                 entityRect.setFillColor(sf::Color(255, 214, 102));
             }
+            else if (entity.type == "rock")
+            {
+                entityRect.setFillColor(sf::Color(130, 130, 130));
+            }
+            else if (entity.type == "wall")
+            {
+                entityRect.setFillColor(sf::Color(96, 80, 60));
+            }
             else
             {
                 entityRect.setFillColor(sf::Color(255, 100, 100));

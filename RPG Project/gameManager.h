@@ -39,6 +39,14 @@ private:
         ConfirmExitSave
     };
 
+    enum class EditorBrush
+    {
+        Rock,
+        Wall,
+        Store,
+        Npc
+    };
+
     // Window and rendering
     sf::RenderWindow window;
     sf::Font font;
@@ -63,6 +71,8 @@ private:
     bool inventoryOpen = false;
     bool shopOpen = false;
     int selectedInventoryIndex = 0;
+    bool mapEditorEnabled = false;
+    EditorBrush activeEditorBrush = EditorBrush::Rock;
 
     RunPhase runPhase = RunPhase::SaveSelection;
     std::vector<std::filesystem::path> availableSaveFiles;
@@ -102,6 +112,10 @@ private:
     void handleSaveSelectionInput(sf::Keyboard::Scancode scancode);
     void handleExitConfirmInput(sf::Keyboard::Scancode scancode);
     void handlePlayingKeyInput(sf::Keyboard::Scancode scancode);
+    bool handleMapEditorKeyInput(sf::Keyboard::Scancode scancode);
+    std::string getEditorBrushName() const;
+    bool applyMapEditorBrushAtPlayer();
+    bool eraseMapEditorSelectionAtPlayer();
     void startWildBattle();
     void renderBattleOverlay();
     void handleInput();

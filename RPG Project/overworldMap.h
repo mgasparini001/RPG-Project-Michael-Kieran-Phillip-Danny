@@ -56,6 +56,7 @@ public:
     OverworldMap();
 
     [[nodiscard]] const Tile& getTile(int chunkX, int chunkY, int tileX, int tileY) const;
+    bool setTilePassable(int chunkX, int chunkY, int tileX, int tileY, bool passable);
 
     bool tryMovePlayer(int dx, int dy);
 
@@ -64,6 +65,8 @@ public:
     bool loadFromFile(const std::string& filePath);
 
     void addEntity(int id, int chunkX, int chunkY, int tileX, int tileY, const std::string& type);
+    bool placeOrReplaceEntity(int chunkX, int chunkY, int tileX, int tileY, const std::string& type);
+    bool removeEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY);
     [[nodiscard]] const MapEntity* getEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
     [[nodiscard]] const std::vector<MapEntity>& getEntities() const;
 

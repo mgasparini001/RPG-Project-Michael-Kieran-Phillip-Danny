@@ -252,6 +252,31 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
         return;
     }
 
+    if (scancode == sf::Keyboard::Scancode::Tab)
+    {
+        if (inventoryOpen || shopOpen)
+        {
+            showPopup("Close inventory/shop before editor mode", 1.4f);
+            return;
+        }
+
+        mapEditorEnabled = !mapEditorEnabled;
+        if (mapEditorEnabled)
+        {
+            showPopup("Map editor on | Brush: " + getEditorBrushName(), 1.6f);
+        }
+        else
+        {
+            showPopup("Map editor off", 1.0f);
+        }
+        return;
+    }
+
+    if (mapEditorEnabled && handleMapEditorKeyInput(scancode))
+    {
+        return;
+    }
+
     // escape closes ui first, if no ui open then ask to save/quit
     if (scancode == sf::Keyboard::Scancode::Escape)
     {
@@ -380,7 +405,8 @@ void GameManager::handleInput()
         {
             timeSinceLastMove = 0.0f;
 
-            if (map.isEnemySpawnTileAtPosition(map.getPlayerChunkX(), map.getPlayerChunkY(), map.getPlayerTileX(), map.getPlayerTileY()) &&
+            if (!mapEditorEnabled &&
+                map.isEnemySpawnTileAtPosition(map.getPlayerChunkX(), map.getPlayerChunkY(), map.getPlayerTileX(), map.getPlayerTileY()) &&
                 mapPlayer.diceRoll(8) == 1)
             {
                 startWildBattle();
@@ -467,16 +493,20 @@ void GameManager::renderClientViewport()
         return;
     }
 
-    sf::Text controls(font,
-        "Move: WASD/Arrows  |  Interact: F  |  Inventory: E  |  Equip: Enter  |  Save: F5",
-        18);
+    const std::string controlsText =
+        mapEditorEnabled
+        ? "Editor: 1 Rock 2 Wall 3 Store 4 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
+        : "Move: WASD/Arrows | Interact: F | Inventory: E | Equip: Enter | Save: F5 | Editor: Tab";
+
+    sf::Text controls(font, controlsText, 18);
     controls.setFillColor(sf::Color(220, 228, 238));
     controls.setPosition({20.0f, panelTop + 10.0f});
     window.draw(controls);
 
     sf::Text status(font,
         "Gold: " + std::to_string(mapPlayer.getGold()) +
-        "   Equipped Item ID: " + std::to_string(mapPlayer.getEquippedItemID()),
+        "   Equipped Item ID: " + std::to_string(mapPlayer.getEquippedItemID()) +
+        (mapEditorEnabled ? ("   Editor Brush: " + getEditorBrushName()) : ""),
         18);
     status.setFillColor(sf::Color(200, 212, 226));
     status.setPosition({20.0f, panelTop + 38.0f});
@@ -1024,6 +1054,124 @@ void GameManager::tryBuyShopItem()
 
     mapShop->buySomething(mapPlayer, *shopNpc, shopItemId, 1);
     showPopup("Bought " + shopItemName, 1.2f);
+}
+
+bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
+{
+    if (!mapEditorEnabled)
+    {
+        return false;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::Num1)
+    {
+        activeEditorBrush = EditorBrush::Rock;
+        showPopup("Brush: Rock", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num2)
+    {
+        activeEditorBrush = EditorBrush::Wall;
+        showPopup("Brush: Wall", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num3)
+    {
+        activeEditorBrush = EditorBrush::Store;
+        showPopup("Brush: Store", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num4)
+    {
+        activeEditorBrush = EditorBrush::Npc;
+        showPopup("Brush: NPC", 0.9f);
+        return true;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::F)
+    {
+        if (applyMapEditorBrushAtPlayer())
+        {
+            showPopup("Placed " + getEditorBrushName(), 1.0f);
+        }
+        else
+        {
+            showPopup("Could not place object", 1.0f);
+        }
+        return true;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::R ||
+        scancode == sf::Keyboard::Scancode::Delete ||
+        scancode == sf::Keyboard::Scancode::Backspace)
+    {
+        if (eraseMapEditorSelectionAtPlayer())
+        {
+            showPopup("Tile cleared", 0.9f);
+        }
+        else
+        {
+            showPopup("Nothing to clear", 0.9f);
+        }
+        return true;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::F6)
+    {
+        if (saveCurrentGameToSelectedFile())
+        {
+            showPopup("Map saved", 0.9f);
+        }
+        else
+        {
+            showPopup("Map save failed", 1.1f);
+        }
+        return true;
+    }
+
+    return false;
+}
+
+std::string GameManager::getEditorBrushName() const
+{
+    switch (activeEditorBrush)
+    {
+    case EditorBrush::Rock:
+        return "rock";
+    case EditorBrush::Wall:
+        return "wall";
+    case EditorBrush::Store:
+        return "store";
+    case EditorBrush::Npc:
+        return "npc";
+    default:
+        return "rock";
+    }
+}
+
+bool GameManager::applyMapEditorBrushAtPlayer()
+{
+    const int chunkX = map.getPlayerChunkX();
+    const int chunkY = map.getPlayerChunkY();
+    const int tileX = map.getPlayerTileX();
+    const int tileY = map.getPlayerTileY();
+
+    const std::string entityType = getEditorBrushName();
+    const bool updatedPassability = map.setTilePassable(chunkX, chunkY, tileX, tileY, false);
+    const bool updatedEntity = map.placeOrReplaceEntity(chunkX, chunkY, tileX, tileY, entityType);
+    return updatedPassability && updatedEntity;
+}
+
+bool GameManager::eraseMapEditorSelectionAtPlayer()
+{
+    const int chunkX = map.getPlayerChunkX();
+    const int chunkY = map.getPlayerChunkY();
+    const int tileX = map.getPlayerTileX();
+    const int tileY = map.getPlayerTileY();
+
+    const bool removedEntity = map.removeEntityAtPosition(chunkX, chunkY, tileX, tileY);
+    map.setTilePassable(chunkX, chunkY, tileX, tileY, true);
+    return removedEntity;
 }
 
 void GameManager::startWildBattle()
