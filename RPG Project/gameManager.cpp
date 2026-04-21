@@ -5,8 +5,9 @@
 #include <vector>
 
 #include "item.h"
+#include "fodder.h"
 
-// helper functions for asset paths, map file discovery, and JSON parsing
+// tiny helpers for finding assets/save files no matter where app starts from
 namespace
 {
 std::filesystem::path resolveAssetPath(const std::string& fileName)
@@ -31,7 +32,7 @@ std::filesystem::path resolveAssetPath(const std::string& fileName)
     return cwd / fileName;
 }
 
-//checks a couple different places for the Maps directory
+// checks a couple places for Maps folder
 std::filesystem::path resolveMapsDirectory()
 {
     const std::filesystem::path cwd = std::filesystem::current_path();
@@ -54,7 +55,7 @@ std::filesystem::path resolveMapsDirectory()
 }
 
 
-// get all .json files
+// grab all json save files and keep them sorted
 std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& mapsDir)
 {
     std::vector<std::filesystem::path> files;
@@ -83,22 +84,22 @@ std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& maps
 }
 }
 
-// writes string to json
+// setup main game window and starting player object
 GameManager::GameManager()
     : window(sf::VideoMode(sf::Vector2u(WINDOW_WIDTH, WINDOW_HEIGHT)), "RPG Game"),
-      mapPlayer("Ash", 50, 8, 4, 3, 1000, 6, 7, 0, 100),
-      inventoryOpen(false)
+      mapPlayer("Ash", 50, 8, 4, 3, 1000, 6, 7, 0, 100)
 {
     window.setFramerateLimit(60);
 }
 
-// i forget what this is for
+// nothing special needed on destroy right now
 GameManager::~GameManager()
 {
 }
 
 bool GameManager::initialize()
 {
+    // try local font first then windows font fallback
     const std::vector<std::string> fontPaths = {
         "arial.ttf",
         "C:\\Windows\\Fonts\\arial.ttf"
@@ -128,11 +129,12 @@ void GameManager::run()
 {
     sf::Clock clock;
 
+    // main game loop runs til player closes window
     while (window.isOpen())
     {
         float deltaTime = clock.restart().asSeconds();
 
-        // Handle events
+        // handle window + keyboard events
         while (const auto event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -141,144 +143,7 @@ void GameManager::run()
             }
             else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
-                if (runPhase == RunPhase::SaveSelection)
-                {
-                    if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
-                    {
-                        window.close();
-                    }
-                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Up)
-                    {
-                        if (!availableSaveFiles.empty())
-                        {
-                            selectedSaveIndex = (selectedSaveIndex - 1 + static_cast<int>(availableSaveFiles.size())) %
-                                                static_cast<int>(availableSaveFiles.size());
-                        }
-                    }
-                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Down)
-                    {
-                        if (!availableSaveFiles.empty())
-                        {
-                            selectedSaveIndex = (selectedSaveIndex + 1) % static_cast<int>(availableSaveFiles.size());
-                        }
-                    }
-                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Enter)
-                    {
-                        if (loadSelectedSaveFile())
-                        {
-                            runPhase = RunPhase::Playing;
-                            showPopup("Loaded save: " + selectedSaveFile.filename().string(), 1.4f);
-                            saveSelectionMessage.clear();
-                        }
-                        else
-                        {
-                            saveSelectionMessage = "Failed to load selected save file.";
-                        }
-                    }
-                }
-                else if (runPhase == RunPhase::ConfirmExitSave)
-                {
-                    if (keyPressed->scancode == sf::Keyboard::Scancode::Y)
-                    {
-                        if (saveCurrentGameToSelectedFile())
-                        {
-                            window.close();
-                        }
-                        else
-                        {
-                            exitPromptMessage = "Save failed. Press N to quit without saving or Esc to return.";
-                        }
-                    }
-                    else if (keyPressed->scancode == sf::Keyboard::Scancode::N)
-                    {
-                        window.close();
-                    }
-                    else if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
-                    {
-                        runPhase = RunPhase::Playing;
-                        exitPromptMessage.clear();
-                    }
-                }
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
-                {
-                    if (inventoryOpen)
-                    {
-                        inventoryOpen = false;
-                        showPopup("Inventory closed", 0.9f);
-                    }
-                    else if (shopOpen)
-                    {
-                        shopOpen = false;
-                        showPopup("Shop closed", 0.9f);
-                    }
-                    else
-                    {
-                        runPhase = RunPhase::ConfirmExitSave;
-                        exitPromptMessage = "Save before exiting? Y = save and quit, N = quit, Esc = cancel";
-                    }
-                }
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::F5)
-                {
-                    if (saveCurrentGameToSelectedFile())
-                    {
-                        showPopup("Game saved", 0.9f);
-                    }
-                    else
-                    {
-                        showPopup("Save failed", 1.1f);
-                    }
-                }
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::E)
-                {
-                    inventoryOpen = !inventoryOpen;
-                    if (inventoryOpen)
-                    {
-                        selectedInventoryIndex = 0;
-                        showPopup("Inventory opened", 0.9f);
-                    }
-                    else
-                    {
-                        showPopup("Inventory closed", 0.9f);
-                    }
-                }
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::F)
-                {
-                    if (shopOpen)
-                    {
-                        shopOpen = false;
-                        showPopup("Shop closed", 0.9f);
-                    }
-                    else if (!inventoryOpen)
-                    {
-                        tryInteraction();
-                    }
-                }
-                else if (inventoryOpen && keyPressed->scancode == sf::Keyboard::Scancode::Up)
-                {
-                    if (selectedInventoryIndex > 0)
-                    {
-                        --selectedInventoryIndex;
-                    }
-                }
-                else if (inventoryOpen && keyPressed->scancode == sf::Keyboard::Scancode::Down)
-                {
-                    const auto items = getInventoryItemIds();
-                    if (!items.empty() && selectedInventoryIndex < static_cast<int>(items.size()) - 1)
-                    {
-                        ++selectedInventoryIndex;
-                    }
-                }
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::Enter)
-                {
-                    if (inventoryOpen)
-                    {
-                        equipSelectedInventoryItem();
-                    }
-                    else if (shopOpen)
-                    {
-                        tryBuyShopItem();
-                    }
-                }
+                handleKeyPressed(keyPressed->scancode);
             }
         }
 
@@ -286,22 +151,224 @@ void GameManager::run()
         {
             handleInput();
         }
+
+        // update timers and ui bits
         update(deltaTime);
 
-        // Render
+        // draw current frame
         window.clear(sf::Color::Black);
         render();
         window.display();
     }
 }
 
-void GameManager::handleInput()
+void GameManager::handleKeyPressed(sf::Keyboard::Scancode scancode)
 {
-    if (inventoryOpen || shopOpen)
+    // keep save select input isolated
+    if (runPhase == RunPhase::SaveSelection)
+    {
+        handleSaveSelectionInput(scancode);
+        return;
+    }
+
+    // keep exit confirm input isolated
+    if (runPhase == RunPhase::ConfirmExitSave)
+    {
+        handleExitConfirmInput(scancode);
+        return;
+    }
+
+    // normal gameplay keys
+    handlePlayingKeyInput(scancode);
+}
+
+//save file input handeling
+void GameManager::handleSaveSelectionInput(sf::Keyboard::Scancode scancode)
+{
+    if (scancode == sf::Keyboard::Scancode::Escape)
+    {
+        window.close();
+    }
+    else if (scancode == sf::Keyboard::Scancode::Up)
+    {
+        if (!availableSaveFiles.empty())
+        {
+            selectedSaveIndex = (selectedSaveIndex - 1 + static_cast<int>(availableSaveFiles.size())) %
+                                static_cast<int>(availableSaveFiles.size());
+        }
+    }
+    else if (scancode == sf::Keyboard::Scancode::Down)
+    {
+        if (!availableSaveFiles.empty())
+        {
+            selectedSaveIndex = (selectedSaveIndex + 1) % static_cast<int>(availableSaveFiles.size());
+        }
+    }
+    else if (scancode == sf::Keyboard::Scancode::Enter)
+    {
+        if (loadSelectedSaveFile())
+        {
+            runPhase = RunPhase::Playing;
+            showPopup("Loaded save: " + selectedSaveFile.filename().string(), 1.4f);
+            saveSelectionMessage.clear();
+        }
+        else
+        {
+            saveSelectionMessage = "Failed to load selected save file.";
+        }
+    }
+}
+
+void GameManager::handleExitConfirmInput(sf::Keyboard::Scancode scancode)
+{
+    if (scancode == sf::Keyboard::Scancode::Y)
+    {
+        if (saveCurrentGameToSelectedFile())
+        {
+            window.close();
+        }
+        else
+        {
+            exitPromptMessage = "Save failed. Press N to quit without saving or Esc to return.";
+        }
+    }
+    else if (scancode == sf::Keyboard::Scancode::N)
+    {
+        window.close();
+    }
+    else if (scancode == sf::Keyboard::Scancode::Escape)
+    {
+        runPhase = RunPhase::Playing;
+        exitPromptMessage.clear();
+    }
+}
+
+void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
+{
+    // while in battle, all key input goes to the battle overlay only
+    if (activeBattle)
+    {
+        activeBattle->handleKey(scancode);
+        return;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::Tab)
+    {
+        if (inventoryOpen || shopOpen)
+        {
+            showPopup("Close inventory/shop before editor mode", 1.4f);
+            return;
+        }
+
+        mapEditorEnabled = !mapEditorEnabled;
+        if (mapEditorEnabled)
+        {
+            showPopup("Map editor on | Brush: " + getEditorBrushName(), 1.6f);
+        }
+        else
+        {
+            showPopup("Map editor off", 1.0f);
+        }
+        return;
+    }
+
+    if (mapEditorEnabled && handleMapEditorKeyInput(scancode))
     {
         return;
     }
 
+    // escape closes ui first, if no ui open then ask to save/quit
+    if (scancode == sf::Keyboard::Scancode::Escape)
+    {
+        if (inventoryOpen)
+        {
+            inventoryOpen = false;
+            showPopup("Inventory closed", 0.9f);
+        }
+        else if (shopOpen)
+        {
+            shopOpen = false;
+            showPopup("Shop closed", 0.9f);
+        }
+        else
+        {
+            runPhase = RunPhase::ConfirmExitSave;
+            exitPromptMessage = "Save before exiting? Y = save and quit, N = quit, Esc = cancel";
+        }
+    }
+    else if (scancode == sf::Keyboard::Scancode::F5)
+    {
+        if (saveCurrentGameToSelectedFile())
+        {
+            showPopup("Game saved", 0.9f);
+        }
+        else
+        {
+            showPopup("Save failed", 1.1f);
+        }
+    }
+    else if (scancode == sf::Keyboard::Scancode::E)
+    {
+        inventoryOpen = !inventoryOpen;
+        if (inventoryOpen)
+        {
+            selectedInventoryIndex = 0;
+            showPopup("Inventory opened", 0.9f);
+        }
+        else
+        {
+            showPopup("Inventory closed", 0.9f);
+        }
+    }
+    else if (scancode == sf::Keyboard::Scancode::F)
+    {
+        if (shopOpen)
+        {
+            shopOpen = false;
+            showPopup("Shop closed", 0.9f);
+        }
+        else if (!inventoryOpen)
+        {
+            tryInteraction();
+        }
+    }
+    else if (inventoryOpen && scancode == sf::Keyboard::Scancode::Up)
+    {
+        if (selectedInventoryIndex > 0)
+        {
+            --selectedInventoryIndex;
+        }
+    }
+    else if (inventoryOpen && scancode == sf::Keyboard::Scancode::Down)
+    {
+        const auto items = getInventoryItemIds();
+        if (!items.empty() && selectedInventoryIndex < static_cast<int>(items.size()) - 1)
+        {
+            ++selectedInventoryIndex;
+        }
+    }
+    else if (scancode == sf::Keyboard::Scancode::Enter)
+    {
+        if (inventoryOpen)
+        {
+            equipSelectedInventoryItem();
+        }
+        else if (shopOpen)
+        {
+            tryBuyShopItem();
+        }
+    }
+}
+
+void GameManager::handleInput()
+{
+    // no movement while menus are up
+    if (inventoryOpen || shopOpen || activeBattle)
+    {
+        return;
+    }
+
+    // simple cooldown so movement doesn't spam
     timeSinceLastMove += 0.016f;
     
     if (timeSinceLastMove < MOVE_COOLDOWN)
@@ -338,10 +405,11 @@ void GameManager::handleInput()
         {
             timeSinceLastMove = 0.0f;
 
-            if (mapPlayer.diceRoll(8) == 1)
+            if (!mapEditorEnabled &&
+                map.isEnemySpawnTileAtPosition(map.getPlayerChunkX(), map.getPlayerChunkY(), map.getPlayerTileX(), map.getPlayerTileY()) &&
+                mapPlayer.diceRoll(8) == 1)
             {
-                fodder slime("Slime", 18, 3, 1, 1, 10, 4, 1);
-                enterBattle(slime, mapPlayer, itemRegistry, mapPlayer.getInventory(), true, true);
+                startWildBattle();
             }
         }
     }
@@ -349,6 +417,7 @@ void GameManager::handleInput()
 
 void GameManager::update(float deltaTime)
 {
+    // popup expires over time
     if (popupTimeRemaining > 0.0f)
     {
         popupTimeRemaining -= deltaTime;
@@ -358,10 +427,22 @@ void GameManager::update(float deltaTime)
             popupMessage.clear();
         }
     }
+
+    if (activeBattle && activeBattle->shouldClose())
+    {
+        showPopup(activeBattle->getEndMessage(), 1.4f);
+        activeBattle.reset();
+
+        if (musicReady && backgroundMusic.getStatus() != sf::SoundSource::Status::Playing)
+        {
+            backgroundMusic.play();
+        }
+    }
 }
 
 void GameManager::render()
 {
+    // each run phase has its own ui flow
     if (runPhase == RunPhase::SaveSelection)
     {
         renderSaveSelectionScreen();
@@ -378,16 +459,22 @@ void GameManager::render()
 
     renderMapViewport();
     renderClientViewport();
+    if (activeBattle)
+    {
+        renderBattleOverlay();
+    }
     renderPopup();
 }
 
 void GameManager::renderMapViewport()
 {
+    // top part of window is world view
     mapController.render(window, WINDOW_WIDTH, WINDOW_HEIGHT, MAP_VIEWPORT_HEIGHT_RATIO);
 }
 
 void GameManager::renderClientViewport()
 {
+    // bottom panel for controls/stats/inventory/shop
     const float panelTop = static_cast<float>(WINDOW_HEIGHT) * MAP_VIEWPORT_HEIGHT_RATIO;
     const float panelHeight = static_cast<float>(WINDOW_HEIGHT) - panelTop;
 
@@ -406,16 +493,20 @@ void GameManager::renderClientViewport()
         return;
     }
 
-    sf::Text controls(font,
-        "Move: WASD/Arrows  |  Interact: F  |  Inventory: E  |  Equip: Enter  |  Save: F5",
-        18);
+    const std::string controlsText =
+        mapEditorEnabled
+        ? "Editor: 1 Rock 2 Wall 3 Store 4 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
+        : "Move: WASD/Arrows | Interact: F | Inventory: E | Equip: Enter | Save: F5 | Editor: Tab";
+
+    sf::Text controls(font, controlsText, 18);
     controls.setFillColor(sf::Color(220, 228, 238));
     controls.setPosition({20.0f, panelTop + 10.0f});
     window.draw(controls);
 
     sf::Text status(font,
         "Gold: " + std::to_string(mapPlayer.getGold()) +
-        "   Equipped Item ID: " + std::to_string(mapPlayer.getEquippedItemID()),
+        "   Equipped Item ID: " + std::to_string(mapPlayer.getEquippedItemID()) +
+        (mapEditorEnabled ? ("   Editor Brush: " + getEditorBrushName()) : ""),
         18);
     status.setFillColor(sf::Color(200, 212, 226));
     status.setPosition({20.0f, panelTop + 38.0f});
@@ -434,6 +525,7 @@ void GameManager::renderClientViewport()
 
 void GameManager::renderSaveSelectionScreen()
 {
+    // full screen list of save files
     sf::RectangleShape bg({static_cast<float>(WINDOW_WIDTH), static_cast<float>(WINDOW_HEIGHT)});
     bg.setFillColor(sf::Color(17, 25, 35));
     window.draw(bg);
@@ -483,6 +575,7 @@ void GameManager::renderSaveSelectionScreen()
 
 void GameManager::renderExitPrompt()
 {
+    // modal overlay when player tries to quit
     if (font.getInfo().family.empty())
     {
         return;
@@ -518,6 +611,7 @@ void GameManager::renderExitPrompt()
 
 void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
 {
+    // inventory list with current selected item
     sf::RectangleShape invBg({620.0f, panelHeight - 24.0f});
     invBg.setPosition({16.0f, panelTop + 12.0f});
     invBg.setFillColor(sf::Color(12, 16, 24, 240));
@@ -566,6 +660,7 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
 
 void GameManager::renderShopPanel(float panelTop, float panelHeight)
 {
+    // simple shop panel shows first sellable item
     sf::RectangleShape shopBg({540.0f, panelHeight - 24.0f});
     shopBg.setPosition({WINDOW_WIDTH - 556.0f, panelTop + 12.0f});
     shopBg.setFillColor(sf::Color(24, 20, 14, 240));
@@ -605,6 +700,7 @@ void GameManager::renderShopPanel(float panelTop, float panelHeight)
 
 void GameManager::renderPopup()
 {
+    // short status popup near map area
     if (popupMessage.empty() || popupTimeRemaining <= 0.0f)
     {
         return;
@@ -633,6 +729,7 @@ void GameManager::renderPopup()
 
 void GameManager::tryInteraction()
 {
+    // check tile player is on first
     const int chunkX = map.getPlayerChunkX();
     const int chunkY = map.getPlayerChunkY();
     const int tileX = map.getPlayerTileX();
@@ -653,6 +750,7 @@ void GameManager::tryInteraction()
         return;
     }
 
+    // then check 4 tiles around player
     const int offsets[4][2] = {
         {0, -1},
         {0, 1},
@@ -684,12 +782,14 @@ void GameManager::tryInteraction()
 
 void GameManager::showPopup(const std::string& message, float seconds)
 {
+    // overwrites old popup with newest one
     popupMessage = message;
     popupTimeRemaining = seconds;
 }
 
 bool GameManager::initializeBackgroundMusic()
 {
+    // try load + loop bg music (not fatal if this fails)
     const std::filesystem::path songPath = resolveAssetPath("Main Menu.wav");
     if (!backgroundMusic.openFromFile(songPath.string()))
     {
@@ -707,6 +807,7 @@ bool GameManager::initializeBackgroundMusic()
 
 void GameManager::initializeMapGameplayState()
 {
+    // register base items used in map gameplay
     auto sword = std::make_shared<Item>(0, "Iron Sword", "Sword of Iron", 50, false);
     auto potion = std::make_shared<Item>(1, "Health Potion", "Potion of Health", 10, true);
     auto shield = std::make_shared<Item>(2, "Shield", "Blocks attacks", 100, false);
@@ -715,7 +816,6 @@ void GameManager::initializeMapGameplayState()
     itemRegistry.setItem(1, potion);
     itemRegistry.setItem(2, shield);
 
-    fod = std::make_unique<fodder>("zombie", 50, 3, 4, 3, 1000, 6, 7);
     mapShop = std::make_unique<store>("Map Shop", itemRegistry);
     shopNpc = std::make_unique<npc>("Shopkeeper", "A local merchant", 50, 8, 4, 3, 1000, 6, 7, false, 0);
     shopNpc->addItemToInventory(1, itemRegistry, 30);
@@ -723,6 +823,7 @@ void GameManager::initializeMapGameplayState()
 
 void GameManager::applyDefaultPlayerState()
 {
+    // fallback player state for new saves / missing player data
     mapPlayer.setHp(50);
     mapPlayer.setGold(100);
     mapPlayer.setXp(0);
@@ -735,6 +836,7 @@ void GameManager::applyDefaultPlayerState()
 
 OverworldMap::PlayerState GameManager::buildPlayerStateForSave()
 {
+    // copy runtime player + inventory into save struct
     OverworldMap::PlayerState state;
     state.hasData = true;
     state.hp = mapPlayer.getHp();
@@ -761,6 +863,7 @@ OverworldMap::PlayerState GameManager::buildPlayerStateForSave()
 
 void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
 {
+    // restore player basics + inventory from loaded file
     mapPlayer.setHp(state.hp);
     mapPlayer.setGold(state.gold);
     mapPlayer.setXp(state.xp);
@@ -782,6 +885,7 @@ void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
 
 bool GameManager::initializeMapFromSaveFile()
 {
+    // make sure maps dir exists, and at least one save exists
     const std::filesystem::path mapsDir = resolveMapsDirectory();
     std::error_code ec;
     std::filesystem::create_directories(mapsDir, ec);
@@ -814,6 +918,7 @@ bool GameManager::initializeMapFromSaveFile()
 
 bool GameManager::loadSelectedSaveFile()
 {
+    // load whichever file is highlighted in save list
     if (availableSaveFiles.empty())
     {
         return false;
@@ -825,6 +930,7 @@ bool GameManager::loadSelectedSaveFile()
 
 bool GameManager::loadSaveFile(const std::filesystem::path& path)
 {
+    // load map file and apply embedded player state if present
     if (!map.loadFromFile(path.string()))
     {
         return false;
@@ -846,6 +952,7 @@ bool GameManager::loadSaveFile(const std::filesystem::path& path)
 
 bool GameManager::saveCurrentGameToSelectedFile()
 {
+    // write latest player state back into selected map file
     if (selectedSaveFile.empty())
     {
         return false;
@@ -857,6 +964,7 @@ bool GameManager::saveCurrentGameToSelectedFile()
 
 std::vector<int> GameManager::getInventoryItemIds()
 {
+    // flattened list of inventory item ids with quantity > 0
     std::vector<int> ids;
     InventoryNode* current = mapPlayer.getInventory().getHead();
     while (current != nullptr)
@@ -872,6 +980,7 @@ std::vector<int> GameManager::getInventoryItemIds()
 
 bool GameManager::getShopListing(int& itemId, std::string& itemName, int& itemPrice) const
 {
+    // pull first available shop item from npc inventory
     itemId = -1;
     itemName.clear();
     itemPrice = 0;
@@ -899,6 +1008,7 @@ bool GameManager::getShopListing(int& itemId, std::string& itemName, int& itemPr
 
 void GameManager::equipSelectedInventoryItem()
 {
+    // equip currently highlighted inventory entry
     const auto itemIds = getInventoryItemIds();
     if (itemIds.empty() || selectedInventoryIndex < 0 || selectedInventoryIndex >= static_cast<int>(itemIds.size()))
     {
@@ -920,6 +1030,7 @@ void GameManager::equipSelectedInventoryItem()
 
 void GameManager::tryBuyShopItem()
 {
+    // basic buy flow: checks, then purchase
     if (!mapShop || !shopNpc)
     {
         showPopup("Shop unavailable", 1.2f);
@@ -943,4 +1054,149 @@ void GameManager::tryBuyShopItem()
 
     mapShop->buySomething(mapPlayer, *shopNpc, shopItemId, 1);
     showPopup("Bought " + shopItemName, 1.2f);
+}
+
+bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
+{
+    if (!mapEditorEnabled)
+    {
+        return false;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::Num1)
+    {
+        activeEditorBrush = EditorBrush::Rock;
+        showPopup("Brush: Rock", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num2)
+    {
+        activeEditorBrush = EditorBrush::Wall;
+        showPopup("Brush: Wall", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num3)
+    {
+        activeEditorBrush = EditorBrush::Store;
+        showPopup("Brush: Store", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num4)
+    {
+        activeEditorBrush = EditorBrush::Npc;
+        showPopup("Brush: NPC", 0.9f);
+        return true;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::F)
+    {
+        if (applyMapEditorBrushAtPlayer())
+        {
+            showPopup("Placed " + getEditorBrushName(), 1.0f);
+        }
+        else
+        {
+            showPopup("Could not place object", 1.0f);
+        }
+        return true;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::R ||
+        scancode == sf::Keyboard::Scancode::Delete ||
+        scancode == sf::Keyboard::Scancode::Backspace)
+    {
+        if (eraseMapEditorSelectionAtPlayer())
+        {
+            showPopup("Tile cleared", 0.9f);
+        }
+        else
+        {
+            showPopup("Nothing to clear", 0.9f);
+        }
+        return true;
+    }
+
+    if (scancode == sf::Keyboard::Scancode::F6)
+    {
+        if (saveCurrentGameToSelectedFile())
+        {
+            showPopup("Map saved", 0.9f);
+        }
+        else
+        {
+            showPopup("Map save failed", 1.1f);
+        }
+        return true;
+    }
+
+    return false;
+}
+
+std::string GameManager::getEditorBrushName() const
+{
+    switch (activeEditorBrush)
+    {
+    case EditorBrush::Rock:
+        return "rock";
+    case EditorBrush::Wall:
+        return "wall";
+    case EditorBrush::Store:
+        return "store";
+    case EditorBrush::Npc:
+        return "npc";
+    default:
+        return "rock";
+    }
+}
+
+bool GameManager::applyMapEditorBrushAtPlayer()
+{
+    const int chunkX = map.getPlayerChunkX();
+    const int chunkY = map.getPlayerChunkY();
+    const int tileX = map.getPlayerTileX();
+    const int tileY = map.getPlayerTileY();
+
+    const std::string entityType = getEditorBrushName();
+    const bool updatedPassability = map.setTilePassable(chunkX, chunkY, tileX, tileY, false);
+    const bool updatedEntity = map.placeOrReplaceEntity(chunkX, chunkY, tileX, tileY, entityType);
+    return updatedPassability && updatedEntity;
+}
+
+bool GameManager::eraseMapEditorSelectionAtPlayer()
+{
+    const int chunkX = map.getPlayerChunkX();
+    const int chunkY = map.getPlayerChunkY();
+    const int tileX = map.getPlayerTileX();
+    const int tileY = map.getPlayerTileY();
+
+    const bool removedEntity = map.removeEntityAtPosition(chunkX, chunkY, tileX, tileY);
+    map.setTilePassable(chunkX, chunkY, tileX, tileY, true);
+    return removedEntity;
+}
+
+void GameManager::startWildBattle()
+{
+    if (activeBattle)
+    {
+        return;
+    }
+
+    auto enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 10, 4, 1);
+    activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
+
+    // stop map music during battle so tracks do not stack
+    if (musicReady && backgroundMusic.getStatus() == sf::SoundSource::Status::Playing)
+    {
+        backgroundMusic.stop();
+    }
+}
+
+void GameManager::renderBattleOverlay()
+{
+    if (!activeBattle || font.getInfo().family.empty())
+    {
+        return;
+    }
+
+    activeBattle->render(window, font);
 }

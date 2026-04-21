@@ -23,6 +23,14 @@ public:
         std::string type; // "npc" or "enemy"
     };
 
+    struct EnemySpawnTile
+    {
+        int chunkX = 0;
+        int chunkY = 0;
+        int tileX = 0;
+        int tileY = 0;
+    };
+
     struct PlayerInventoryEntry
     {
         int id = -1;
@@ -48,6 +56,7 @@ public:
     OverworldMap();
 
     [[nodiscard]] const Tile& getTile(int chunkX, int chunkY, int tileX, int tileY) const;
+    bool setTilePassable(int chunkX, int chunkY, int tileX, int tileY, bool passable);
 
     bool tryMovePlayer(int dx, int dy);
 
@@ -56,12 +65,15 @@ public:
     bool loadFromFile(const std::string& filePath);
 
     void addEntity(int id, int chunkX, int chunkY, int tileX, int tileY, const std::string& type);
-    [[nodiscard]] int checkEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
+    bool placeOrReplaceEntity(int chunkX, int chunkY, int tileX, int tileY, const std::string& type);
+    bool removeEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY);
     [[nodiscard]] const MapEntity* getEntityAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
     [[nodiscard]] const std::vector<MapEntity>& getEntities() const;
 
+    void addEnemySpawnTile(int chunkX, int chunkY, int tileX, int tileY);
+    [[nodiscard]] bool isEnemySpawnTileAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
+
     void setPlayerState(const PlayerState& playerState);
-    void clearPlayerState();
     [[nodiscard]] const PlayerState* getPlayerState() const;
 
     [[nodiscard]] int getPlayerChunkX() const;
@@ -79,6 +91,7 @@ private:
 
     WorldChunks m_chunks{};
     std::vector<MapEntity> m_entities;
+    std::vector<EnemySpawnTile> m_enemySpawnTiles;
     PlayerState m_playerState;
 
     int m_playerChunkX = 0;

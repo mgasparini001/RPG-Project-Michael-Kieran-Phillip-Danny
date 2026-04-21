@@ -8,9 +8,7 @@
 #include "ItemRegistry.h"
 #include "Store.h"
 #include "npc.h"
-#include "fodder.h"
 #include "battle.h"
-#include "inventory.h"
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -22,7 +20,6 @@ class GameManager
 public:
     static constexpr int WINDOW_WIDTH = 1440;
     static constexpr int WINDOW_HEIGHT = 960;
-    static constexpr int TILE_SIZE = 32;
     static constexpr float MAP_VIEWPORT_HEIGHT_RATIO = 0.82f;
 
     GameManager();
@@ -34,15 +31,20 @@ public:
     // Main game loop
     void run();
 
-    // Get the main window
-    sf::RenderWindow& getWindow() { return window; }
-
 private:
     enum class RunPhase
     {
         SaveSelection,
         Playing,
         ConfirmExitSave
+    };
+
+    enum class EditorBrush
+    {
+        Rock,
+        Wall,
+        Store,
+        Npc
     };
 
     // Window and rendering
@@ -55,7 +57,6 @@ private:
     MapController mapController;
     player mapPlayer;
     ItemRegistry itemRegistry;
-    std::unique_ptr<fodder> fod;
     std::unique_ptr<store> mapShop;
     std::unique_ptr<npc> shopNpc;
 
@@ -70,6 +71,8 @@ private:
     bool inventoryOpen = false;
     bool shopOpen = false;
     int selectedInventoryIndex = 0;
+    bool mapEditorEnabled = false;
+    EditorBrush activeEditorBrush = EditorBrush::Rock;
 
     RunPhase runPhase = RunPhase::SaveSelection;
     std::vector<std::filesystem::path> availableSaveFiles;
@@ -80,7 +83,7 @@ private:
 
     bool musicReady = false;
 
-    static constexpr int SHOP_NPC_ID = 900;
+    std::unique_ptr<BattleEncounter> activeBattle;
 
     // Helper methods
     void renderMapViewport();
@@ -105,6 +108,16 @@ private:
     void equipSelectedInventoryItem();
     bool getShopListing(int& itemId, std::string& itemName, int& itemPrice) const;
     void tryBuyShopItem();
+    void handleKeyPressed(sf::Keyboard::Scancode scancode);
+    void handleSaveSelectionInput(sf::Keyboard::Scancode scancode);
+    void handleExitConfirmInput(sf::Keyboard::Scancode scancode);
+    void handlePlayingKeyInput(sf::Keyboard::Scancode scancode);
+    bool handleMapEditorKeyInput(sf::Keyboard::Scancode scancode);
+    std::string getEditorBrushName() const;
+    bool applyMapEditorBrushAtPlayer();
+    bool eraseMapEditorSelectionAtPlayer();
+    void startWildBattle();
+    void renderBattleOverlay();
     void handleInput();
     void update(float deltaTime);
     void render();

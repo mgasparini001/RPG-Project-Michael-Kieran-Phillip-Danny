@@ -1,5 +1,4 @@
 #include "MapController.h"
-#include <cmath>
 
 void MapController::initialize(OverworldMap* mapPtr)
 {
