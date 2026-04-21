@@ -12,9 +12,6 @@
 #include <sstream>
 using namespace std;
 
-//forward declare
-void refreshScreen();
-
 
 //copy pasted fix from client.cpp since the music and everything needs to be reloaded
 
@@ -96,6 +93,24 @@ BattleEncounter::BattleEncounter(std::unique_ptr<enemy> enemy,
 	    ? ("A wild " + m_enemy->getName() + " appears!")
 	    : (m_enemy->getName() + " challenges you to a duel!");
 	m_promptMessage = "Press Enter to start battle";
+
+	// load sound effects
+	const std::filesystem::path attackPath = resolveBattleAssetPath("Attack.wav");
+	const std::filesystem::path restPath = resolveBattleAssetPath("eppy.wav");
+	const std::filesystem::path fleePath = resolveBattleAssetPath("Scream.wav");
+
+	if (m_attackBuffer.loadFromFile(attackPath.string()))
+	{
+		m_attackSound = std::make_unique<sf::Sound>(m_attackBuffer);
+	}
+	if (m_restBuffer.loadFromFile(restPath.string()))
+	{
+		m_restSound = std::make_unique<sf::Sound>(m_restBuffer);
+	}
+	if (m_fleeBuffer.loadFromFile(fleePath.string()))
+	{
+		m_fleeSound = std::make_unique<sf::Sound>(m_fleeBuffer);
+	}
 }
 
 void BattleEncounter::handleKey(sf::Keyboard::Scancode scancode)
@@ -289,6 +304,10 @@ void BattleEncounter::resolvePlayerAttack(bool meleeAttack)
 	}
 	else
 	{
+		if (m_attackSound)
+		{
+			m_attackSound->play();
+		}
 		m_statusMessage = "You hit " + m_enemy->getName() + " for " +
 		                  std::to_string(std::max(0, enemyHpBefore - enemyHpAfter)) + " damage";
 	}
@@ -315,6 +334,10 @@ void BattleEncounter::resolvePlayerAttack(bool meleeAttack)
 void BattleEncounter::resolvePlayerRest()
 {
 	m_player.rest();
+	if (m_restSound)
+	{
+		m_restSound->play();
+	}
 	m_statusMessage = m_player.getName() + " rests and restores some stamina";
 
 	if (m_enemy && m_enemy->getHp() > 0)
@@ -340,6 +363,10 @@ void BattleEncounter::resolvePlayerRunAttempt()
 	else
 	{
 		const bool escaped = m_player.flee();
+		if (m_fleeSound)
+		{
+			m_fleeSound->play();
+		}
 		m_statusMessage = escaped ? "You successfully escaped" : "You failed to escape";
 		if (escaped)
 		{
@@ -417,6 +444,10 @@ void BattleEncounter::resolveEnemyTurn()
 		const int hpBefore = m_player.getHp();
 		if (m_enemy->attack(m_player, true))
 		{
+			if (m_attackSound)
+			{
+				m_attackSound->play();
+			}
 			m_statusMessage += "\n" + m_enemy->getName() + " hits you for " +
 			                   std::to_string(std::max(0, hpBefore - m_player.getHp())) + " damage";
 		}
@@ -428,12 +459,20 @@ void BattleEncounter::resolveEnemyTurn()
 	else if (eRoll <= 7)
 	{
 		m_enemy->rest();
+		if (m_restSound)
+		{
+			m_restSound->play();
+		}
 		m_statusMessage += "\n" + m_enemy->getName() + " rests and restores stamina";
 	}
 	else if (eRoll <= 9 && m_healRuns <= 3)
 	{
 		m_enemy->heal();
 		++m_healRuns;
+		if (m_restSound)
+		{
+			m_restSound->play();
+		}
 		m_statusMessage += "\n" + m_enemy->getName() + " rests and restores health";
 	}
 	else
@@ -441,6 +480,10 @@ void BattleEncounter::resolveEnemyTurn()
 		const bool escaped = m_enemy->flee();
 		if (escaped)
 		{
+			if (m_fleeSound)
+			{
+				m_fleeSound->play();
+			}
 			finishBattle(m_enemy->getName() + " ran away");
 		}
 		m_statusMessage += escaped
@@ -521,252 +564,4 @@ std::string BattleEncounter::buildOverlayText() const
 	}
 
 	return out.str();
-}
-
-
-void enterBattle(enemy& enemy, player& p1, ItemRegistry& registry, Inventory& inv, bool canRun, bool isWild) {
-	const auto attackPath = resolveBattleAssetPath("Attack.wav");
-	const auto restPath = resolveBattleAssetPath("eppy.wav");
-	const auto fleePath = resolveBattleAssetPath("Scream.wav");
-	const auto encounterPath = resolveBattleAssetPath("Encounter.wav");
-	const auto menuPath = resolveBattleAssetPath("Main Menu.wav");
-
-	sf::SoundBuffer buff1;
-	sf::SoundBuffer buff2;
-	sf::SoundBuffer buff3;
-	if (!buff1.loadFromFile(attackPath.string()) ||
-		!buff2.loadFromFile(restPath.string()) ||
-		!buff3.loadFromFile(fleePath.string()))
-	{
-		std::cerr << "Battle audio failed to load from the expected asset paths." << std::endl;
-		std::cerr << "Attack: " << attackPath << std::endl;
-		std::cerr << "Rest: " << restPath << std::endl;
-		std::cerr << "Flee: " << fleePath << std::endl;
-		return;
-	}
-	sf::Sound sound1(buff1);
-	sf::Sound sound2(buff2);
-	sf::Sound sound3(buff3);
-	bool hasRun = false;
-	sf::Music encounter;
-	if (!encounter.openFromFile(encounterPath.string()))
-	{
-		std::cerr << "Battle encounter music failed to load from " << encounterPath << std::endl;
-		return;
-	}
-	encounter.setLooping(true);
-	encounter.setVolume(50.f);
-	encounter.play();
-	refreshScreen();
-	cout << "\nentered battle...\n\n";
-	if (isWild)
-	{
-		cout << "A wild " << enemy.getName() << " appears!" << endl;
-	}
-	else
-	{
-		cout << enemy.getName() << " challenges you to a duel!" << endl;
-	}
-	
-	string anything = "";
-	cout << "Press enter to proceed\n";
-	std::cin.clear();
-	std::cin.ignore(1000, '\n');
-	std::cin.get();
-	encounter.stop();
-
-	refreshScreen();
-
-	sf::Music Music;
-	if (!Music.openFromFile(menuPath.string()))
-	{
-		std::cerr << "Battle menu music failed to load from " << menuPath << std::endl;
-		return;
-	}
-	Music.setVolume(50.f);
-	Music.setLooping(true);
-
-	Music.play();
-
-	int choice;
-	int healRuns = 1;
-
-	// Gameplay loop 
-	do
-	{
-		cout << buildBattleDisplayText(enemy, p1, registry);
-		bool valid = false;
-		while (!valid)
-		{
-			string test = getValidInput();
-			if (test != "fail")
-			{
-				choice = stoi(test);
-				if (choice < 1 || choice > 4)
-				{
-					cout << "Invalid input. Please enter one of the numbers on screen" << endl;
-				}
-				else
-				{
-					valid = true;
-				}
-			}
-		}
-
-	switch (choice)
-		{
-			//case where the player decides to attack
-		case 1:
-		{
-			int choice;
-			cout << "\n1. Melee Attack (Costs 100 stamina)" << endl;
-			cout << "2. Ranged Attack (Costs 50 stamina)" << endl;
-			bool valid = false;
-			while (!valid)
-			{
-				string test = getValidInput();
-				if (test != "fail")
-				{
-					choice = stoi(test);
-					if (choice < 1 || choice > 2)
-					{
-						cout << "Invalid input. Please enter one of the numbers on screen" << endl;
-					}
-					else
-					{
-						valid = true;
-					}
-				}
-			}
-			if (choice == 1)
-			{
-				if (p1.attack(enemy, true))
-				{
-					sound1.play();
-				}
-			}
-			else
-			{
-				if (p1.attack(enemy, false))
-				{
-					sound1.play();
-				}
-			}
-			cout << "Press enter to proceed\n";
-			std::cin.ignore();
-			std::cin.get();
-			refreshScreen();
-			sound1.stop();
-			break;
-		}
-		//case where the player decides to rest
-		case 2:
-		{
-			cout << p1.getName() << " rests and restores some stamina!" << endl;
-			p1.rest();
-			sound2.play();
-			cout << "Press enter to proceed\n";
-			std::cin.ignore();
-			std::cin.get();
-			sound2.stop();
-			refreshScreen();
-			break;
-		}
-		//case where the player tries to run away
-		case 3:
-		{
-			if (canRun)
-			{
-				bool check = p1.flee();
-				if (check)
-				{
-					hasRun = true;
-				}
-				sound3.play();
-				cout << "Enter anything to proceed\n";
-				std::cin.ignore();
-				std::cin.get();
-				sound3.stop();
-				refreshScreen();
-				break;
-			}
-			else
-			{
-				cout << "You can't run from a fight like this!\n";
-				cout << "Enter anything to proceed\n";
-				std::cin.ignore();
-				std::cin.get();
-				refreshScreen();
-				break;
-			}
-		}
-		//case where player uses an item (WIP-still need to make item stats and implement that to equip/attack method)
-		case 4:
-		{
-			inv.manageInventory(p1, registry, true);
-			break;
-		}
-		}
-		cout << buildBattleDisplayText(enemy, p1, registry);
-		
-		if (enemy.getHp() > 0 && !hasRun)
-		{
-			// Enemy Action Engine:
-			//int healRuns = 0;
-			int eRoll = enemy.diceRoll(10);
-			//case where the enemy attacks
-			if (eRoll <= 5)
-			{
-				if (enemy.attack(p1, true))
-				{
-					sound1.play();
-				}
-				cout << "Enter anything to proceed\n";
-				cin >> anything;
-				refreshScreen();
-			}
-			//case where the enemy tries to rest
-			else if (eRoll <= 7)
-			{
-				cout << enemy.getName() << " rests and restores some stamina!" << endl;
-				enemy.rest();
-				sound2.play();
-				cout << "Enter anything to proceed\n";
-				cin >> anything;
-				sound2.stop();
-				refreshScreen();
-			}
-			// enemy heals case
-			else if (eRoll <= 9 && healRuns <= 3)
-			{
-				cout << enemy.getName() << " rests and restores some health!" << endl;
-				enemy.heal();
-				sound2.play();
-				cout << "Enter anything to proceed\n";
-				cin >> anything;
-				sound2.stop();
-				refreshScreen();
-				healRuns++;
-			}
-			// case where enemy attempts to flee
-			else {
-				bool check = enemy.flee();
-				if (check)
-				{
-					hasRun = true;
-				}
-				sound3.play();
-				cout << "Enter anything to proceed";
-				cin >> anything;
-				sound3.stop();
-				refreshScreen();
-			}
-		}
-		// ends once a party dies or escapes
-	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
-
-	refreshScreen();
-
-	Music.stop();
-
 }

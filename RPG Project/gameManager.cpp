@@ -433,6 +433,11 @@ void GameManager::update(float deltaTime)
         showPopup(activeBattle->getEndMessage(), 1.4f);
         activeBattle.reset();
 
+        // stop battle music and resume background music
+        if (battleMusic.getStatus() == sf::SoundSource::Status::Playing)
+        {
+            battleMusic.stop();
+        }
         if (musicReady && backgroundMusic.getStatus() != sf::SoundSource::Status::Playing)
         {
             backgroundMusic.play();
@@ -801,6 +806,19 @@ bool GameManager::initializeBackgroundMusic()
     backgroundMusic.setLooping(true);
     backgroundMusic.setVolume(40.0f);
     backgroundMusic.play();
+
+    // load battle music (also not fatal)
+    const std::filesystem::path battleMusicPath = resolveAssetPath("Encounter.wav");
+    if (!battleMusic.openFromFile(battleMusicPath.string()))
+    {
+        std::cerr << "Warning: failed to load battle music from " << battleMusicPath << std::endl;
+    }
+    else
+    {
+        battleMusic.setLooping(true);
+        battleMusic.setVolume(40.0f);
+    }
+
     musicReady = true;
     return true;
 }
@@ -1184,10 +1202,14 @@ void GameManager::startWildBattle()
     auto enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 10, 4, 1);
     activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
 
-    // stop map music during battle so tracks do not stack
-    if (musicReady && backgroundMusic.getStatus() == sf::SoundSource::Status::Playing)
+    // stop map music and start battle music
+    if (backgroundMusic.getStatus() == sf::SoundSource::Status::Playing)
     {
         backgroundMusic.stop();
+    }
+    if (battleMusic.getStatus() != sf::SoundSource::Status::Playing)
+    {
+        battleMusic.play();
     }
 }
 

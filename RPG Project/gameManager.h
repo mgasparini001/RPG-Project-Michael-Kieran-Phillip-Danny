@@ -51,6 +51,7 @@ private:
     sf::RenderWindow window;
     sf::Font font;
     sf::Music backgroundMusic;
+    sf::Music battleMusic;
 
     // Game state
     OverworldMap map;
