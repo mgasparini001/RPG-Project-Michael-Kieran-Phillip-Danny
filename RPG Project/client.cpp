@@ -96,13 +96,22 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			cout << "\aitems:\n";
 			registry.printRegistry();
 
-			int itemID, quantity;
+			int itemID, quantity, dmg, armor, AP, HP, Stamina;
 			cout << "enter item ID: ";
 			cin >> itemID;
 			cout << "enter quantity: ";
 			cin >> quantity;
-
-			p1.addItemToInventory(itemID, quantity);
+			cout << "enter item damage amount: ";
+			cin >> dmg;
+			cout << "enter item armor amount: ";
+			cin >> armor;
+			cout << "enter item armor penetration (strength) amount: ";
+			cin >> AP;
+			cout << "enter item health buff amount: ";
+			cin >> HP;
+			cout << "enter item stamina buff amount: ";
+			cin >> Stamina;
+			p1.addItemToInventory(itemID, dmg, armor, AP, HP, Stamina, quantity);
 			cout << "Added " << quantity << " of " << registry.getItemName(itemID) << "!\n";
 			cout << "press enter";
 			cin.ignore();
@@ -381,10 +390,10 @@ int main(){
 	itemRegistry.setItemName(3, "Shield");
 	
 	// add some items to the player for testing
-	p1.addItemToInventory(0, 1);  // 1 sword
-	p1.addItemToInventory(1, 5);  // 5 health potions
-	p1.addItemToInventory(2, 50); // 50 gold
-	p1.addItemToInventory(3, 1); // 1 shield
+	p1.addItemToInventory(0, 5, 0, 2, 0, 0, 1);  // 1 sword
+	p1.addItemToInventory(1, 0, 0, 0, 10, 0, 5);  // 5 health potions
+	p1.addItemToInventory(2, 0, 0, 0, 0, 0, 50); // 50 gold
+	p1.addItemToInventory(3, 0, 7, 0, 0, 0, 1); // 1 shield
 	//setting dice seed
 	srand(static_cast<unsigned int>(time(0)));
 	//test commit

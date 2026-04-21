@@ -10,7 +10,7 @@ Inventory::~Inventory()
     clear();
 }
 
-void Inventory::addItem(int itemID, int quantity)
+void Inventory::addItem(int itemID, int Dmg, int Armor, int ap, int sp, int hp, int quantity)
 {
     // check for existing item
     InventoryNode* current = head;
@@ -25,7 +25,7 @@ void Inventory::addItem(int itemID, int quantity)
     }
 
     // item not found, create new one
-    InventoryNode* newNode = new InventoryNode(itemID, quantity);
+    InventoryNode* newNode = new InventoryNode(itemID, Dmg, Armor, ap, sp, hp, quantity);
 
     if (head == nullptr)
     {

@@ -71,7 +71,7 @@ public:
 
     // Inventory management
     Inventory& getInventory();
-    void addItemToInventory(int itemID, int quantity = 1);
+    void addItemToInventory(int itemID, int Dmg, int Armor, int ap, int sp, int hp, int quantity = 1);
     bool removeItemFromInventory(int itemID, ItemRegistry registry, player &p, int quantity = 1);
     int getItemQuantity(int itemID) const;
     bool hasItem(int itemID) const;
@@ -80,6 +80,7 @@ public:
     bool getHasItemEquipped();
     void unequipItem(ItemRegistry& registry);
     bool equipItem(int equippedItemID, ItemRegistry &registry);
+    void consumeItem(int itemID, ItemRegistry& registry);
     int getEquippedItemID();
     //bool hasItemEquipped(bool isEquipped);
    

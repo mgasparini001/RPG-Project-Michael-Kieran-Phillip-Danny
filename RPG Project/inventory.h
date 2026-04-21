@@ -20,8 +20,8 @@ struct InventoryNode
     int HP;
     int stamina;
     
-    InventoryNode(int id, int qty = 1, int Dmg, int Armor, int ap, int hp, int sp)
-        : itemID(id), quantity(qty), next(nullptr), prev(nullptr), isEquipped(false), dmg(Dmg), armor(Armor), AP(ap), HP(hp), stamina(sp) {
+    InventoryNode(int id, int Dmg, int Armor, int ap, int hp, int sp, int qty = 1)
+        : itemID(id), next(nullptr), prev(nullptr), isEquipped(false), dmg(Dmg), armor(Armor), AP(ap), HP(hp), stamina(sp), quantity(qty) {
     }
 };
 
@@ -40,7 +40,7 @@ public:
     ~Inventory();
 
     // add or increase
-    void addItem(int itemID, int quantity = 1);
+    void addItem(int itemID, int Dmg, int Armor, int ap, int sp, int hp, int quantity);
 
     // remove or decrease
     bool removeItem(int itemID, ItemRegistry registry, player &p, int quantity = 1);
