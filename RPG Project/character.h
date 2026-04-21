@@ -8,6 +8,7 @@
 struct InventoryNode;
 class ItemRegistry;
 class player;
+class item;
 
 // Base Character class
 class Character
@@ -20,9 +21,9 @@ protected:
     int AP; 
     int Dmg;
     int Stamina;
-
+    InventoryNode* equippedItem = nullptr;
     bool hasItemEquipped;
-    
+    int equippedItemID;
 
     std::string Name;
     Inventory inventory;

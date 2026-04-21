@@ -24,4 +24,9 @@ public:
 
     // check if player can consume
     bool isConsumable() const;
+
+   
+
+
+
 };

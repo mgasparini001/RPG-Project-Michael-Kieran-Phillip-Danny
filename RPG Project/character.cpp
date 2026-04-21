@@ -27,14 +27,15 @@ int Character::getArmor() {
 }
 //input: Address of character object and boolean represnting attack type, Output: void, does an attack
 void Character::attack(Character& target, bool attackType){
+    
     // attackType
     if (attackType) {
-        if (Stamina > 100) {
+        if (Stamina + equippedItem->stamina > 100) {
             Stamina -= 100;
             //melee attack
-            if (diceRoll(Melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
+            if (diceRoll(Melee) + AP + equippedItem->AP > +target.getArmor() + target.equippedItem->armor) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
                 attackMessage(target);
-                target.takeDamage(diceRoll(Melee) + Dmg);
+                target.takeDamage(diceRoll(Melee) + Dmg + equippedItem->dmg);
             }
             else
             {
@@ -177,8 +178,36 @@ void Character::unequipItem(ItemRegistry& registry)
         //std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
         current = current->next;
     }
+    if (current != nullptr && hasItemEquipped == true)
+    {
+        current->isEquipped = false;
+        equippedItem = nullptr;
+        hasItemEquipped = false;
+        equippedItemID = NULL;
+        if (current->AP != NULL)
+        {
+            AP -= current->AP;
+        }
+        if (current->dmg != NULL)
+        {
+            Dmg -= current->dmg;
+        }
+        if (current->armor != NULL)
+        {
+            Armor -= current->armor;
+        }
+        if (current->HP != NULL)
+        {
+            HP -= current->HP;
+        }
+        if (current->stamina != NULL)
+        {
+            Stamina -= current->stamina;
+        }
+    }
+    
     //unequip
-    if (current->itemID == 0)
+  /*  if (current->itemID == 0)
     {
         current->isEquipped = false;
         hasItemEquipped = false;
@@ -204,7 +233,7 @@ void Character::unequipItem(ItemRegistry& registry)
         current->isEquipped = false;
         hasItemEquipped = false;
         Armor -= 2;
-    }
+    }*/
 }
 bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
 {
@@ -225,40 +254,66 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
     {
         unequipItem(registry);
     }
-   
-
-    if (!hasItemEquipped && current->itemID == 0) {
-
-        //attach equipped item to a var or node******
-        current->isEquipped = true;
-        hasItemEquipped = true;
-        AP += 3;
-    }
-
-    else if (!hasItemEquipped && current->itemID == 1)
+    if (current != nullptr)
     {
-       // current->itemID = equippedItemID;
+        //equippedItem = current;
         current->isEquipped = true;
         hasItemEquipped = true;
-
+        if (current->AP != NULL)
+        {
+            AP += current->AP;
+        }
+        if (current->dmg != NULL)
+        {
+            Dmg += current->dmg;
+        }
+        if (current->armor != NULL)
+        {
+            Armor += current->armor;
+        }
+        if (current->HP != NULL)
+        {
+            HP += current->HP;
+        }
+        if (current->stamina != NULL)
+        {
+            Stamina += current->stamina;
+        }
     }
+    
 
-    else if (!hasItemEquipped && current->itemID == 2)
-    {
-       // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+    //if (!hasItemEquipped && current->itemID == 0) {
 
-    }
+    //    //attach equipped item to a var or node******
+    //    current->isEquipped = true;
+    //    hasItemEquipped = true;
+    //    AP += 3;
+    //}
 
-    else if (!hasItemEquipped && current->itemID == 3)
-    {
-       // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
-        Armor += 2;
+    //else if (!hasItemEquipped && current->itemID == 1)
+    //{
+    //   // current->itemID = equippedItemID;
+    //    current->isEquipped = true;
+    //    hasItemEquipped = true;
 
-    }
+    //}
+
+    //else if (!hasItemEquipped && current->itemID == 2)
+    //{
+    //   // current->itemID = equippedItemID;
+    //    current->isEquipped = true;
+    //    hasItemEquipped = true;
+
+    //}
+
+    //else if (!hasItemEquipped && current->itemID == 3)
+    //{
+    //   // current->itemID = equippedItemID;
+    //    current->isEquipped = true;
+    //    hasItemEquipped = true;
+    //    Armor += 2;
+
+    //}
     return true;
    
 }

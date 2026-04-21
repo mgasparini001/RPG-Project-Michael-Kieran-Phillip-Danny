@@ -145,5 +145,69 @@ InventoryNode* Inventory::getHead() {
     return head;
 }
 
+int Inventory::getDmg(int itemID)
+{
+    InventoryNode* current = head;
+
+    while (current != nullptr)
+    {
+        if (current->itemID == itemID)
+            return current->quantity;
+        current = current->next;
+    }
+    return current->dmg;
+}
+
+int Inventory::getArmor(int itemID)
+{
+    InventoryNode* current = head;
+
+    while (current != nullptr)
+    {
+        if (current->itemID == itemID)
+            return current->quantity;
+        current = current->next;
+    }
+    return current->armor;
+}
+
+int Inventory::getAP(int itemID)
+{
+    InventoryNode* current = head;
+
+    while (current != nullptr)
+    {
+        if (current->itemID == itemID)
+            return current->quantity;
+        current = current->next;
+    }
+    return current->AP;
+}
+
+int Inventory::getHP(int itemID)
+{
+    InventoryNode* current = head;
+
+    while (current != nullptr)
+    {
+        if (current->itemID == itemID)
+            return current->quantity;
+        current = current->next;
+    }
+    return current->HP;
+}
+
+int Inventory::getStamina(int itemID)
+{
+    InventoryNode* current = head;
+
+    while (current != nullptr)
+    {
+        if (current->itemID == itemID)
+            return current->quantity;
+        current = current->next;
+    }
+    return current->stamina;
+}
 
 //test commit

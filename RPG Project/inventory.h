@@ -14,10 +14,14 @@ struct InventoryNode
     InventoryNode* next;
     InventoryNode* prev;
     bool isEquipped;
+    int dmg;
+    int armor;
+    int AP;
+    int HP;
+    int stamina;
     
-
-    InventoryNode(int id, int qty = 1)
-        : itemID(id), quantity(qty), next(nullptr), prev(nullptr), isEquipped(false) {
+    InventoryNode(int id, int qty = 1, int Dmg, int Armor, int ap, int hp, int sp)
+        : itemID(id), quantity(qty), next(nullptr), prev(nullptr), isEquipped(false), dmg(Dmg), armor(Armor), AP(ap), HP(hp), stamina(sp) {
     }
 };
 
@@ -55,6 +59,15 @@ public:
 
     InventoryNode* getHead();
  
+    int getDmg(int itemID);
+
+    int getArmor(int itemID);
+
+    int getAP(int itemID);
+
+    int getHP(int itemID);
+
+    int getStamina(int itemID);
 };
 
 //test commit
