@@ -80,7 +80,7 @@ public:
     bool getHasItemEquipped();
     void unequipItem(ItemRegistry& registry);
     bool equipItem(int equippedItemID, ItemRegistry &registry);
-    void consumeItem(int itemID, ItemRegistry& registry);
+    bool consumeItem(int itemID, ItemRegistry& registry);
     int getEquippedItemID();
     //bool hasItemEquipped(bool isEquipped);
    

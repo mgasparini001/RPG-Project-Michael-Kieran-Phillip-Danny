@@ -279,6 +279,7 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
         {
             Stamina += current->stamina;
         }
+        
     }
     
 
@@ -317,48 +318,47 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
     return true;
    
 }
-//void Character::consumeItem(int itemID, ItemRegistry& registry)
-//{
-//    InventoryNode* current = inventory.getHead();
-//
-//    while (current != nullptr && current->itemID != equippedItemID)
-//    {
-//        current = current->next;
-//    }
-//    // checks for if you have the item before consumming it
-//    if (current == nullptr)
-//    {
-//        return false;
-//    }
-//
-//    
-//    if (current != nullptr)
-//    {
-//        //equippedItem = current;
-//        current->isEquipped = true;
-//        hasItemEquipped = true;
-//        if (current->AP != NULL)
-//        {
-//            AP += current->AP;
-//        }
-//        if (current->dmg != NULL)
-//        {
-//            Dmg += current->dmg;
-//        }
-//        if (current->armor != NULL)
-//        {
-//            Armor += current->armor;
-//        }
-//        if (current->HP != NULL)
-//        {
-//            HP += current->HP;
-//        }
-//        if (current->stamina != NULL)
-//        {
-//            Stamina += current->stamina;
-//        }
-//    }
-//}
+bool Character::consumeItem(int itemID, ItemRegistry& registry)
+{
+    InventoryNode* current = inventory.getHead();
+
+    while (current != nullptr && current->itemID != equippedItemID)
+    {
+        current = current->next;
+    }
+    // checks for if you have the item before consumming it
+    if (current == nullptr)
+    {
+        return false;
+    }
+
+    
+    if (current != nullptr)
+    {
+        
+        if (current->AP != NULL)
+        {
+            AP += current->AP;
+        }
+        if (current->dmg != NULL)
+        {
+            Dmg += current->dmg;
+        }
+        if (current->armor != NULL)
+        {
+            Armor += current->armor;
+        }
+        if (current->HP != NULL)
+        {
+            HP += current->HP;
+        }
+        if (current->stamina != NULL)
+        {
+            Stamina += current->stamina;
+        }
+    }
+    return true;
+}
 int Character::getEquippedItemID()
 {
     InventoryNode* current = inventory.getHead();
