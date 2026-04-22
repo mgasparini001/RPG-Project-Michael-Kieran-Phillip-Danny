@@ -47,4 +47,15 @@ void ItemRegistry::setEquippedItemName(int itemID, std::string& name)
 {
     equippedItemName = name;
 }
+bool ItemRegistry::hasItem(int itemID)
+{
+    if (getItemName(itemID) == "Unknown Item")
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
 //test commit

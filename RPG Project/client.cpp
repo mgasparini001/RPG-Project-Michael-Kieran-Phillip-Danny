@@ -62,7 +62,7 @@ void returnToOverworld() {
 
 }
 
-void manageInventory(player& p1, ItemRegistry& registry) {
+void manageInventory(player& p1, ItemRegistry& registry, InventoryNode* item) {
 	
 	bool inInv = true;
 	bool isEquipped = false;
@@ -165,10 +165,15 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			int itemID;
 			cout << "enter item ID: ";
 			cin >> itemID;
-			/*while (!p1.getInventory().hasItem(itemID))
+			while (item != nullptr && item->itemID != itemID)
+			{
+				item = item->next;
+			}
+			while (!registry.hasItem(itemID))
 			{
 				cout << "Outside input range, womp womp\n";
-			}*/
+			}
+			
 			if (p1.equipItem(itemID, registry))
 			{
 				isEquipped = true;
@@ -194,11 +199,19 @@ void manageInventory(player& p1, ItemRegistry& registry) {
 			int itemID;
 			cout << "enter item ID: ";
 			cin >> itemID;
-			/*while (!p1.getInventory().hasItem(itemID))
+			while (!registry.hasItem(itemID))
 			{
 				cout << "Outside input range, womp womp\n";
-			}*/
-			if (p1.consumeItem(itemID, registry))
+			}
+			while (item != nullptr && item->itemID != itemID)
+			{
+				item = item->next;
+			}
+			if (item != nullptr && !item->isConsummable)
+			{
+				cout << "item is not consummable.\n";
+			}
+			else if (p1.consumeItem(itemID, registry))
 			{
 				
 				cout << "Consumed " << registry.getItemName(itemID) << "!\n";
@@ -259,8 +272,8 @@ void refreshScreen() {
 // Input: an enemy and a player    Output: an interactive battle loop that reverts to main menu upon ending
 // desc: displays enemy name and hp, and starts battle sequence loop, letting user either fight, rest, or flee. uses Character hp, stamina, dmg, and armor penetration (strength)
 // lets player decide on melee or ranged attack, with ranged having a chance to miss but taking less stamina
-void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
-	sf::Music Music;
+void enterBattle(enemy& enemy, player& p1, ItemRegistry registry, InventoryNode* item) {
+	//sf::Music Music;
 	bool hasRun = false;
 
 	cout << "\nentered battle...\n\n";
@@ -273,11 +286,11 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
 
 	refreshScreen();
 	
-	Music.openFromFile("Placeholder_song.wav");
+	/*Music.openFromFile("Placeholder_song.wav");
 
 	Music.setLooping(true);
 
-	Music.play();
+	Music.play();*/
 
 	int choice;
 
@@ -350,7 +363,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
 			//case where player uses an item (WIP)
 			case 4:
 			{
-				manageInventory(p1, registry);
+				manageInventory(p1, registry, item);
 				break;
 			}
 		}
@@ -393,7 +406,7 @@ void enterBattle(enemy& enemy, player& p1, ItemRegistry registry) {
 		// ends once a party dies or escapes
 	} while ((p1.getHp() > 0 && enemy.getHp() > 0) && !hasRun);
 	
-	Music.stop();
+	//Music.stop();
 
 }
 
@@ -421,10 +434,14 @@ int main(){
 	itemRegistry.setItemName(3, "Shield");
 	
 	// add some items to the player for testing
-	p1.addItemToInventory(0, 5, 0, 2, 0, 0, 1);  // 1 sword
-	p1.addItemToInventory(1, 0, 0, 0, 10, 0, 5);  // 5 health potions
-	p1.addItemToInventory(2, 0, 0, 0, 0, 0, 50); // 50 gold
-	p1.addItemToInventory(3, 0, 7, 0, 0, 0, 1); // 1 shield
+	p1.addItemToInventory(0, 5, 0, 2, 0, 0, false, 1);  // 1 sword
+	p1.addItemToInventory(1, 0, 0, 0, 10, 0, true, 5);  // 5 health potions
+	p1.addItemToInventory(2, 0, 0, 0, 0, 0, false, 50); // 50 gold
+	p1.addItemToInventory(3, 0, 4, 0, 0, 0, false, 1); // 1 shield
+
+	int p1EquippedItemID = p1.getEquippedItemID();
+	InventoryNode* item = p1.getInventory().getHead();
+	
 	//setting dice seed
 	srand(static_cast<unsigned int>(time(0)));
 	//test commit
@@ -483,17 +500,17 @@ int main(){
 			int roll = diceRoll(3);
 			if (roll == 3)
 			{
-				enterBattle(zombie, p1, itemRegistry);
+				enterBattle(zombie, p1, itemRegistry, item);
 			}
 
 			else if (roll == 2)
 			{
-				enterBattle(dragon, p1, itemRegistry);
+				enterBattle(dragon, p1, itemRegistry, item);
 			}
 
 			else
 			{
-				enterBattle(shrek, p1, itemRegistry);
+				enterBattle(shrek, p1, itemRegistry, item);
 			}
 			
 			//after battle ends, refreshes and goes back to menu
@@ -503,7 +520,7 @@ int main(){
 			
 		}
 		case 3:
-			manageInventory(p1, itemRegistry);
+			manageInventory(p1, itemRegistry, item);
 			break;
 		case 4:
 			enterShop();

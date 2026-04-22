@@ -14,14 +14,15 @@ struct InventoryNode
     InventoryNode* next;
     InventoryNode* prev;
     bool isEquipped;
+    bool isConsummable;
     int dmg;
     int armor;
     int AP;
     int HP;
     int stamina;
     
-    InventoryNode(int id, int Dmg, int Armor, int ap, int hp, int sp, int qty = 1)
-        : itemID(id), next(nullptr), prev(nullptr), isEquipped(false), dmg(Dmg), armor(Armor), AP(ap), HP(hp), stamina(sp), quantity(qty) {
+    InventoryNode(int id, int Dmg, int Armor, int ap, int hp, int sp, bool consumable, int qty = 1)
+        : itemID(id), next(nullptr), prev(nullptr), isEquipped(false), dmg(Dmg), armor(Armor), AP(ap), HP(hp), stamina(sp), isConsummable(consumable), quantity(qty) {
     }
 };
 
@@ -40,7 +41,7 @@ public:
     ~Inventory();
 
     // add or increase
-    void addItem(int itemID, int Dmg, int Armor, int ap, int sp, int hp, int quantity);
+    void addItem(int itemID, int Dmg, int Armor, int ap, int sp, int hp, bool consumable, int quantity);
 
     // remove or decrease
     bool removeItem(int itemID, ItemRegistry registry, player &p, int quantity = 1);
@@ -58,7 +59,10 @@ public:
     void printInventory(ItemRegistry& registry, Character &p) const;
 
     InventoryNode* getHead();
+    void setHead(InventoryNode* item);
  
+    InventoryNode* getTail();
+    void setTail(InventoryNode* item);
     int getDmg(int itemID);
 
     int getArmor(int itemID);

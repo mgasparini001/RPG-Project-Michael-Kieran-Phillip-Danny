@@ -71,7 +71,7 @@ public:
 
     // Inventory management
     Inventory& getInventory();
-    void addItemToInventory(int itemID, int Dmg, int Armor, int ap, int sp, int hp, int quantity = 1);
+    void addItemToInventory(int itemID, int Dmg, int Armor, int ap, int sp, int hp, bool consumable, int quantity = 1);
     bool removeItemFromInventory(int itemID, ItemRegistry registry, player &p, int quantity = 1);
     int getItemQuantity(int itemID) const;
     bool hasItem(int itemID) const;

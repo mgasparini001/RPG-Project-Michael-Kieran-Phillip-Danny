@@ -24,7 +24,7 @@ public:
     void printRegistry() const;
    
     void setEquippedItemName(int itemID, std::string& name);
-   
+    bool hasItem(int itemID);
 };
 
 //test commit

@@ -10,7 +10,7 @@ Inventory::~Inventory()
     clear();
 }
 
-void Inventory::addItem(int itemID, int Dmg, int Armor, int ap, int sp, int hp, int quantity)
+void Inventory::addItem(int itemID, int Dmg, int Armor, int ap, int sp, int hp, bool consumable, int quantity)
 {
     // check for existing item
     InventoryNode* current = head;
@@ -25,7 +25,7 @@ void Inventory::addItem(int itemID, int Dmg, int Armor, int ap, int sp, int hp, 
     }
 
     // item not found, create new one
-    InventoryNode* newNode = new InventoryNode(itemID, Dmg, Armor, ap, sp, hp, quantity);
+    InventoryNode* newNode = new InventoryNode(itemID, Dmg, Armor, ap, sp, hp, consumable, quantity);
 
     if (head == nullptr)
     {
@@ -144,15 +144,24 @@ void Inventory::printInventory(ItemRegistry& registry, Character &p) const
 InventoryNode* Inventory::getHead() {
     return head;
 }
-
+void Inventory::setHead(InventoryNode* item)
+{
+    head = item;
+}
+InventoryNode* Inventory::getTail()
+{
+    return tail;
+}
+void Inventory::setTail(InventoryNode* item)
+{
+    tail = item;
+}
 int Inventory::getDmg(int itemID)
 {
     InventoryNode* current = head;
 
-    while (current != nullptr)
+    while (current->itemID != itemID)
     {
-        if (current->itemID == itemID)
-            return current->quantity;
         current = current->next;
     }
     return current->dmg;
@@ -162,10 +171,8 @@ int Inventory::getArmor(int itemID)
 {
     InventoryNode* current = head;
 
-    while (current != nullptr)
+    while (current->itemID != itemID)
     {
-        if (current->itemID == itemID)
-            return current->quantity;
         current = current->next;
     }
     return current->armor;
@@ -175,10 +182,8 @@ int Inventory::getAP(int itemID)
 {
     InventoryNode* current = head;
 
-    while (current != nullptr)
+    while (current->itemID != itemID)
     {
-        if (current->itemID == itemID)
-            return current->quantity;
         current = current->next;
     }
     return current->AP;
@@ -188,10 +193,8 @@ int Inventory::getHP(int itemID)
 {
     InventoryNode* current = head;
 
-    while (current != nullptr)
+    while (current->itemID != itemID)
     {
-        if (current->itemID == itemID)
-            return current->quantity;
         current = current->next;
     }
     return current->HP;
@@ -201,10 +204,8 @@ int Inventory::getStamina(int itemID)
 {
     InventoryNode* current = head;
 
-    while (current != nullptr)
+    while (current->itemID != itemID)
     {
-        if (current->itemID == itemID)
-            return current->quantity;
         current = current->next;
     }
     return current->stamina;

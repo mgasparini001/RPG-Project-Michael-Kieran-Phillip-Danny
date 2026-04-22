@@ -30,20 +30,20 @@ void Character::attack(Character& target, bool attackType){
     
     // attackType
     if (attackType) {
-        if (Stamina + equippedItem->stamina > 100) {
+        if (Stamina > 100) {
             Stamina -= 100;
             //melee attack
-            if (diceRoll(Melee) + AP + equippedItem->AP > +target.getArmor() + target.equippedItem->armor) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
+            if (diceRoll(Melee) + AP > +target.getArmor()) {//sees if attack will pierce target's armor (character's skill for AP and dmg)
                 attackMessage(target);
-                target.takeDamage(diceRoll(Melee) + Dmg + equippedItem->dmg);
+                target.takeDamage(diceRoll(Melee) + Dmg);
             }
             else
             {
-                std::cout << "Qwaping, the attack did nothing";
+                std::cout << "Qwaping, the attack did nothing\n";
             }
         }
         else {
-            std::cout << Name << "is too exhuasted to make the attack!";
+            std::cout << Name << "is too exhuasted to make the attack!\n";
         }
     }
     else {
@@ -61,7 +61,7 @@ void Character::attack(Character& target, bool attackType){
         }
         else
         {
-            std::cout << Name << "is too exhuasted to make the attack!";
+            std::cout << Name << "is too exhuasted to make the attack!\n";
         }
     }
 }
@@ -148,8 +148,8 @@ Inventory& Character::getInventory() {
     return inventory;
 }
 
-void Character::addItemToInventory(int itemID, int Dmg, int Armor, int ap, int sp, int hp, int quantity) {
-    inventory.addItem(itemID, Dmg, Armor, ap, sp, hp, quantity);
+void Character::addItemToInventory(int itemID, int Dmg, int Armor, int ap, int sp, int hp, bool consumable, int quantity) {
+    inventory.addItem(itemID, Dmg, Armor, ap, sp, hp, consumable, quantity);
 }
 
 bool Character::removeItemFromInventory(int itemID, ItemRegistry registry, player &p, int quantity) {
@@ -173,38 +173,52 @@ void Character::unequipItem(ItemRegistry& registry)
 {
     //find equipped item
     InventoryNode* current = inventory.getHead();
-    while (current != nullptr && current->isEquipped == false)
+    if (hasItemEquipped)
     {
-        //std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
-        current = current->next;
+        while (current->isEquipped == false)
+        {
+            //std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
+            current = current->next;
+        }
+        
+        if (current != nullptr)
+        {
+            if (current->isConsummable)
+            {
+                current->isEquipped = false;
+                equippedItem = nullptr;
+                hasItemEquipped = false;
+                equippedItemID = NULL;
+                return;
+            }
+
+            current->isEquipped = false;
+            equippedItem = nullptr;
+            hasItemEquipped = false;
+            equippedItemID = NULL;
+            if (current->AP != NULL)
+            {
+                AP -= current->AP;
+            }
+            if (current->dmg != NULL)
+            {
+                Dmg -= current->dmg;
+            }
+            if (current->armor != NULL)
+            {
+                Armor -= current->armor;
+            }
+            if (current->HP != NULL)
+            {
+                HP -= current->HP;
+            }
+            if (current->stamina != NULL)
+            {
+                Stamina -= current->stamina;
+            }
+        }
     }
-    if (current != nullptr && hasItemEquipped == true)
-    {
-        current->isEquipped = false;
-        equippedItem = nullptr;
-        hasItemEquipped = false;
-        equippedItemID = NULL;
-        if (current->AP != NULL)
-        {
-            AP -= current->AP;
-        }
-        if (current->dmg != NULL)
-        {
-            Dmg -= current->dmg;
-        }
-        if (current->armor != NULL)
-        {
-            Armor -= current->armor;
-        }
-        if (current->HP != NULL)
-        {
-            HP -= current->HP;
-        }
-        if (current->stamina != NULL)
-        {
-            Stamina -= current->stamina;
-        }
-    }
+    
     
     //unequip
   /*  if (current->itemID == 0)
@@ -253,6 +267,12 @@ bool Character::equipItem(int equippedItemID, ItemRegistry &registry)
     if (hasItemEquipped)
     {
         unequipItem(registry);
+    }
+    if (current->isConsummable)
+    {
+        current->isEquipped = true;
+        hasItemEquipped = true;
+        return true;
     }
     if (current != nullptr)
     {
@@ -322,7 +342,7 @@ bool Character::consumeItem(int itemID, ItemRegistry& registry)
 {
     InventoryNode* current = inventory.getHead();
 
-    while (current != nullptr && current->itemID != equippedItemID)
+    while (current != nullptr && current->itemID != itemID)
     {
         current = current->next;
     }
@@ -356,19 +376,44 @@ bool Character::consumeItem(int itemID, ItemRegistry& registry)
         {
             Stamina += current->stamina;
         }
+        current->quantity -= 1;
+        // if quantity is zero remove the node
+        if (current->quantity <= 0)
+        {
+            if (hasItemEquipped == true)
+            {
+                unequipItem(registry);
+            }
+
+            if (current->prev != nullptr)
+                current->prev->next = current->next;
+            else
+                inventory.setHead(current->next);
+
+            if (current->next != nullptr)
+                current->next->prev = current->prev;
+            else
+                inventory.setTail(current->prev);
+
+            delete current;
+        }
     }
     return true;
 }
 int Character::getEquippedItemID()
 {
-    InventoryNode* current = inventory.getHead();
-    while (current->isEquipped == false)
+    if (hasItemEquipped)
     {
-        //std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
-        current = current->next;
+        InventoryNode* current = inventory.getHead();
+        while (current->isEquipped == false)
+        {
+            //std::cout << registry.getItemName(current->itemID) << " x" << current->quantity << "\n";
+            current = current->next;
+        }
+
+        return current->itemID;
     }
     
-    return current->itemID;
 }
 
 
