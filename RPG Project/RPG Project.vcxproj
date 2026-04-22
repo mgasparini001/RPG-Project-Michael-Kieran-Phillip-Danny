@@ -156,6 +156,7 @@
     <ClInclude Include="battle.h" />
     <ClInclude Include="boss.h" />
     <ClInclude Include="character.h" />
+    <ClInclude Include="chat.h" />
     <ClInclude Include="dialogueNode.h" />
     <ClInclude Include="DLL.h" />
     <ClInclude Include="enemy.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="npc.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="client.cpp" />
+    <ClCompile Include="chat.cpp" />
     <ClCompile Include="Store.cpp" />
     <ClCompile Include="TalkingNPC.cpp" />
     <ClCompile Include="weapon.cpp" />
