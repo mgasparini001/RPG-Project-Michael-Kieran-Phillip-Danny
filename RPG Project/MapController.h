@@ -20,7 +20,7 @@ public:
                float mapAreaRatio);
 
     /// Handle player movement with automatic chunk transitions
-    bool movePlayer(int dx, int dy);
+    bool movePlayer(int dx, int dy, bool ignoreTraversalRules = false);
 
     // Rendering constants
     float calculateTileSize(unsigned int windowWidth, unsigned int windowHeight, float mapAreaRatio) const;

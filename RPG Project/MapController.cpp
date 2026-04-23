@@ -27,12 +27,12 @@ void MapController::render(sf::RenderWindow& window,
 
 }
 
-bool MapController::movePlayer(int dx, int dy)
+bool MapController::movePlayer(int dx, int dy, bool ignoreTraversalRules)
 {
     if (!map)
         return false;
 
-    return map->tryMovePlayer(dx, dy);
+    return map->tryMovePlayer(dx, dy, ignoreTraversalRules);
 }
 
 float MapController::calculateTileSize(unsigned int windowWidth, unsigned int windowHeight, float mapAreaRatio) const

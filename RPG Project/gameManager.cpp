@@ -401,7 +401,7 @@ void GameManager::handleInput()
     
     if (dx != 0 || dy != 0)
     {
-        if (mapController.movePlayer(dx, dy))
+        if (mapController.movePlayer(dx, dy, mapEditorEnabled))
         {
             timeSinceLastMove = 0.0f;
 
@@ -433,6 +433,11 @@ void GameManager::update(float deltaTime)
         showPopup(activeBattle->getEndMessage(), 1.4f);
         activeBattle.reset();
 
+        // stop battle music and resume background music
+        if (battleMusic.getStatus() == sf::SoundSource::Status::Playing)
+        {
+            battleMusic.stop();
+        }
         if (musicReady && backgroundMusic.getStatus() != sf::SoundSource::Status::Playing)
         {
             backgroundMusic.play();
@@ -495,7 +500,7 @@ void GameManager::renderClientViewport()
 
     const std::string controlsText =
         mapEditorEnabled
-        ? "Editor: 1 Rock 2 Wall 3 Store 4 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
+        ? "Editor: 1 Grass 2 Water 3 Sand 4 Rock 5 Wall 6 Store 7 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
         : "Move: WASD/Arrows | Interact: F | Inventory: E | Equip: Enter | Save: F5 | Editor: Tab";
 
     sf::Text controls(font, controlsText, 18);
@@ -801,6 +806,19 @@ bool GameManager::initializeBackgroundMusic()
     backgroundMusic.setLooping(true);
     backgroundMusic.setVolume(40.0f);
     backgroundMusic.play();
+
+    // load battle music (also not fatal)
+    const std::filesystem::path battleMusicPath = resolveAssetPath("Encounter.wav");
+    if (!battleMusic.openFromFile(battleMusicPath.string()))
+    {
+        std::cerr << "Warning: failed to load battle music from " << battleMusicPath << std::endl;
+    }
+    else
+    {
+        battleMusic.setLooping(true);
+        battleMusic.setVolume(40.0f);
+    }
+
     musicReady = true;
     return true;
 }
@@ -1065,23 +1083,41 @@ bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
 
     if (scancode == sf::Keyboard::Scancode::Num1)
     {
+        activeEditorBrush = EditorBrush::Grass;
+        showPopup("Brush: Grass", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num2)
+    {
+        activeEditorBrush = EditorBrush::Water;
+        showPopup("Brush: Water", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num3)
+    {
+        activeEditorBrush = EditorBrush::Sand;
+        showPopup("Brush: Sand", 0.9f);
+        return true;
+    }
+    if (scancode == sf::Keyboard::Scancode::Num4)
+    {
         activeEditorBrush = EditorBrush::Rock;
         showPopup("Brush: Rock", 0.9f);
         return true;
     }
-    if (scancode == sf::Keyboard::Scancode::Num2)
+    if (scancode == sf::Keyboard::Scancode::Num5)
     {
         activeEditorBrush = EditorBrush::Wall;
         showPopup("Brush: Wall", 0.9f);
         return true;
     }
-    if (scancode == sf::Keyboard::Scancode::Num3)
+    if (scancode == sf::Keyboard::Scancode::Num6)
     {
         activeEditorBrush = EditorBrush::Store;
         showPopup("Brush: Store", 0.9f);
         return true;
     }
-    if (scancode == sf::Keyboard::Scancode::Num4)
+    if (scancode == sf::Keyboard::Scancode::Num7)
     {
         activeEditorBrush = EditorBrush::Npc;
         showPopup("Brush: NPC", 0.9f);
@@ -1136,6 +1172,12 @@ std::string GameManager::getEditorBrushName() const
 {
     switch (activeEditorBrush)
     {
+    case EditorBrush::Grass:
+        return "grass";
+    case EditorBrush::Water:
+        return "water";
+    case EditorBrush::Sand:
+        return "sand";
     case EditorBrush::Rock:
         return "rock";
     case EditorBrush::Wall:
@@ -1156,6 +1198,26 @@ bool GameManager::applyMapEditorBrushAtPlayer()
     const int tileX = map.getPlayerTileX();
     const int tileY = map.getPlayerTileY();
 
+    if (activeEditorBrush == EditorBrush::Grass ||
+        activeEditorBrush == EditorBrush::Water ||
+        activeEditorBrush == EditorBrush::Sand)
+    {
+        OverworldMap::TerrainType terrain = OverworldMap::TerrainType::Grass;
+        if (activeEditorBrush == EditorBrush::Water)
+        {
+            terrain = OverworldMap::TerrainType::Water;
+        }
+        else if (activeEditorBrush == EditorBrush::Sand)
+        {
+            terrain = OverworldMap::TerrainType::Sand;
+        }
+
+        const bool updatedTerrain = map.setTileTerrain(chunkX, chunkY, tileX, tileY, terrain);
+        const bool updatedPassability = map.setTilePassable(chunkX, chunkY, tileX, tileY, true);
+        map.removeEntityAtPosition(chunkX, chunkY, tileX, tileY);
+        return updatedTerrain && updatedPassability;
+    }
+
     const std::string entityType = getEditorBrushName();
     const bool updatedPassability = map.setTilePassable(chunkX, chunkY, tileX, tileY, false);
     const bool updatedEntity = map.placeOrReplaceEntity(chunkX, chunkY, tileX, tileY, entityType);
@@ -1170,8 +1232,9 @@ bool GameManager::eraseMapEditorSelectionAtPlayer()
     const int tileY = map.getPlayerTileY();
 
     const bool removedEntity = map.removeEntityAtPosition(chunkX, chunkY, tileX, tileY);
-    map.setTilePassable(chunkX, chunkY, tileX, tileY, true);
-    return removedEntity;
+    const bool resetTerrain = map.setTileTerrain(chunkX, chunkY, tileX, tileY, OverworldMap::TerrainType::Grass);
+    const bool resetPassability = map.setTilePassable(chunkX, chunkY, tileX, tileY, true);
+    return removedEntity || (resetTerrain && resetPassability);
 }
 
 void GameManager::startWildBattle()
@@ -1184,10 +1247,14 @@ void GameManager::startWildBattle()
     auto enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 10, 4, 1);
     activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
 
-    // stop map music during battle so tracks do not stack
-    if (musicReady && backgroundMusic.getStatus() == sf::SoundSource::Status::Playing)
+    // stop map music and start battle music
+    if (backgroundMusic.getStatus() == sf::SoundSource::Status::Playing)
     {
         backgroundMusic.stop();
+    }
+    if (battleMusic.getStatus() != sf::SoundSource::Status::Playing)
+    {
+        battleMusic.play();
     }
 }
 

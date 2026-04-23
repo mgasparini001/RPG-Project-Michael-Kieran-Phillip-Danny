@@ -41,6 +41,9 @@ private:
 
     enum class EditorBrush
     {
+        Grass,
+        Water,
+        Sand,
         Rock,
         Wall,
         Store,
@@ -51,6 +54,7 @@ private:
     sf::RenderWindow window;
     sf::Font font;
     sf::Music backgroundMusic;
+    sf::Music battleMusic;
 
     // Game state
     OverworldMap map;
@@ -72,7 +76,7 @@ private:
     bool shopOpen = false;
     int selectedInventoryIndex = 0;
     bool mapEditorEnabled = false;
-    EditorBrush activeEditorBrush = EditorBrush::Rock;
+    EditorBrush activeEditorBrush = EditorBrush::Grass;
 
     RunPhase runPhase = RunPhase::SaveSelection;
     std::vector<std::filesystem::path> availableSaveFiles;

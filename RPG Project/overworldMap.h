@@ -7,9 +7,16 @@
 class OverworldMap
 {
 public:
+    enum class TerrainType
+    {
+        Grass,
+        Water,
+        Sand
+    };
+
     struct Tile
     {
-        // World is currently all grass, but we keep passable for later
+        TerrainType terrain = TerrainType::Grass;
         bool passable = true;
     };
 
@@ -56,9 +63,10 @@ public:
     OverworldMap();
 
     [[nodiscard]] const Tile& getTile(int chunkX, int chunkY, int tileX, int tileY) const;
+    bool setTileTerrain(int chunkX, int chunkY, int tileX, int tileY, TerrainType terrain);
     bool setTilePassable(int chunkX, int chunkY, int tileX, int tileY, bool passable);
 
-    bool tryMovePlayer(int dx, int dy);
+    bool tryMovePlayer(int dx, int dy, bool ignoreTraversalRules = false);
 
     // Persist and restore the entire map state (tiles, entities, and player position).
     bool saveToFile(const std::string& filePath) const;

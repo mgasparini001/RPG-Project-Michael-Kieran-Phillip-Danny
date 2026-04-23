@@ -11,7 +11,45 @@
 
 namespace
 {
-constexpr int kMapVersion = 1;
+constexpr int kMapVersion = 2;
+
+const char* terrainToString(OverworldMap::TerrainType terrain)
+{
+    switch (terrain)
+    {
+    case OverworldMap::TerrainType::Grass:
+        return "grass";
+    case OverworldMap::TerrainType::Water:
+        return "water";
+    case OverworldMap::TerrainType::Sand:
+        return "sand";
+    default:
+        return "grass";
+    }
+}
+
+bool tryParseTerrain(const std::string& value, OverworldMap::TerrainType& terrain)
+{
+    if (value == "grass")
+    {
+        terrain = OverworldMap::TerrainType::Grass;
+        return true;
+    }
+
+    if (value == "water")
+    {
+        terrain = OverworldMap::TerrainType::Water;
+        return true;
+    }
+
+    if (value == "sand")
+    {
+        terrain = OverworldMap::TerrainType::Sand;
+        return true;
+    }
+
+    return false;
+}
 
 class JsonReader
 {
@@ -247,6 +285,20 @@ const OverworldMap::Tile& OverworldMap::getTile(int chunkX, int chunkY, int tile
     return chunk[static_cast<std::size_t>(tileIndexFor(tileX, tileY))];
 }
 
+bool OverworldMap::setTileTerrain(int chunkX, int chunkY, int tileX, int tileY, TerrainType terrain)
+{
+    if (!isChunkInBounds(chunkX, chunkY) ||
+        tileX < 0 || tileX >= ChunkWidth ||
+        tileY < 0 || tileY >= ChunkHeight)
+    {
+        return false;
+    }
+
+    ChunkTiles& chunk = m_chunks[static_cast<std::size_t>(chunkIndexFor(chunkX, chunkY))];
+    chunk[static_cast<std::size_t>(tileIndexFor(tileX, tileY))].terrain = terrain;
+    return true;
+}
+
 bool OverworldMap::setTilePassable(int chunkX, int chunkY, int tileX, int tileY, bool passable)
 {
     if (!isChunkInBounds(chunkX, chunkY) ||
@@ -261,7 +313,7 @@ bool OverworldMap::setTilePassable(int chunkX, int chunkY, int tileX, int tileY,
     return true;
 }
 
-bool OverworldMap::tryMovePlayer(int dx, int dy)
+bool OverworldMap::tryMovePlayer(int dx, int dy, bool ignoreTraversalRules)
 {
     if ((dx == 0 && dy == 0) || (dx != 0 && dy != 0))
     {
@@ -300,8 +352,41 @@ bool OverworldMap::tryMovePlayer(int dx, int dy)
         return false;
     }
 
+    if (ignoreTraversalRules)
+    {
+        m_playerChunkX = nextChunkX;
+        m_playerChunkY = nextChunkY;
+        m_playerTileX = nextTileX;
+        m_playerTileY = nextTileY;
+        return true;
+    }
+
+    const Tile& currentTile = getTile(m_playerChunkX, m_playerChunkY, m_playerTileX, m_playerTileY);
     const Tile& nextTile = getTile(nextChunkX, nextChunkY, nextTileX, nextTileY);
-    if (!nextTile.passable)
+    const MapEntity* currentEntity = getEntityAtPosition(m_playerChunkX, m_playerChunkY, m_playerTileX, m_playerTileY);
+    const MapEntity* nextEntity = getEntityAtPosition(nextChunkX, nextChunkY, nextTileX, nextTileY);
+    const bool standingOnRock = currentEntity != nullptr && currentEntity->type == "rock";
+    const bool steppingToRock = nextEntity != nullptr && nextEntity->type == "rock";
+    const bool steppingToWall = nextEntity != nullptr && nextEntity->type == "wall";
+
+    if (steppingToWall)
+    {
+        return false;
+    }
+
+    if (currentTile.terrain == TerrainType::Water &&
+        nextTile.terrain != TerrainType::Sand &&
+        nextTile.terrain != TerrainType::Water)
+    {
+        return false;
+    }
+
+    if (steppingToRock && currentTile.terrain != TerrainType::Sand && !standingOnRock)
+    {
+        return false;
+    }
+
+    if (!nextTile.passable && !steppingToRock)
     {
         return false;
     }
@@ -345,6 +430,27 @@ bool OverworldMap::saveToFile(const std::string& filePath) const
                 }
                 file << (tile.passable ? "true" : "false");
                 firstTile = false;
+            }
+        }
+    }
+
+    file << "],\n";
+    file << "  \"terrain\": [";
+
+    bool firstTerrain = true;
+    for (int chunkY = 0; chunkY < WorldChunkHeight; ++chunkY)
+    {
+        for (int chunkX = 0; chunkX < WorldChunkWidth; ++chunkX)
+        {
+            const ChunkTiles& chunk = m_chunks[static_cast<std::size_t>(chunkIndexFor(chunkX, chunkY))];
+            for (const Tile& tile : chunk)
+            {
+                if (!firstTerrain)
+                {
+                    file << ",";
+                }
+                writeEscapedJsonString(file, terrainToString(tile.terrain));
+                firstTerrain = false;
             }
         }
     }
@@ -447,7 +553,7 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
 
         reader.expectKey("version");
         const int version = reader.parseInt();
-        if (version != kMapVersion)
+        if (version < 1 || version > kMapVersion)
         {
             return false;
         }
@@ -500,8 +606,47 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
 
         reader.expect(',');
 
-        reader.expectKey("entities");
-        reader.expect('[');
+        bool hasTerrainData = false;
+        std::string nextKey = reader.parseString();
+        reader.expect(':');
+
+        if (nextKey == "terrain")
+        {
+            hasTerrainData = true;
+            reader.expect('[');
+            for (int tileIndex = 0; tileIndex < kTotalTileCount; ++tileIndex)
+            {
+                TerrainType terrain = TerrainType::Grass;
+                if (!tryParseTerrain(reader.parseString(), terrain))
+                {
+                    return false;
+                }
+
+                const int chunkArea = ChunkWidth * ChunkHeight;
+                const int chunkFlatIndex = tileIndex / chunkArea;
+                const int tileFlatIndex = tileIndex % chunkArea;
+                loadedChunks[static_cast<std::size_t>(chunkFlatIndex)][static_cast<std::size_t>(tileFlatIndex)].terrain =
+                    terrain;
+
+                if (tileIndex < kTotalTileCount - 1)
+                {
+                    reader.expect(',');
+                }
+            }
+            reader.expect(']');
+
+            reader.expect(',');
+            reader.expectKey("entities");
+            reader.expect('[');
+        }
+        else if (nextKey == "entities")
+        {
+            reader.expect('[');
+        }
+        else
+        {
+            return false;
+        }
 
         std::vector<MapEntity> loadedEntities;
         if (!reader.tryConsume(']'))
@@ -546,6 +691,12 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
                 reader.expect(']');
                 break;
             }
+        }
+
+        if (!hasTerrainData && version >= 2)
+        {
+            // Version 2 files should always include terrain data.
+            return false;
         }
 
         PlayerState loadedPlayerState{};
