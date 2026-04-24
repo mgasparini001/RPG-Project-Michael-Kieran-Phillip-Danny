@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <string>
+#include <map>
 
 class OverworldMap
 {
@@ -28,6 +29,31 @@ public:
         int tileX = 0;
         int tileY = 0;
         std::string type; // "npc" or "enemy"
+    };
+
+    struct EntityMetadata
+    {
+        struct DialogueOption
+        {
+            std::string text;
+            int nextNodeId = -1; // -1 ends conversation
+        };
+
+        struct DialogueNode
+        {
+            int id = 1;
+            std::string npcText;
+            std::vector<DialogueOption> options;
+        };
+
+        std::string npcName;
+        std::string npcDescription;
+        std::string dialogue; // comma-separated dialogue nodes or full text
+        int xpReward = 0;
+        std::string shopName;
+        std::string shopNpcName;
+        std::string shopInventory; // comma-separated format: "id:quantity,id:quantity"
+        std::vector<DialogueNode> dialogueTree;
     };
 
     struct EnemySpawnTile
@@ -84,6 +110,9 @@ public:
     void setPlayerState(const PlayerState& playerState);
     [[nodiscard]] const PlayerState* getPlayerState() const;
 
+    void setEntityMetadata(int entityId, const EntityMetadata& metadata);
+    [[nodiscard]] const EntityMetadata* getEntityMetadata(int entityId) const;
+
     [[nodiscard]] int getPlayerChunkX() const;
     [[nodiscard]] int getPlayerChunkY() const;
     [[nodiscard]] int getPlayerTileX() const;
@@ -101,6 +130,7 @@ private:
     std::vector<MapEntity> m_entities;
     std::vector<EnemySpawnTile> m_enemySpawnTiles;
     PlayerState m_playerState;
+    std::map<int, EntityMetadata> m_entityMetadata;
 
     int m_playerChunkX = 0;
     int m_playerChunkY = 0;

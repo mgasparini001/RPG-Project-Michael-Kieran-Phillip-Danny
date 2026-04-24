@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <filesystem>
+#include <sstream>
 #include <vector>
 
 #include "item.h"
@@ -72,6 +73,12 @@ std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& maps
         }
 
         if (entry.path().extension() != ".json")
+        {
+            continue;
+        }
+
+        const std::string fileName = entry.path().filename().string();
+        if (fileName.size() >= 11 && fileName.substr(fileName.size() - 11) == "_reset.json")
         {
             continue;
         }
@@ -221,6 +228,25 @@ void GameManager::handleSaveSelectionInput(sf::Keyboard::Scancode scancode)
 
 void GameManager::handleExitConfirmInput(sf::Keyboard::Scancode scancode)
 {
+    if (resetConfirmPending)
+    {
+        if (scancode == sf::Keyboard::Scancode::Y)
+        {
+            resetGameState();
+            exitPromptMessage.clear();
+            return;
+        }
+        if (scancode == sf::Keyboard::Scancode::N || scancode == sf::Keyboard::Scancode::Escape)
+        {
+            resetConfirmPending = false;
+            runPhase = RunPhase::Playing;
+            exitPromptMessage.clear();
+            showPopup("Reset cancelled", 1.0f);
+            return;
+        }
+        return;
+    }
+
     if (scancode == sf::Keyboard::Scancode::Y)
     {
         if (saveCurrentGameToSelectedFile())
@@ -236,8 +262,14 @@ void GameManager::handleExitConfirmInput(sf::Keyboard::Scancode scancode)
     {
         window.close();
     }
+    else if (scancode == sf::Keyboard::Scancode::R)
+    {
+        resetConfirmPending = true;
+        exitPromptMessage = "Reset game to starting state? Y = reset, N/Esc = cancel";
+    }
     else if (scancode == sf::Keyboard::Scancode::Escape)
     {
+        resetConfirmPending = false;
         runPhase = RunPhase::Playing;
         exitPromptMessage.clear();
     }
@@ -249,6 +281,27 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
     if (activeBattle)
     {
         activeBattle->handleKey(scancode);
+        return;
+    }
+
+    if (activeDialogue.open)
+    {
+        if (scancode == sf::Keyboard::Scancode::Up)
+        {
+            stepDialogueSelection(-1);
+        }
+        else if (scancode == sf::Keyboard::Scancode::Down)
+        {
+            stepDialogueSelection(1);
+        }
+        else if (scancode == sf::Keyboard::Scancode::Enter)
+        {
+            confirmDialogueSelection();
+        }
+        else if (scancode == sf::Keyboard::Scancode::Escape)
+        {
+            closeDialogue();
+        }
         return;
     }
 
@@ -293,7 +346,8 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
         else
         {
             runPhase = RunPhase::ConfirmExitSave;
-            exitPromptMessage = "Save before exiting? Y = save and quit, N = quit, Esc = cancel";
+            resetConfirmPending = false;
+            exitPromptMessage = "Pause menu: R = reset game, Y = save and quit, N = quit, Esc = cancel";
         }
     }
     else if (scancode == sf::Keyboard::Scancode::F5)
@@ -363,7 +417,7 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
 void GameManager::handleInput()
 {
     // no movement while menus are up
-    if (inventoryOpen || shopOpen || activeBattle)
+    if (inventoryOpen || shopOpen || activeBattle || activeDialogue.open)
     {
         return;
     }
@@ -468,6 +522,10 @@ void GameManager::render()
     {
         renderBattleOverlay();
     }
+    if (activeDialogue.open)
+    {
+        renderDialogueOverlay();
+    }
     renderPopup();
 }
 
@@ -500,7 +558,7 @@ void GameManager::renderClientViewport()
 
     const std::string controlsText =
         mapEditorEnabled
-        ? "Editor: 1 Grass 2 Water 3 Sand 4 Rock 5 Wall 6 Store 7 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
+        ? "Editor: 1 Grass 2 Water 3 Sand 4 Rock 5 Wall 6 Shop 7 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
         : "Move: WASD/Arrows | Interact: F | Inventory: E | Equip: Enter | Save: F5 | Editor: Tab";
 
     sf::Text controls(font, controlsText, 18);
@@ -732,6 +790,179 @@ void GameManager::renderPopup()
     window.draw(popupText);
 }
 
+void GameManager::renderDialogueOverlay()
+{
+    if (!activeDialogue.open || font.getInfo().family.empty())
+    {
+        return;
+    }
+
+    const ActiveDialogueNode* node = getActiveDialogueNodeById(activeDialogue.currentNodeId);
+    if (!node)
+    {
+        return;
+    }
+
+    sf::RectangleShape overlay({static_cast<float>(WINDOW_WIDTH), static_cast<float>(WINDOW_HEIGHT)});
+    overlay.setFillColor(sf::Color(0, 0, 0, 120));
+    window.draw(overlay);
+
+    sf::RectangleShape panel({1020.0f, 320.0f});
+    panel.setOrigin({panel.getSize().x * 0.5f, panel.getSize().y * 0.5f});
+    panel.setPosition({static_cast<float>(WINDOW_WIDTH) * 0.5f, static_cast<float>(WINDOW_HEIGHT) * 0.5f});
+    panel.setFillColor(sf::Color(18, 24, 34, 245));
+    panel.setOutlineColor(sf::Color(220, 230, 240));
+    panel.setOutlineThickness(2.0f);
+    window.draw(panel);
+
+    sf::Text title(font, activeDialogue.speakerName.empty() ? "NPC" : activeDialogue.speakerName, 28);
+    title.setFillColor(sf::Color(255, 236, 170));
+    title.setPosition({panel.getPosition().x - 480.0f, panel.getPosition().y - 126.0f});
+    window.draw(title);
+
+    sf::Text body(font, node->npcText, 22);
+    body.setFillColor(sf::Color::White);
+    body.setPosition({panel.getPosition().x - 480.0f, panel.getPosition().y - 72.0f});
+    window.draw(body);
+
+    float y = panel.getPosition().y + 8.0f;
+    for (int i = 0; i < static_cast<int>(node->options.size()); ++i)
+    {
+        const auto& option = node->options[static_cast<std::size_t>(i)];
+        const bool selected = (i == activeDialogue.selectedOptionIndex);
+
+        sf::RectangleShape optionBg({960.0f, 34.0f});
+        optionBg.setPosition({panel.getPosition().x - 480.0f, y - 4.0f});
+        optionBg.setFillColor(selected ? sf::Color(56, 82, 118) : sf::Color(28, 36, 48));
+        optionBg.setOutlineColor(selected ? sf::Color(154, 198, 255) : sf::Color(68, 92, 120));
+        optionBg.setOutlineThickness(1.0f);
+        window.draw(optionBg);
+
+        sf::Text optionText(font, std::to_string(i) + ". " + option.text, 20);
+        optionText.setFillColor(selected ? sf::Color::White : sf::Color(214, 227, 243));
+        optionText.setPosition({panel.getPosition().x - 464.0f, y});
+        window.draw(optionText);
+        y += 40.0f;
+    }
+
+    sf::Text hint(font, "Up/Down: choose   Enter: select   Esc: close", 18);
+    hint.setFillColor(sf::Color(190, 205, 222));
+    hint.setPosition({panel.getPosition().x - 480.0f, panel.getPosition().y + 122.0f});
+    window.draw(hint);
+}
+
+bool GameManager::beginNpcDialogue(int entityId, const OverworldMap::EntityMetadata& metadata)
+{
+    activeDialogue = ActiveDialogue{};
+    activeDialogue.open = true;
+    activeDialogue.entityId = entityId;
+    activeDialogue.speakerName = metadata.npcName.empty() ? (metadata.shopNpcName.empty() ? "NPC" : metadata.shopNpcName)
+                                                          : metadata.npcName;
+
+    if (!metadata.dialogueTree.empty())
+    {
+        for (const auto& node : metadata.dialogueTree)
+        {
+            ActiveDialogueNode copy{};
+            copy.id = node.id;
+            copy.npcText = node.npcText;
+            for (const auto& option : node.options)
+            {
+                copy.options.push_back({option.text, option.nextNodeId});
+            }
+            activeDialogue.nodes.push_back(std::move(copy));
+        }
+
+        activeDialogue.currentNodeId = activeDialogue.nodes.front().id;
+        return true;
+    }
+
+    ActiveDialogueNode node{};
+    node.id = 1;
+    node.npcText = !metadata.dialogue.empty() ? metadata.dialogue : metadata.npcDescription;
+    if (node.npcText.empty())
+    {
+        node.npcText = "...";
+    }
+
+    if (!metadata.dialogue.empty())
+    {
+        node.options.push_back({"Continue", -1});
+    }
+
+    activeDialogue.nodes.push_back(std::move(node));
+    activeDialogue.currentNodeId = 1;
+    return true;
+}
+
+const GameManager::ActiveDialogueNode* GameManager::getActiveDialogueNodeById(int nodeId) const
+{
+    for (const auto& node : activeDialogue.nodes)
+    {
+        if (node.id == nodeId)
+        {
+            return &node;
+        }
+    }
+    return nullptr;
+}
+
+void GameManager::stepDialogueSelection(int delta)
+{
+    const ActiveDialogueNode* node = getActiveDialogueNodeById(activeDialogue.currentNodeId);
+    if (!node || node->options.empty())
+    {
+        return;
+    }
+
+    const int optionCount = static_cast<int>(node->options.size());
+    activeDialogue.selectedOptionIndex = (activeDialogue.selectedOptionIndex + delta + optionCount) % optionCount;
+}
+
+void GameManager::confirmDialogueSelection()
+{
+    const ActiveDialogueNode* node = getActiveDialogueNodeById(activeDialogue.currentNodeId);
+    if (!node)
+    {
+        closeDialogue();
+        return;
+    }
+
+    if (node->options.empty())
+    {
+        closeDialogue();
+        return;
+    }
+
+    if (activeDialogue.selectedOptionIndex < 0 ||
+        activeDialogue.selectedOptionIndex >= static_cast<int>(node->options.size()))
+    {
+        activeDialogue.selectedOptionIndex = 0;
+    }
+
+    const auto& option = node->options[static_cast<std::size_t>(activeDialogue.selectedOptionIndex)];
+    if (option.nextNodeId < 0)
+    {
+        closeDialogue();
+        return;
+    }
+
+    const ActiveDialogueNode* nextNode = getActiveDialogueNodeById(option.nextNodeId);
+    if (!nextNode)
+    {
+        closeDialogue();
+        return;
+    }
+
+    activeDialogue.currentNodeId = nextNode->id;
+    activeDialogue.selectedOptionIndex = 0;
+}
+
+void GameManager::closeDialogue()
+{
+    activeDialogue = ActiveDialogue{};
+}
+
 void GameManager::tryInteraction()
 {
     // check tile player is on first
@@ -740,18 +971,89 @@ void GameManager::tryInteraction()
     const int tileX = map.getPlayerTileX();
     const int tileY = map.getPlayerTileY();
 
-    const OverworldMap::MapEntity* onTile = map.getEntityAtPosition(chunkX, chunkY, tileX, tileY);
-    if (onTile)
+    auto interactWithEntity = [this](const OverworldMap::MapEntity* entity) -> bool
     {
-        if (onTile->type == "shop")
+        if (!entity)
         {
+            return false;
+        }
+
+        const bool isShop = (entity->type == "shop");
+        if (isShop)
+        {
+            if (!shopNpc)
+            {
+                showPopup("Shop unavailable", 1.2f);
+                return true;
+            }
+
+            if (const OverworldMap::EntityMetadata* metadata = map.getEntityMetadata(entity->id))
+            {
+                // Apply shop listing from metadata string format: id:qty,id:qty
+                shopNpc->getInventory().clear();
+                if (!metadata->shopInventory.empty())
+                {
+                    std::stringstream stream(metadata->shopInventory);
+                    std::string entry;
+                    while (std::getline(stream, entry, ','))
+                    {
+                        std::stringstream pairStream(entry);
+                        std::string idToken;
+                        std::string qtyToken;
+                        if (!std::getline(pairStream, idToken, ':') || !std::getline(pairStream, qtyToken, ':'))
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            const int itemId = std::stoi(idToken);
+                            const int quantity = std::stoi(qtyToken);
+                            if (quantity > 0)
+                            {
+                                shopNpc->addItemToInventory(itemId, itemRegistry, quantity);
+                            }
+                        }
+                        catch (...)
+                        {
+                            // ignore malformed entries and keep parsing
+                        }
+                    }
+                }
+
+                const std::string shopName = metadata->shopName.empty() ? "Shop" : metadata->shopName;
+                shopOpen = true;
+                showPopup(shopName + " opened: Press Enter to buy", 1.6f);
+                return true;
+            }
+
             shopOpen = true;
             showPopup("Shop opened: Press Enter to buy", 1.6f);
+            return true;
         }
-        else
+
+        if (entity->type == "npc")
         {
-            showPopup("You interact with " + onTile->type + " #" + std::to_string(onTile->id));
+            if (const OverworldMap::EntityMetadata* metadata = map.getEntityMetadata(entity->id))
+            {
+                if (!metadata->dialogueTree.empty() || !metadata->dialogue.empty() || !metadata->npcDescription.empty())
+                {
+                    if (beginNpcDialogue(entity->id, *metadata))
+                    {
+                        return true;
+                    }
+                    return true;
+                }
+            }
         }
+
+        showPopup("You interact with " + entity->type + " #" + std::to_string(entity->id));
+        return true;
+    };
+
+    const OverworldMap::MapEntity* onTile = map.getEntityAtPosition(chunkX, chunkY, tileX, tileY);
+    if (interactWithEntity(onTile))
+    {
         return;
     }
 
@@ -767,17 +1069,8 @@ void GameManager::tryInteraction()
     {
         const OverworldMap::MapEntity* entity =
             map.getEntityAtPosition(chunkX, chunkY, tileX + offset[0], tileY + offset[1]);
-        if (entity)
+        if (interactWithEntity(entity))
         {
-            if (entity->type == "shop")
-            {
-                shopOpen = true;
-                showPopup("Shop opened: Press Enter to buy", 1.6f);
-            }
-            else
-            {
-                showPopup("You interact with " + entity->type + " #" + std::to_string(entity->id));
-            }
             return;
         }
     }
@@ -879,6 +1172,70 @@ OverworldMap::PlayerState GameManager::buildPlayerStateForSave()
     return state;
 }
 
+void GameManager::resetGameState()
+{
+    if (selectedSaveFile.empty())
+    {
+        showPopup("Reset failed: no active save", 1.5f);
+        return;
+    }
+
+    if (!restoreFromResetSnapshot(selectedSaveFile))
+    {
+        showPopup("Reset failed: missing reset snapshot", 1.8f);
+        return;
+    }
+
+    if (!loadSaveFile(selectedSaveFile))
+    {
+        showPopup("Reset failed: could not reload save", 1.8f);
+        return;
+    }
+
+    // clear ui states
+    inventoryOpen = false;
+    shopOpen = false;
+    mapEditorEnabled = false;
+
+    // return to playing phase
+    runPhase = RunPhase::Playing;
+    resetConfirmPending = false;
+
+    showPopup("Game reset to starting state", 1.5f);
+}
+
+std::filesystem::path GameManager::getResetSnapshotPath(const std::filesystem::path& mapPath) const
+{
+    const std::string stem = mapPath.stem().string();
+    return mapPath.parent_path() / (stem + "_reset.json");
+}
+
+bool GameManager::ensureResetSnapshotExists(const std::filesystem::path& mapPath)
+{
+    const std::filesystem::path resetPath = getResetSnapshotPath(mapPath);
+    if (std::filesystem::exists(resetPath))
+    {
+        return true;
+    }
+
+    std::error_code ec;
+    std::filesystem::copy_file(mapPath, resetPath, std::filesystem::copy_options::none, ec);
+    return !ec;
+}
+
+bool GameManager::restoreFromResetSnapshot(const std::filesystem::path& mapPath)
+{
+    const std::filesystem::path resetPath = getResetSnapshotPath(mapPath);
+    if (!std::filesystem::exists(resetPath))
+    {
+        return false;
+    }
+
+    std::error_code ec;
+    std::filesystem::copy_file(resetPath, mapPath, std::filesystem::copy_options::overwrite_existing, ec);
+    return !ec;
+}
+
 void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
 {
     // restore player basics + inventory from loaded file
@@ -965,7 +1322,7 @@ bool GameManager::loadSaveFile(const std::filesystem::path& path)
     }
 
     selectedSaveFile = path;
-    return true;
+    return ensureResetSnapshotExists(path);
 }
 
 bool GameManager::saveCurrentGameToSelectedFile()
@@ -1070,6 +1427,8 @@ void GameManager::tryBuyShopItem()
         return;
     }
 
+
+
     mapShop->buySomething(mapPlayer, *shopNpc, shopItemId, 1);
     showPopup("Bought " + shopItemName, 1.2f);
 }
@@ -1113,8 +1472,8 @@ bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
     }
     if (scancode == sf::Keyboard::Scancode::Num6)
     {
-        activeEditorBrush = EditorBrush::Store;
-        showPopup("Brush: Store", 0.9f);
+        activeEditorBrush = EditorBrush::Shop;
+        showPopup("Brush: Shop", 0.9f);
         return true;
     }
     if (scancode == sf::Keyboard::Scancode::Num7)
@@ -1182,8 +1541,8 @@ std::string GameManager::getEditorBrushName() const
         return "rock";
     case EditorBrush::Wall:
         return "wall";
-    case EditorBrush::Store:
-        return "store";
+    case EditorBrush::Shop:
+        return "shop";
     case EditorBrush::Npc:
         return "npc";
     default:
@@ -1221,6 +1580,29 @@ bool GameManager::applyMapEditorBrushAtPlayer()
     const std::string entityType = getEditorBrushName();
     const bool updatedPassability = map.setTilePassable(chunkX, chunkY, tileX, tileY, false);
     const bool updatedEntity = map.placeOrReplaceEntity(chunkX, chunkY, tileX, tileY, entityType);
+
+    if (updatedEntity && (entityType == "shop" || entityType == "npc"))
+    {
+        const OverworldMap::MapEntity* placed = map.getEntityAtPosition(chunkX, chunkY, tileX, tileY);
+        if (placed)
+        {
+            OverworldMap::EntityMetadata metadata;
+            if (entityType == "shop")
+            {
+                metadata.shopName = "Map Shop";
+                metadata.shopNpcName = "Shopkeeper";
+                metadata.shopInventory = "1:10";
+            }
+            else
+            {
+                metadata.npcName = "Villager";
+                metadata.npcDescription = "A local villager.";
+                metadata.dialogue = "Hello there";
+            }
+            map.setEntityMetadata(placed->id, metadata);
+        }
+    }
+
     return updatedPassability && updatedEntity;
 }
 

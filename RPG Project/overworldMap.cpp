@@ -530,6 +530,70 @@ bool OverworldMap::saveToFile(const std::string& filePath) const
         file << "\n  ";
     }
     file << "]\n";
+
+    file << ",\n";
+    file << "  \"entityMetadata\": [";
+    
+    bool firstMetadata = true;
+    for (const auto& [entityId, metadata] : m_entityMetadata)
+    {
+        if (!firstMetadata)
+        {
+            file << ",";
+        }
+        firstMetadata = false;
+
+        file << "\n    {\"entityId\": " << entityId << ", \"data\": {";
+        file << "\"npcName\": ";
+        writeEscapedJsonString(file, metadata.npcName);
+        file << ", \"npcDescription\": ";
+        writeEscapedJsonString(file, metadata.npcDescription);
+        file << ", \"dialogue\": ";
+        writeEscapedJsonString(file, metadata.dialogue);
+        file << ", \"xpReward\": " << metadata.xpReward;
+        file << ", \"shopName\": ";
+        writeEscapedJsonString(file, metadata.shopName);
+        file << ", \"shopNpcName\": ";
+        writeEscapedJsonString(file, metadata.shopNpcName);
+        file << ", \"shopInventory\": ";
+        writeEscapedJsonString(file, metadata.shopInventory);
+        file << ", \"dialogueTree\": [";
+        for (std::size_t i = 0; i < metadata.dialogueTree.size(); ++i)
+        {
+            const auto& node = metadata.dialogueTree[i];
+            if (i > 0)
+            {
+                file << ",";
+            }
+
+            file << "{\"id\": " << node.id << ", \"npcText\": ";
+            writeEscapedJsonString(file, node.npcText);
+            file << ", \"options\": [";
+
+            for (std::size_t optionIndex = 0; optionIndex < node.options.size(); ++optionIndex)
+            {
+                const auto& option = node.options[optionIndex];
+                if (optionIndex > 0)
+                {
+                    file << ",";
+                }
+
+                file << "{\"text\": ";
+                writeEscapedJsonString(file, option.text);
+                file << ", \"nextNodeId\": " << option.nextNodeId << "}";
+            }
+
+            file << "]}";
+        }
+        file << "]";
+        file << "}}";
+    }
+    
+    if (!m_entityMetadata.empty())
+    {
+        file << "\n  ";
+    }
+    file << "]\n";
     file << "}\n";
 
     return file.good();
@@ -807,6 +871,145 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
             }
         }
 
+        std::map<int, EntityMetadata> loadedEntityMetadata;
+        if (reader.tryConsume(','))
+        {
+            reader.expectKey("entityMetadata");
+            reader.expect('[');
+            if (!reader.tryConsume(']'))
+            {
+                while (true)
+                {
+                    EntityMetadata metadata{};
+                    reader.expect('{');
+
+                    reader.expectKey("entityId");
+                    int entityId = reader.parseInt();
+                    reader.expect(',');
+
+                    reader.expectKey("data");
+                    reader.expect('{');
+
+                    if (!reader.tryConsume('}'))
+                    {
+                        while (true)
+                        {
+                            const std::string key = reader.parseString();
+                            reader.expect(':');
+
+                            if (key == "npcName")
+                            {
+                                metadata.npcName = reader.parseString();
+                            }
+                            else if (key == "npcDescription")
+                            {
+                                metadata.npcDescription = reader.parseString();
+                            }
+                            else if (key == "dialogue")
+                            {
+                                metadata.dialogue = reader.parseString();
+                            }
+                            else if (key == "xpReward")
+                            {
+                                metadata.xpReward = reader.parseInt();
+                            }
+                            else if (key == "shopName" || key == "storeName")
+                            {
+                                metadata.shopName = reader.parseString();
+                            }
+                            else if (key == "shopNpcName" || key == "storeNpcName")
+                            {
+                                metadata.shopNpcName = reader.parseString();
+                            }
+                            else if (key == "shopInventory" || key == "storeInventory")
+                            {
+                                metadata.shopInventory = reader.parseString();
+                            }
+                            else if (key == "dialogueTree")
+                            {
+                                reader.expect('[');
+                                if (!reader.tryConsume(']'))
+                                {
+                                    while (true)
+                                    {
+                                        EntityMetadata::DialogueNode node{};
+                                        reader.expect('{');
+                                        reader.expectKey("id");
+                                        node.id = reader.parseInt();
+                                        reader.expect(',');
+                                        reader.expectKey("npcText");
+                                        node.npcText = reader.parseString();
+                                        reader.expect(',');
+                                        reader.expectKey("options");
+                                        reader.expect('[');
+
+                                        if (!reader.tryConsume(']'))
+                                        {
+                                            while (true)
+                                            {
+                                                EntityMetadata::DialogueOption option{};
+                                                reader.expect('{');
+                                                reader.expectKey("text");
+                                                option.text = reader.parseString();
+                                                reader.expect(',');
+                                                reader.expectKey("nextNodeId");
+                                                option.nextNodeId = reader.parseInt();
+                                                reader.expect('}');
+
+                                                node.options.push_back(std::move(option));
+
+                                                if (reader.tryConsume(','))
+                                                {
+                                                    continue;
+                                                }
+
+                                                reader.expect(']');
+                                                break;
+                                            }
+                                        }
+
+                                        reader.expect('}');
+                                        metadata.dialogueTree.push_back(std::move(node));
+
+                                        if (reader.tryConsume(','))
+                                        {
+                                            continue;
+                                        }
+
+                                        reader.expect(']');
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                throw std::runtime_error("Unknown entity metadata key");
+                            }
+
+                            if (reader.tryConsume(','))
+                            {
+                                continue;
+                            }
+
+                            reader.expect('}');
+                            break;
+                        }
+                    }
+
+                    loadedEntityMetadata[entityId] = metadata;
+                    reader.expect('}');
+
+                    if (reader.tryConsume(','))
+                    {
+                        continue;
+                    }
+
+                    reader.expect(']');
+                    break;
+                }
+            }
+        }
+
         reader.expect('}');
         reader.ensureFullyConsumed();
 
@@ -818,6 +1021,7 @@ bool OverworldMap::loadFromFile(const std::string& filePath)
         m_playerTileY = loadedPlayerTileY;
         m_playerState = std::move(loadedPlayerState);
         m_enemySpawnTiles = std::move(loadedEnemySpawnTiles);
+        m_entityMetadata = std::move(loadedEntityMetadata);
         return true;
     }
     catch (...)
@@ -952,6 +1156,21 @@ void OverworldMap::setPlayerState(const PlayerState& playerState)
 const OverworldMap::PlayerState* OverworldMap::getPlayerState() const
 {
     return m_playerState.hasData ? &m_playerState : nullptr;
+}
+
+void OverworldMap::setEntityMetadata(int entityId, const EntityMetadata& metadata)
+{
+    m_entityMetadata[entityId] = metadata;
+}
+
+const OverworldMap::EntityMetadata* OverworldMap::getEntityMetadata(int entityId) const
+{
+    auto it = m_entityMetadata.find(entityId);
+    if (it != m_entityMetadata.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
 }
 
 int OverworldMap::tileIndexFor(int x, int y)
