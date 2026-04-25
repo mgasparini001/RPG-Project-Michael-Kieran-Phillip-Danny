@@ -941,7 +941,22 @@ void GameManager::confirmDialogueSelection()
     }
 
     const auto& option = node->options[static_cast<std::size_t>(activeDialogue.selectedOptionIndex)];
-    if (option.nextNodeId < 0)
+    if (option.nextNodeId < -1)
+    {
+        int actionCode = option.nextNodeId;
+        closeDialogue();
+        
+        if (actionCode == -2)
+        {
+            startWildBattle(-1); // Trigger random battle
+        }
+        else if (actionCode <= -100)
+        {
+            startWildBattle(std::abs(actionCode) - 100); // Trigger specific battle ID
+        }
+        return;
+    }
+    else if (option.nextNodeId == -1)
     {
         closeDialogue();
         return;
@@ -1678,17 +1693,44 @@ bool GameManager::eraseMapEditorSelectionAtPlayer()
     return removedEntity || (resetTerrain && resetPassability);
 }
 
-void GameManager::startWildBattle()
+void GameManager::startWildBattle(int enemyId)
 {
     if (activeBattle)
     {
         return;
     }
 
-    auto enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 10, 4, 1);
+    std::unique_ptr<fodder> enemy;
+
+    if (enemyId == -1)
+    {
+        // Random enemy pool
+        int roll = mapPlayer.diceRoll(4);
+        switch (roll)
+        {
+            case 1: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
+            case 2: enemy = std::make_unique<fodder>("Bat", 15, 4, 1, 2, 500, 5, 2); break;
+            case 3: enemy = std::make_unique<fodder>("Goblin", 25, 5, 2, 1, 600, 6, 3); break;
+            case 4: enemy = std::make_unique<fodder>("Googlie Mooglie", 20, 6, 1, 3, 600, 8, 4); break;
+            default: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
+        }
+    }
+    else
+    {
+        // Specific scripted enemies
+        switch (enemyId)
+        {
+            //ultimate boss is Red Dragon
+            case 1: enemy = std::make_unique<fodder>("Rogue Guard", 40, 8, 4, 3, 1000, 10, 5); break;
+            case 2: enemy = std::make_unique<fodder>("Boss Slime", 80, 12, 5, 2, 1200, 25, 10); break;
+            case 3: enemy = std::make_unique<fodder>("Final Boss", 150, 20, 10, 5, 2000, 50, 20); break;
+            case 4: enemy = std::make_unique<fodder>("Red Dragon", 200, 25, 15, 6, 2500, 100, 30); break;
+            default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 100, 1, 1); break; 
+        }
+    }
+
     activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
 
-    // stop map music and start battle music
     if (backgroundMusic.getStatus() == sf::SoundSource::Status::Playing)
     {
         backgroundMusic.stop();
