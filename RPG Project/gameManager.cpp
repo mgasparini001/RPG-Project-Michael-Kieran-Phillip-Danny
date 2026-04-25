@@ -1645,16 +1645,15 @@ void GameManager::startWildBattle(int enemyId)
 
     if (enemyId == -1)
     {
-        // Random enemy for wild encounters
-        int roll = mapPlayer.diceRoll(4); // Assuming 3 random enemy types
+        // Random enemy pool
+        int roll = mapPlayer.diceRoll(4);
         switch (roll)
         {
-            // formatting: name, hp, attack, defense, speed, xpReward, goldReward, itemDropChance
-            case 1: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 10, 4, 1); break;
-            case 2: enemy = std::make_unique<fodder>("Bat", 15, 4, 1, 2, 12, 5, 2); break;
-            case 3: enemy = std::make_unique<fodder>("Goblin", 25, 5, 2, 1, 15, 6, 3); break;
-            case 4: enemy = std::make_unique<fodder>("Googlie Mooglie", 20, 6, 1, 3, 18, 8, 4); break;
-            default: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 10, 4, 1); break;
+            case 1: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
+            case 2: enemy = std::make_unique<fodder>("Bat", 15, 4, 1, 2, 500, 5, 2); break;
+            case 3: enemy = std::make_unique<fodder>("Goblin", 25, 5, 2, 1, 600, 6, 3); break;
+            case 4: enemy = std::make_unique<fodder>("Googlie Mooglie", 20, 6, 1, 3, 600, 8, 4); break;
+            default: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
         }
     }
     else
@@ -1663,11 +1662,11 @@ void GameManager::startWildBattle(int enemyId)
         switch (enemyId)
         {
             //ultimate boss is Red Dragon
-            case 1: enemy = std::make_unique<fodder>("Rogue Guard", 40, 8, 4, 3, 30, 10, 5); break;
-            case 2: enemy = std::make_unique<fodder>("Boss Slime", 80, 12, 5, 2, 100, 25, 10); break;
-            case 3: enemy = std::make_unique<fodder>("Final Boss", 150, 20, 10, 5, 200, 50, 20); break;
-            case 4: enemy = std::make_unique<fodder>("Red Dragon", 200, 25, 15, 6, 300, 100, 30); break;
-            default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 1, 1, 1); break; // Fallback
+            case 1: enemy = std::make_unique<fodder>("Rogue Guard", 40, 8, 4, 3, 1000, 10, 5); break;
+            case 2: enemy = std::make_unique<fodder>("Boss Slime", 80, 12, 5, 2, 1200, 25, 10); break;
+            case 3: enemy = std::make_unique<fodder>("Final Boss", 150, 20, 10, 5, 2000, 50, 20); break;
+            case 4: enemy = std::make_unique<fodder>("Red Dragon", 200, 25, 15, 6, 2500, 100, 30); break;
+            default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 100, 1, 1); break; 
         }
     }
 
