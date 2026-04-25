@@ -1122,14 +1122,73 @@ void GameManager::initializeMapGameplayState()
     auto sword = std::make_shared<Item>(0, "Iron Sword", "Sword of Iron", 50, false);
     auto potion = std::make_shared<Item>(1, "Health Potion", "Potion of Health", 10, true);
     auto shield = std::make_shared<Item>(2, "Shield", "Blocks attacks", 100, false);
+    auto waterBottle = std::make_shared<Item>(3, "Plastic Water Bottle", "", 10, false);
+    auto RustySword = std::make_shared<Item>(4, "Rusty Sword", "", 10, false);
+    auto SheepskinS = std::make_shared<Item>(5, "Sheepskin Shield", "", 30, false);
+    auto BollD = std::make_shared<Item>(32, "Bollock Dagger", "", 50, false);
+    auto cloth = std::make_shared<Item>(6, "Cloth Cloak", "", 40, false);
+    auto TurkishDelight = std::make_shared<Item>(7, "Turkish Delight", "", 2, true);
+    auto Bread = std::make_shared<Item>(8, "Bread", "", 6, true);
+    auto CheeseC = std::make_shared<Item>(9, "Chesse and Crackers", "", 3, true);
+    auto mace = std::make_shared<Item>(10, "Iron Mace", "", 80, false);
+    auto breastPlate = std::make_shared<Item>(11, "Bronze breastplate", "", 80, false);
+    auto Hanger = std::make_shared<Item>(12, "Hanger Sword", "", 60, false);
+    auto Ring = std::make_shared<Item>(13, "Sacred Ring", "", 100, false);
+    auto Salmon = std::make_shared<Item>(14, "Salmon", "", 15, true);
+    auto Crab = std::make_shared<Item>(15, "Crab", "", 10, true);
+    auto sushi = std::make_shared<Item>(16, "Sushi", "", 20, true);
+    auto Frost = std::make_shared<Item>(17, "Frostbite", "", 200, false);
+    auto chain = std::make_shared<Item>(18, "Chainmail Shirt", "", 120, false);
+    auto fisher = std::make_shared<Item>(19, "Fisher hat", "", 40, false);
+    auto sKey = std::make_shared<Item>(20, "Sliver Key", "", 500, false);
+    auto chainMG = std::make_shared<Item>(21, "Chainmail Gauntlet", "", 100, false);
+    auto Wall = std::make_shared<Item>(22, "Walleye", "", 15, true);
+    auto cod = std::make_shared<Item>(23, "Cod", "", 10, true);
+    auto Emb = std::make_shared<Item>(24, "EmberFang", "", 220, false);
+    auto templar = std::make_shared<Item>(25, "Templar Sword", "", 200, false);
+    auto IronB = std::make_shared<Item>(26, "Iron BreastPlate", "", 180, false);
+    auto ChainH = std::make_shared<Item>(27, "Chainmail hood", "", 100, false);
+    auto HeaterS = std::make_shared<Item>(28, "Heater Shield", "", 80, false);
+    auto Watermelon = std::make_shared<Item>(29, "Watermelon", "", 5, true);
+    auto Eggs = std::make_shared<Item>(30, "Eggs", "", 15, true);
+    auto HighPotion = std::make_shared<Item>(31, "High Potion", "", 100, true);
+
 
     itemRegistry.setItem(0, sword);
     itemRegistry.setItem(1, potion);
     itemRegistry.setItem(2, shield);
+    itemRegistry.setItem(3, waterBottle);
+    itemRegistry.setItem(4, RustySword);
+    itemRegistry.setItem(5, SheepskinS);
+    itemRegistry.setItem(6, cloth);
+    itemRegistry.setItem(7, TurkishDelight);
+    itemRegistry.setItem(8, Bread);
+    itemRegistry.setItem(9, CheeseC);
+    itemRegistry.setItem(10, mace);
+    itemRegistry.setItem(11, breastPlate);
+    itemRegistry.setItem(12, Hanger);
+    itemRegistry.setItem(13, Ring);
+    itemRegistry.setItem(14, Salmon);
+    itemRegistry.setItem(15, Crab);
+    itemRegistry.setItem(16, sushi);
+    itemRegistry.setItem(17, Frost);
+    itemRegistry.setItem(18, chain);
+    itemRegistry.setItem(19, fisher);
+    itemRegistry.setItem(20, sKey);
+    itemRegistry.setItem(21, chainMG);
+    itemRegistry.setItem(22, Wall);
+    itemRegistry.setItem(23, cod);
+    itemRegistry.setItem(24, Emb);
+    itemRegistry.setItem(25, templar);
+    itemRegistry.setItem(26, IronB);
+    itemRegistry.setItem(27, ChainH);
+    itemRegistry.setItem(28, HeaterS);
+    itemRegistry.setItem(29, Watermelon);
+    itemRegistry.setItem(30, Eggs);
+    itemRegistry.setItem(31, HighPotion);
+    itemRegistry.setItem(32, BollD);
+    
 
-    mapShop = std::make_unique<store>("Map Shop", itemRegistry);
-    shopNpc = std::make_unique<npc>("Shopkeeper", "A local merchant", 50, 8, 4, 3, 1000, 6, 7, false, 0);
-    shopNpc->addItemToInventory(1, itemRegistry, 30);
 }
 
 void GameManager::applyDefaultPlayerState()
