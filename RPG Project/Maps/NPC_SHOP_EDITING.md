@@ -53,7 +53,7 @@ Example:
     }
   },
   {
-    "entityId": 20,
+    "entityId": 20, 
     "data": {
       "npcName": "",
       "npcDescription": "",
