@@ -6,6 +6,7 @@
 #include "MapController.h"
 #include "player.h"
 #include "ItemRegistry.h"
+#include "inventory.h"
 #include "Store.h"
 #include "npc.h"
 #include "battle.h"
@@ -46,7 +47,7 @@ private:
         Sand,
         Rock,
         Wall,
-        Store,
+        Shop,
         Npc
     };
 
@@ -68,9 +69,12 @@ private:
     std::string popupMessage;
     float popupTimeRemaining = 0.0f;
 
+    // Reset game state
+    bool resetConfirmPending = false;
+
     // Input debouncing
     float timeSinceLastMove = 0.0f;
-    static constexpr float MOVE_COOLDOWN = 0.15f;
+    static constexpr float MOVE_COOLDOWN = 0.05f;
 
     bool inventoryOpen = false;
     bool shopOpen = false;
@@ -89,19 +93,54 @@ private:
 
     std::unique_ptr<BattleEncounter> activeBattle;
 
+    struct ActiveDialogueOption
+    {
+        std::string text;
+        int nextNodeId = -1;
+    };
+
+    struct ActiveDialogueNode
+    {
+        int id = 1;
+        std::string npcText;
+        std::vector<ActiveDialogueOption> options;
+    };
+
+    struct ActiveDialogue
+    {
+        bool open = false;
+        int entityId = -1;
+        int currentNodeId = 1;
+        int selectedOptionIndex = 0;
+        std::vector<ActiveDialogueNode> nodes;
+        std::string speakerName;
+    };
+
+    ActiveDialogue activeDialogue;
+
     // Helper methods
     void renderMapViewport();
     void renderClientViewport();
     void renderPopup();
     void renderInventoryPanel(float panelTop, float panelHeight);
     void renderShopPanel(float panelTop, float panelHeight);
+    void renderDialogueOverlay();
     void renderSaveSelectionScreen();
     void renderExitPrompt();
+    bool beginNpcDialogue(int entityId, const OverworldMap::EntityMetadata& metadata);
+    const ActiveDialogueNode* getActiveDialogueNodeById(int nodeId) const;
+    void stepDialogueSelection(int delta);
+    void confirmDialogueSelection();
+    void closeDialogue();
     void tryInteraction();
     void showPopup(const std::string& message, float seconds = 2.2f);
     bool initializeBackgroundMusic();
     void initializeMapGameplayState();
     void applyDefaultPlayerState();
+    void resetGameState();
+    std::filesystem::path getResetSnapshotPath(const std::filesystem::path& mapPath) const;
+    bool ensureResetSnapshotExists(const std::filesystem::path& mapPath);
+    bool restoreFromResetSnapshot(const std::filesystem::path& mapPath);
     OverworldMap::PlayerState buildPlayerStateForSave();
     void applyLoadedPlayerState(const OverworldMap::PlayerState& state);
     bool initializeMapFromSaveFile();
@@ -112,6 +151,7 @@ private:
     void equipSelectedInventoryItem();
     bool getShopListing(int& itemId, std::string& itemName, int& itemPrice) const;
     void tryBuyShopItem();
+    void trySellSelectedItem();
     void handleKeyPressed(sf::Keyboard::Scancode scancode);
     void handleSaveSelectionInput(sf::Keyboard::Scancode scancode);
     void handleExitConfirmInput(sf::Keyboard::Scancode scancode);
@@ -120,7 +160,7 @@ private:
     std::string getEditorBrushName() const;
     bool applyMapEditorBrushAtPlayer();
     bool eraseMapEditorSelectionAtPlayer();
-    void startWildBattle();
+    void startWildBattle(int enemyId = -1);
     void renderBattleOverlay();
     void handleInput();
     void update(float deltaTime);

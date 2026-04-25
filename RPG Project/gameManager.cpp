@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <filesystem>
+#include <sstream>
 #include <vector>
 
 #include "item.h"
@@ -76,6 +77,12 @@ std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& maps
             continue;
         }
 
+        const std::string fileName = entry.path().filename().string();
+        if (fileName.size() >= 11 && fileName.substr(fileName.size() - 11) == "_reset.json")
+        {
+            continue;
+        }
+
         files.push_back(entry.path());
     }
 
@@ -97,6 +104,7 @@ GameManager::~GameManager()
 {
 }
 
+// try to load map and player state from a save file, return success
 bool GameManager::initialize()
 {
     // try local font first then windows font fallback
@@ -125,6 +133,7 @@ bool GameManager::initialize()
     return true;
 }
 
+// main game loop, runs until player closes window
 void GameManager::run()
 {
     sf::Clock clock;
@@ -162,6 +171,7 @@ void GameManager::run()
     }
 }
 
+// top level key handler, goes to diff handlers based on game state
 void GameManager::handleKeyPressed(sf::Keyboard::Scancode scancode)
 {
     // keep save select input isolated
@@ -219,8 +229,28 @@ void GameManager::handleSaveSelectionInput(sf::Keyboard::Scancode scancode)
     }
 }
 
+// handle the input for exit confirm
 void GameManager::handleExitConfirmInput(sf::Keyboard::Scancode scancode)
 {
+    if (resetConfirmPending)
+    {
+        if (scancode == sf::Keyboard::Scancode::Y)
+        {
+            resetGameState();
+            exitPromptMessage.clear();
+            return;
+        }
+        if (scancode == sf::Keyboard::Scancode::N || scancode == sf::Keyboard::Scancode::Escape)
+        {
+            resetConfirmPending = false;
+            runPhase = RunPhase::Playing;
+            exitPromptMessage.clear();
+            showPopup("Reset cancelled", 1.0f);
+            return;
+        }
+        return;
+    }
+
     if (scancode == sf::Keyboard::Scancode::Y)
     {
         if (saveCurrentGameToSelectedFile())
@@ -236,19 +266,47 @@ void GameManager::handleExitConfirmInput(sf::Keyboard::Scancode scancode)
     {
         window.close();
     }
+    else if (scancode == sf::Keyboard::Scancode::R)
+    {
+        resetConfirmPending = true;
+        exitPromptMessage = "Reset game to starting state? Y = reset, N/Esc = cancel";
+    }
     else if (scancode == sf::Keyboard::Scancode::Escape)
     {
+        resetConfirmPending = false;
         runPhase = RunPhase::Playing;
         exitPromptMessage.clear();
     }
 }
 
+// gameplay input handle, only on during normal play
 void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
 {
     // while in battle, all key input goes to the battle overlay only
     if (activeBattle)
     {
         activeBattle->handleKey(scancode);
+        return;
+    }
+
+    if (activeDialogue.open)
+    {
+        if (scancode == sf::Keyboard::Scancode::Up)
+        {
+            stepDialogueSelection(-1);
+        }
+        else if (scancode == sf::Keyboard::Scancode::Down)
+        {
+            stepDialogueSelection(1);
+        }
+        else if (scancode == sf::Keyboard::Scancode::Enter)
+        {
+            confirmDialogueSelection();
+        }
+        else if (scancode == sf::Keyboard::Scancode::Escape)
+        {
+            closeDialogue();
+        }
         return;
     }
 
@@ -293,7 +351,8 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
         else
         {
             runPhase = RunPhase::ConfirmExitSave;
-            exitPromptMessage = "Save before exiting? Y = save and quit, N = quit, Esc = cancel";
+            resetConfirmPending = false;
+            exitPromptMessage = "Pause menu: R = reset game, Y = save and quit, N = quit, Esc = cancel";
         }
     }
     else if (scancode == sf::Keyboard::Scancode::F5)
@@ -347,6 +406,10 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
             ++selectedInventoryIndex;
         }
     }
+    else if (scancode == sf::Keyboard::Scancode::S && shopOpen && inventoryOpen)
+    {
+        trySellSelectedItem();
+    }
     else if (scancode == sf::Keyboard::Scancode::Enter)
     {
         if (inventoryOpen)
@@ -360,14 +423,16 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
     }
 }
 
+// handle player movement input + wild battle checks
 void GameManager::handleInput()
 {
     // no movement while menus are up
-    if (inventoryOpen || shopOpen || activeBattle)
+    if (inventoryOpen || shopOpen || activeBattle || activeDialogue.open)
     {
         return;
     }
 
+    
     // simple cooldown so movement doesn't spam
     timeSinceLastMove += 0.016f;
     
@@ -375,6 +440,7 @@ void GameManager::handleInput()
     {
         return;
     }
+    
 
     int dx = 0, dy = 0;
     
@@ -415,6 +481,7 @@ void GameManager::handleInput()
     }
 }
 
+// update game state, used for popup timers and battle end checks
 void GameManager::update(float deltaTime)
 {
     // popup expires over time
@@ -430,6 +497,8 @@ void GameManager::update(float deltaTime)
 
     if (activeBattle && activeBattle->shouldClose())
     {
+        bool playerDefeated = (mapPlayer.getHp() <= 0);
+        
         showPopup(activeBattle->getEndMessage(), 1.4f);
         activeBattle.reset();
 
@@ -442,9 +511,25 @@ void GameManager::update(float deltaTime)
         {
             backgroundMusic.play();
         }
+
+        // Handle death state
+        if (playerDefeated)
+        {
+            if (!selectedSaveFile.empty())
+            {
+                loadSaveFile(selectedSaveFile);
+                showPopup("Defeated. Loaded last save.", 2.0f);
+            }
+            else
+            {
+                resetGameState(); // This automatically pulls the _reset.json file
+                showPopup("Defeated. Game reset.", 2.0f);
+            }
+        }
     }
 }
 
+// render the current game state to the window
 void GameManager::render()
 {
     // each run phase has its own ui flow
@@ -468,15 +553,21 @@ void GameManager::render()
     {
         renderBattleOverlay();
     }
+    if (activeDialogue.open)
+    {
+        renderDialogueOverlay();
+    }
     renderPopup();
 }
 
+// top part of window is world view
 void GameManager::renderMapViewport()
 {
     // top part of window is world view
     mapController.render(window, WINDOW_WIDTH, WINDOW_HEIGHT, MAP_VIEWPORT_HEIGHT_RATIO);
 }
 
+// bottom part of window is for controls, stats, inventory, shop, etc
 void GameManager::renderClientViewport()
 {
     // bottom panel for controls/stats/inventory/shop
@@ -500,7 +591,7 @@ void GameManager::renderClientViewport()
 
     const std::string controlsText =
         mapEditorEnabled
-        ? "Editor: 1 Grass 2 Water 3 Sand 4 Rock 5 Wall 6 Store 7 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
+        ? "Editor: 1 Grass 2 Water 3 Sand 4 Rock 5 Wall 6 Shop 7 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
         : "Move: WASD/Arrows | Interact: F | Inventory: E | Equip: Enter | Save: F5 | Editor: Tab";
 
     sf::Text controls(font, controlsText, 18);
@@ -528,6 +619,7 @@ void GameManager::renderClientViewport()
     }
 }
 
+// full screen list of save files
 void GameManager::renderSaveSelectionScreen()
 {
     // full screen list of save files
@@ -578,6 +670,7 @@ void GameManager::renderSaveSelectionScreen()
     }
 }
 
+//overlay for confirming exit and save options
 void GameManager::renderExitPrompt()
 {
     // modal overlay when player tries to quit
@@ -614,6 +707,7 @@ void GameManager::renderExitPrompt()
     window.draw(actions);
 }
 
+// inventory panel on left side of client viewport
 void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
 {
     // inventory list with current selected item
@@ -624,7 +718,10 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
     invBg.setOutlineThickness(2.0f);
     window.draw(invBg);
 
-    sf::Text title(font, "Inventory (Up/Down to select, Enter to equip, E to close)", 20);
+    std::string titleText = shopOpen 
+        ? "Inventory (Up/Down: select, Enter: equip, S: sell, E: close)" 
+        : "Inventory (Up/Down to select, Enter to equip, E to close)";
+    sf::Text title(font, titleText, 20);
     title.setFillColor(sf::Color::White);
     title.setPosition({28.0f, panelTop + 20.0f});
     window.draw(title);
@@ -663,6 +760,7 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
     }
 }
 
+//shop panel on right side of client viewport, shows current item for sale and price
 void GameManager::renderShopPanel(float panelTop, float panelHeight)
 {
     // simple shop panel shows first sellable item
@@ -703,6 +801,7 @@ void GameManager::renderShopPanel(float panelTop, float panelHeight)
     window.draw(line3);
 }
 
+// small popup messager
 void GameManager::renderPopup()
 {
     // short status popup near map area
@@ -732,6 +831,201 @@ void GameManager::renderPopup()
     window.draw(popupText);
 }
 
+// overlay for npc dialogue
+void GameManager::renderDialogueOverlay()
+{
+    if (!activeDialogue.open || font.getInfo().family.empty())
+    {
+        return;
+    }
+
+    const ActiveDialogueNode* node = getActiveDialogueNodeById(activeDialogue.currentNodeId);
+    if (!node)
+    {
+        return;
+    }
+
+    sf::RectangleShape overlay({static_cast<float>(WINDOW_WIDTH), static_cast<float>(WINDOW_HEIGHT)});
+    overlay.setFillColor(sf::Color(0, 0, 0, 120));
+    window.draw(overlay);
+
+    sf::RectangleShape panel({1020.0f, 320.0f});
+    panel.setOrigin({panel.getSize().x * 0.5f, panel.getSize().y * 0.5f});
+    panel.setPosition({static_cast<float>(WINDOW_WIDTH) * 0.5f, static_cast<float>(WINDOW_HEIGHT) * 0.5f});
+    panel.setFillColor(sf::Color(18, 24, 34, 245));
+    panel.setOutlineColor(sf::Color(220, 230, 240));
+    panel.setOutlineThickness(2.0f);
+    window.draw(panel);
+
+    sf::Text title(font, activeDialogue.speakerName.empty() ? "NPC" : activeDialogue.speakerName, 28);
+    title.setFillColor(sf::Color(255, 236, 170));
+    title.setPosition({panel.getPosition().x - 480.0f, panel.getPosition().y - 126.0f});
+    window.draw(title);
+
+    sf::Text body(font, node->npcText, 22);
+    body.setFillColor(sf::Color::White);
+    body.setPosition({panel.getPosition().x - 480.0f, panel.getPosition().y - 72.0f});
+    window.draw(body);
+
+    float y = panel.getPosition().y + 8.0f;
+    for (int i = 0; i < static_cast<int>(node->options.size()); ++i)
+    {
+        const auto& option = node->options[static_cast<std::size_t>(i)];
+        const bool selected = (i == activeDialogue.selectedOptionIndex);
+
+        sf::RectangleShape optionBg({960.0f, 34.0f});
+        optionBg.setPosition({panel.getPosition().x - 480.0f, y - 4.0f});
+        optionBg.setFillColor(selected ? sf::Color(56, 82, 118) : sf::Color(28, 36, 48));
+        optionBg.setOutlineColor(selected ? sf::Color(154, 198, 255) : sf::Color(68, 92, 120));
+        optionBg.setOutlineThickness(1.0f);
+        window.draw(optionBg);
+
+        sf::Text optionText(font, std::to_string(i) + ". " + option.text, 20);
+        optionText.setFillColor(selected ? sf::Color::White : sf::Color(214, 227, 243));
+        optionText.setPosition({panel.getPosition().x - 464.0f, y});
+        window.draw(optionText);
+        y += 40.0f;
+    }
+
+    sf::Text hint(font, "Up/Down: choose   Enter: select   Esc: close", 18);
+    hint.setFillColor(sf::Color(190, 205, 222));
+    hint.setPosition({panel.getPosition().x - 480.0f, panel.getPosition().y + 122.0f});
+    window.draw(hint);
+}
+
+// starting the npc dialogue, returns false if no dialogue available, true if dialogue started (even if just default text)
+bool GameManager::beginNpcDialogue(int entityId, const OverworldMap::EntityMetadata& metadata)
+{
+    activeDialogue = ActiveDialogue{};
+    activeDialogue.open = true;
+    activeDialogue.entityId = entityId;
+    activeDialogue.speakerName = metadata.npcName.empty() ? (metadata.shopNpcName.empty() ? "NPC" : metadata.shopNpcName)
+                                                          : metadata.npcName;
+
+    if (!metadata.dialogueTree.empty())
+    {
+        for (const auto& node : metadata.dialogueTree)
+        {
+            ActiveDialogueNode copy{};
+            copy.id = node.id;
+            copy.npcText = node.npcText;
+            for (const auto& option : node.options)
+            {
+                copy.options.push_back({option.text, option.nextNodeId});
+            }
+            activeDialogue.nodes.push_back(std::move(copy));
+        }
+
+        activeDialogue.currentNodeId = activeDialogue.nodes.front().id;
+        return true;
+    }
+
+    ActiveDialogueNode node{};
+    node.id = 1;
+    node.npcText = !metadata.dialogue.empty() ? metadata.dialogue : metadata.npcDescription;
+    if (node.npcText.empty())
+    {
+        node.npcText = "...";
+    }
+
+    if (!metadata.dialogue.empty())
+    {
+        node.options.push_back({"Continue", -1});
+    }
+
+    activeDialogue.nodes.push_back(std::move(node));
+    activeDialogue.currentNodeId = 1;
+    return true;
+}
+
+// helper to find active dialogue node by id, returns nullptr if not found
+const GameManager::ActiveDialogueNode* GameManager::getActiveDialogueNodeById(int nodeId) const
+{
+    for (const auto& node : activeDialogue.nodes)
+    {
+        if (node.id == nodeId)
+        {
+            return &node;
+        }
+    }
+    return nullptr;
+}
+
+// move dialogue selection up/down, wraps around
+void GameManager::stepDialogueSelection(int delta)
+{
+    const ActiveDialogueNode* node = getActiveDialogueNodeById(activeDialogue.currentNodeId);
+    if (!node || node->options.empty())
+    {
+        return;
+    }
+
+    const int optionCount = static_cast<int>(node->options.size());
+    activeDialogue.selectedOptionIndex = (activeDialogue.selectedOptionIndex + delta + optionCount) % optionCount;
+}
+
+//confirm dialogue selection, handles moving to another node or triggering actions based on the values of the nextNodeId
+void GameManager::confirmDialogueSelection()
+{
+    const ActiveDialogueNode* node = getActiveDialogueNodeById(activeDialogue.currentNodeId);
+    if (!node)
+    {
+        closeDialogue();
+        return;
+    }
+
+    if (node->options.empty())
+    {
+        closeDialogue();
+        return;
+    }
+
+    if (activeDialogue.selectedOptionIndex < 0 ||
+        activeDialogue.selectedOptionIndex >= static_cast<int>(node->options.size()))
+    {
+        activeDialogue.selectedOptionIndex = 0;
+    }
+
+    const auto& option = node->options[static_cast<std::size_t>(activeDialogue.selectedOptionIndex)];
+    if (option.nextNodeId < -1)
+    {
+        int actionCode = option.nextNodeId;
+        closeDialogue();
+        
+        if (actionCode == -2)
+        {
+            startWildBattle(-1); // Trigger random battle
+        }
+        else if (actionCode <= -100)
+        {
+            startWildBattle(std::abs(actionCode) - 100); // Trigger specific battle ID
+        }
+        return;
+    }
+    else if (option.nextNodeId == -1)
+    {
+        closeDialogue();
+        return;
+    }
+
+    const ActiveDialogueNode* nextNode = getActiveDialogueNodeById(option.nextNodeId);
+    if (!nextNode)
+    {
+        closeDialogue();
+        return;
+    }
+
+    activeDialogue.currentNodeId = nextNode->id;
+    activeDialogue.selectedOptionIndex = 0;
+}
+
+// closes dialogue and resets state
+void GameManager::closeDialogue()
+{
+    activeDialogue = ActiveDialogue{};
+}
+
+// trys to interact with any entity on same tile, then 4 adjacent, shows popup if nothing to interact with
 void GameManager::tryInteraction()
 {
     // check tile player is on first
@@ -740,18 +1034,89 @@ void GameManager::tryInteraction()
     const int tileX = map.getPlayerTileX();
     const int tileY = map.getPlayerTileY();
 
-    const OverworldMap::MapEntity* onTile = map.getEntityAtPosition(chunkX, chunkY, tileX, tileY);
-    if (onTile)
+    auto interactWithEntity = [this](const OverworldMap::MapEntity* entity) -> bool
     {
-        if (onTile->type == "shop")
+        if (!entity)
         {
+            return false;
+        }
+
+        const bool isShop = (entity->type == "shop");
+        if (isShop)
+        {
+            if (!shopNpc)
+            {
+                showPopup("Shop unavailable (" + std::to_string(entity->id) + ")", 1.2f);
+                return true;
+            }
+
+            if (const OverworldMap::EntityMetadata* metadata = map.getEntityMetadata(entity->id))
+            {
+                // Apply shop listing from metadata string format: id:qty,id:qty
+                shopNpc->getInventory().clear();
+                if (!metadata->shopInventory.empty())
+                {
+                    std::stringstream stream(metadata->shopInventory);
+                    std::string entry;
+                    while (std::getline(stream, entry, ','))
+                    {
+                        std::stringstream pairStream(entry);
+                        std::string idToken;
+                        std::string qtyToken;
+                        if (!std::getline(pairStream, idToken, ':') || !std::getline(pairStream, qtyToken, ':'))
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            const int itemId = std::stoi(idToken);
+                            const int quantity = std::stoi(qtyToken);
+                            if (quantity > 0)
+                            {
+                                shopNpc->addItemToInventory(itemId, itemRegistry, quantity);
+                            }
+                        }
+                        catch (...)
+                        {
+                            // ignore malformed entries and keep parsing
+                        }
+                    }
+                }
+
+                const std::string shopName = metadata->shopName.empty() ? "Shop" : metadata->shopName;
+                shopOpen = true;
+                showPopup(shopName + " opened: Press Enter to buy", 1.6f);
+                return true;
+            }
+
             shopOpen = true;
             showPopup("Shop opened: Press Enter to buy", 1.6f);
+            return true;
         }
-        else
+
+        if (entity->type == "npc")
         {
-            showPopup("You interact with " + onTile->type + " #" + std::to_string(onTile->id));
+            if (const OverworldMap::EntityMetadata* metadata = map.getEntityMetadata(entity->id))
+            {
+                if (!metadata->dialogueTree.empty() || !metadata->dialogue.empty() || !metadata->npcDescription.empty())
+                {
+                    if (beginNpcDialogue(entity->id, *metadata))
+                    {
+                        return true;
+                    }
+                    return true;
+                }
+            }
         }
+
+        showPopup("You interact with " + entity->type + " #" + std::to_string(entity->id));
+        return true;
+    };
+
+    const OverworldMap::MapEntity* onTile = map.getEntityAtPosition(chunkX, chunkY, tileX, tileY);
+    if (interactWithEntity(onTile))
+    {
         return;
     }
 
@@ -767,17 +1132,8 @@ void GameManager::tryInteraction()
     {
         const OverworldMap::MapEntity* entity =
             map.getEntityAtPosition(chunkX, chunkY, tileX + offset[0], tileY + offset[1]);
-        if (entity)
+        if (interactWithEntity(entity))
         {
-            if (entity->type == "shop")
-            {
-                shopOpen = true;
-                showPopup("Shop opened: Press Enter to buy", 1.6f);
-            }
-            else
-            {
-                showPopup("You interact with " + entity->type + " #" + std::to_string(entity->id));
-            }
             return;
         }
     }
@@ -785,6 +1141,7 @@ void GameManager::tryInteraction()
     showPopup("There is nothing to interact with.", 1.4f);
 }
 
+// helper to show a temporary popup message, overwrites old message if still active
 void GameManager::showPopup(const std::string& message, float seconds)
 {
     // overwrites old popup with newest one
@@ -792,6 +1149,7 @@ void GameManager::showPopup(const std::string& message, float seconds)
     popupTimeRemaining = seconds;
 }
 
+// loads +starts music, returns true if loaded
 bool GameManager::initializeBackgroundMusic()
 {
     // try load + loop bg music (not fatal if this fails)
@@ -823,22 +1181,86 @@ bool GameManager::initializeBackgroundMusic()
     return true;
 }
 
+// initializes the item registry with all items used in the game, including those sold by shops and found in battles
 void GameManager::initializeMapGameplayState()
 {
     // register base items used in map gameplay
     auto sword = std::make_shared<Item>(0, "Iron Sword", "Sword of Iron", 50, false);
     auto potion = std::make_shared<Item>(1, "Health Potion", "Potion of Health", 10, true);
     auto shield = std::make_shared<Item>(2, "Shield", "Blocks attacks", 100, false);
+    auto waterBottle = std::make_shared<Item>(3, "Plastic Water Bottle", "", 10, false);
+    auto RustySword = std::make_shared<Item>(4, "Rusty Sword", "", 10, false);
+    auto SheepskinS = std::make_shared<Item>(5, "Sheepskin Shield", "", 30, false);
+    auto BollD = std::make_shared<Item>(32, "Bollock Dagger", "", 50, false);
+    auto cloth = std::make_shared<Item>(6, "Cloth Cloak", "", 40, false);
+    auto TurkishDelight = std::make_shared<Item>(7, "Turkish Delight", "", 2, true);
+    auto Bread = std::make_shared<Item>(8, "Bread", "", 6, true);
+    auto CheeseC = std::make_shared<Item>(9, "Chesse and Crackers", "", 3, true);
+    auto mace = std::make_shared<Item>(10, "Iron Mace", "", 80, false);
+    auto breastPlate = std::make_shared<Item>(11, "Bronze breastplate", "", 80, false);
+    auto Hanger = std::make_shared<Item>(12, "Hanger Sword", "", 60, false);
+    auto Ring = std::make_shared<Item>(13, "Sacred Ring", "", 100, false);
+    auto Salmon = std::make_shared<Item>(14, "Salmon", "", 15, true);
+    auto Crab = std::make_shared<Item>(15, "Crab", "", 10, true);
+    auto sushi = std::make_shared<Item>(16, "Sushi", "", 20, true);
+    auto Frost = std::make_shared<Item>(17, "Frostbite", "", 200, false);
+    auto chain = std::make_shared<Item>(18, "Chainmail Shirt", "", 120, false);
+    auto fisher = std::make_shared<Item>(19, "Fisher hat", "", 40, false);
+    auto sKey = std::make_shared<Item>(20, "Sliver Key", "", 500, false);
+    auto chainMG = std::make_shared<Item>(21, "Chainmail Gauntlet", "", 100, false);
+    auto Wall = std::make_shared<Item>(22, "Walleye", "", 15, true);
+    auto cod = std::make_shared<Item>(23, "Cod", "", 10, true);
+    auto Emb = std::make_shared<Item>(24, "EmberFang", "", 220, false);
+    auto templar = std::make_shared<Item>(25, "Templar Sword", "", 200, false);
+    auto IronB = std::make_shared<Item>(26, "Iron BreastPlate", "", 180, false);
+    auto ChainH = std::make_shared<Item>(27, "Chainmail hood", "", 100, false);
+    auto HeaterS = std::make_shared<Item>(28, "Heater Shield", "", 80, false);
+    auto Watermelon = std::make_shared<Item>(29, "Watermelon", "", 5, true);
+    auto Eggs = std::make_shared<Item>(30, "Eggs", "", 15, true);
+    auto HighPotion = std::make_shared<Item>(31, "High Potion", "", 100, true);
+
 
     itemRegistry.setItem(0, sword);
     itemRegistry.setItem(1, potion);
     itemRegistry.setItem(2, shield);
-
+    itemRegistry.setItem(3, waterBottle);
+    itemRegistry.setItem(4, RustySword);
+    itemRegistry.setItem(5, SheepskinS);
+    itemRegistry.setItem(6, cloth);
+    itemRegistry.setItem(7, TurkishDelight);
+    itemRegistry.setItem(8, Bread);
+    itemRegistry.setItem(9, CheeseC);
+    itemRegistry.setItem(10, mace);
+    itemRegistry.setItem(11, breastPlate);
+    itemRegistry.setItem(12, Hanger);
+    itemRegistry.setItem(13, Ring);
+    itemRegistry.setItem(14, Salmon);
+    itemRegistry.setItem(15, Crab);
+    itemRegistry.setItem(16, sushi);
+    itemRegistry.setItem(17, Frost);
+    itemRegistry.setItem(18, chain);
+    itemRegistry.setItem(19, fisher);
+    itemRegistry.setItem(20, sKey);
+    itemRegistry.setItem(21, chainMG);
+    itemRegistry.setItem(22, Wall);
+    itemRegistry.setItem(23, cod);
+    itemRegistry.setItem(24, Emb);
+    itemRegistry.setItem(25, templar);
+    itemRegistry.setItem(26, IronB);
+    itemRegistry.setItem(27, ChainH);
+    itemRegistry.setItem(28, HeaterS);
+    itemRegistry.setItem(29, Watermelon);
+    itemRegistry.setItem(30, Eggs);
+    itemRegistry.setItem(31, HighPotion);
+    itemRegistry.setItem(32, BollD);
+    
     mapShop = std::make_unique<store>("Map Shop", itemRegistry);
     shopNpc = std::make_unique<npc>("Shopkeeper", "A local merchant", 50, 8, 4, 3, 1000, 6, 7, false, 0);
     shopNpc->addItemToInventory(1, itemRegistry, 30);
+
 }
 
+// applies default player state to map player, used for new saves and as fallback if save file is missing data
 void GameManager::applyDefaultPlayerState()
 {
     // fallback player state for new saves / missing player data
@@ -852,6 +1274,7 @@ void GameManager::applyDefaultPlayerState()
     mapPlayer.addItemToInventory(2, itemRegistry, 1);
 }
 
+// builds a PlayerState struct from the current runtime player data, embedding into save files
 OverworldMap::PlayerState GameManager::buildPlayerStateForSave()
 {
     // copy runtime player + inventory into save struct
@@ -879,12 +1302,84 @@ OverworldMap::PlayerState GameManager::buildPlayerStateForSave()
     return state;
 }
 
+// resets current state, resets using reset snapshot
+void GameManager::resetGameState()
+{
+    if (selectedSaveFile.empty())
+    {
+        showPopup("Reset failed: no active save", 1.5f);
+        return;
+    }
+
+    if (!restoreFromResetSnapshot(selectedSaveFile))
+    {
+        showPopup("Reset failed: missing reset snapshot", 1.8f);
+        return;
+    }
+
+    if (!loadSaveFile(selectedSaveFile))
+    {
+        showPopup("Reset failed: could not reload save", 1.8f);
+        return;
+    }
+
+    // clear ui states
+    inventoryOpen = false;
+    shopOpen = false;
+    mapEditorEnabled = false;
+
+    // return to playing phase
+    runPhase = RunPhase::Playing;
+    resetConfirmPending = false;
+
+    showPopup("Game reset to starting state", 1.5f);
+}
+
+// helper to get path for reset snapshot
+std::filesystem::path GameManager::getResetSnapshotPath(const std::filesystem::path& mapPath) const
+{
+    const std::string stem = mapPath.stem().string();
+    return mapPath.parent_path() / (stem + "_reset.json");
+}
+
+// makes sure there's a reset snapshot
+bool GameManager::ensureResetSnapshotExists(const std::filesystem::path& mapPath)
+{
+    const std::filesystem::path resetPath = getResetSnapshotPath(mapPath);
+    if (std::filesystem::exists(resetPath))
+    {
+        return true;
+    }
+
+    std::error_code ec;
+    std::filesystem::copy_file(mapPath, resetPath, std::filesystem::copy_options::none, ec);
+    return !ec;
+}
+
+// restores map file from reset snapshot, returns false if snapshot missing or copy fails
+bool GameManager::restoreFromResetSnapshot(const std::filesystem::path& mapPath)
+{
+    const std::filesystem::path resetPath = getResetSnapshotPath(mapPath);
+    if (!std::filesystem::exists(resetPath))
+    {
+        return false;
+    }
+
+    std::error_code ec;
+    std::filesystem::copy_file(resetPath, mapPath, std::filesystem::copy_options::overwrite_existing, ec);
+    return !ec;
+}
+
+// applies the loaded player state
 void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
 {
     // restore player basics + inventory from loaded file
     mapPlayer.setHp(state.hp);
     mapPlayer.setGold(state.gold);
     mapPlayer.setXp(state.xp);
+    
+    // restore stamina so the player isn't trapped in an exhausted state
+    mapPlayer.setStamina(1000);
 
     mapPlayer.getInventory().clear();
     for (const auto& entry : state.inventory)
@@ -901,6 +1396,7 @@ void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
     }
 }
 
+// initializes available save files, creates default if none found, applies default player state if no player data in file
 bool GameManager::initializeMapFromSaveFile()
 {
     // make sure maps dir exists, and at least one save exists
@@ -934,6 +1430,7 @@ bool GameManager::initializeMapFromSaveFile()
     return true;
 }
 
+// loads the currently selected save file, returns false if no files or load fails, applies embedded player state if present
 bool GameManager::loadSelectedSaveFile()
 {
     // load whichever file is highlighted in save list
@@ -946,6 +1443,7 @@ bool GameManager::loadSelectedSaveFile()
     return loadSaveFile(selectedSaveFile);
 }
 
+// loads a save file by path, returns false if load fails, applies embedded player state if present
 bool GameManager::loadSaveFile(const std::filesystem::path& path)
 {
     // load map file and apply embedded player state if present
@@ -965,9 +1463,10 @@ bool GameManager::loadSaveFile(const std::filesystem::path& path)
     }
 
     selectedSaveFile = path;
-    return true;
+    return ensureResetSnapshotExists(path);
 }
 
+// saves current game state to currently selected file, returns false if no file selected or save fails
 bool GameManager::saveCurrentGameToSelectedFile()
 {
     // write latest player state back into selected map file
@@ -980,6 +1479,7 @@ bool GameManager::saveCurrentGameToSelectedFile()
     return map.saveToFile(selectedSaveFile.string());
 }
 
+// helper to get list of item ids in player inventory with quantity > 0, used for rendering and interaction
 std::vector<int> GameManager::getInventoryItemIds()
 {
     // flattened list of inventory item ids with quantity > 0
@@ -996,6 +1496,7 @@ std::vector<int> GameManager::getInventoryItemIds()
     return ids;
 }
 
+// helper get first avalible shop item
 bool GameManager::getShopListing(int& itemId, std::string& itemName, int& itemPrice) const
 {
     // pull first available shop item from npc inventory
@@ -1024,6 +1525,7 @@ bool GameManager::getShopListing(int& itemId, std::string& itemName, int& itemPr
     return false;
 }
 
+// tries to equip item, shows popup if failed
 void GameManager::equipSelectedInventoryItem()
 {
     // equip currently highlighted inventory entry
@@ -1046,6 +1548,7 @@ void GameManager::equipSelectedInventoryItem()
     }
 }
 
+// tries to buy first available shop item, shows popup if failed or on success
 void GameManager::tryBuyShopItem()
 {
     // basic buy flow: checks, then purchase
@@ -1070,10 +1573,13 @@ void GameManager::tryBuyShopItem()
         return;
     }
 
+
+
     mapShop->buySomething(mapPlayer, *shopNpc, shopItemId, 1);
     showPopup("Bought " + shopItemName, 1.2f);
 }
 
+//handles key input for editor
 bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
 {
     if (!mapEditorEnabled)
@@ -1113,8 +1619,8 @@ bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
     }
     if (scancode == sf::Keyboard::Scancode::Num6)
     {
-        activeEditorBrush = EditorBrush::Store;
-        showPopup("Brush: Store", 0.9f);
+        activeEditorBrush = EditorBrush::Shop;
+        showPopup("Brush: Shop", 0.9f);
         return true;
     }
     if (scancode == sf::Keyboard::Scancode::Num7)
@@ -1168,6 +1674,7 @@ bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
     return false;
 }
 
+// helper to get editor brush name
 std::string GameManager::getEditorBrushName() const
 {
     switch (activeEditorBrush)
@@ -1182,8 +1689,8 @@ std::string GameManager::getEditorBrushName() const
         return "rock";
     case EditorBrush::Wall:
         return "wall";
-    case EditorBrush::Store:
-        return "store";
+    case EditorBrush::Shop:
+        return "shop";
     case EditorBrush::Npc:
         return "npc";
     default:
@@ -1191,6 +1698,7 @@ std::string GameManager::getEditorBrushName() const
     }
 }
 
+// applies editor brush at player pos
 bool GameManager::applyMapEditorBrushAtPlayer()
 {
     const int chunkX = map.getPlayerChunkX();
@@ -1221,9 +1729,33 @@ bool GameManager::applyMapEditorBrushAtPlayer()
     const std::string entityType = getEditorBrushName();
     const bool updatedPassability = map.setTilePassable(chunkX, chunkY, tileX, tileY, false);
     const bool updatedEntity = map.placeOrReplaceEntity(chunkX, chunkY, tileX, tileY, entityType);
+
+    if (updatedEntity && (entityType == "shop" || entityType == "npc"))
+    {
+        const OverworldMap::MapEntity* placed = map.getEntityAtPosition(chunkX, chunkY, tileX, tileY);
+        if (placed)
+        {
+            OverworldMap::EntityMetadata metadata;
+            if (entityType == "shop")
+            {
+                metadata.shopName = "Map Shop";
+                metadata.shopNpcName = "Shopkeeper";
+                metadata.shopInventory = "1:10";
+            }
+            else
+            {
+                metadata.npcName = "Villager";
+                metadata.npcDescription = "A local villager.";
+                metadata.dialogue = "Hello there";
+            }
+            map.setEntityMetadata(placed->id, metadata);
+        }
+    }
+
     return updatedPassability && updatedEntity;
 }
 
+// erases any entity at player pos and resets terrain to grass + passable
 bool GameManager::eraseMapEditorSelectionAtPlayer()
 {
     const int chunkX = map.getPlayerChunkX();
@@ -1237,17 +1769,45 @@ bool GameManager::eraseMapEditorSelectionAtPlayer()
     return removedEntity || (resetTerrain && resetPassability);
 }
 
-void GameManager::startWildBattle()
+// starts battle encounter with either random fodder enemy or specific scripted enemy based on passed id, shows popup if battle already active
+void GameManager::startWildBattle(int enemyId)
 {
     if (activeBattle)
     {
         return;
     }
 
-    auto enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 10, 4, 1);
+    std::unique_ptr<fodder> enemy;
+
+    if (enemyId == -1)
+    {
+        // Random enemy pool
+        int roll = mapPlayer.diceRoll(4);
+        switch (roll)
+        {
+            case 1: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
+            case 2: enemy = std::make_unique<fodder>("Bat", 15, 4, 1, 2, 500, 5, 2); break;
+            case 3: enemy = std::make_unique<fodder>("Goblin", 25, 5, 2, 1, 600, 6, 3); break;
+            case 4: enemy = std::make_unique<fodder>("Googlie Mooglie", 20, 6, 1, 3, 600, 8, 4); break;
+            default: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
+        }
+    }
+    else
+    {
+        // Specific scripted enemies
+        switch (enemyId)
+        {
+            //ultimate boss is Red Dragon
+            case 1: enemy = std::make_unique<fodder>("Rogue Guard", 40, 8, 4, 3, 1000, 10, 5); break;
+            case 2: enemy = std::make_unique<fodder>("Boss Slime", 80, 12, 5, 2, 1200, 25, 10); break;
+            case 3: enemy = std::make_unique<fodder>("Final Boss", 150, 20, 10, 5, 2000, 50, 20); break;
+            case 4: enemy = std::make_unique<fodder>("Red Dragon", 200, 25, 15, 6, 2500, 100, 30); break;
+            default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 100, 1, 1); break; 
+        }
+    }
+
     activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
 
-    // stop map music and start battle music
     if (backgroundMusic.getStatus() == sf::SoundSource::Status::Playing)
     {
         backgroundMusic.stop();
@@ -1258,6 +1818,7 @@ void GameManager::startWildBattle()
     }
 }
 
+// renders battle overlay if active battle, does nothing if no battle or font not loaded
 void GameManager::renderBattleOverlay()
 {
     if (!activeBattle || font.getInfo().family.empty())
@@ -1266,4 +1827,55 @@ void GameManager::renderBattleOverlay()
     }
 
     activeBattle->render(window, font);
+}
+
+void GameManager::trySellSelectedItem()
+{
+    if (!shopOpen || !inventoryOpen)
+    {
+        return;
+    }
+
+    const auto itemIds = getInventoryItemIds();
+    if (itemIds.empty() || selectedInventoryIndex < 0 || selectedInventoryIndex >= static_cast<int>(itemIds.size()))
+    {
+        showPopup("No item selected", 1.0f);
+        return;
+    }
+    
+    const int itemId = itemIds[selectedInventoryIndex];
+    int sellPrice = 0;
+    std::string itemName;
+    
+    InventoryNode* current = mapPlayer.getInventory().getHead();
+    while (current != nullptr)
+    {
+        if (current->item && current->item->getId() == itemId)
+        {
+            sellPrice = current->item->getValue();
+            itemName = current->item->getName();
+            break;
+        }
+        current = current->next;
+    }
+
+    if (sellPrice <= 0)
+    {
+        showPopup("Item has no value", 1.2f);
+        return;
+    }
+
+    // Process transaction
+    mapPlayer.removeItemFromInventory(itemId, mapPlayer, 1);
+    mapPlayer.setGold(mapPlayer.getGold() + sellPrice);
+    shopNpc->addItemToInventory(itemId, itemRegistry, 1);
+
+    // Prevent out-of-bounds index if item stack reaches 0
+    const auto newItemIds = getInventoryItemIds();
+    if (selectedInventoryIndex >= static_cast<int>(newItemIds.size()))
+    {
+        selectedInventoryIndex = std::max(0, static_cast<int>(newItemIds.size()) - 1);
+    }
+
+    showPopup("Sold " + itemName + " for " + std::to_string(sellPrice) + " gold", 1.2f);
 }

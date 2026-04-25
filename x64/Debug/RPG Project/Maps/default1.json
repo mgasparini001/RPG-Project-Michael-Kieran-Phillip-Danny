@@ -41,7 +41,7 @@
     {"id": 33, "chunkX": 0, "chunkY": 0, "tileX": 8, "tileY": 6, "type": "wall"},
     {"id": 34, "chunkX": 0, "chunkY": 0, "tileX": 9, "tileY": 6, "type": "wall"},
     {"id": 35, "chunkX": 0, "chunkY": 0, "tileX": 10, "tileY": 6, "type": "wall"},
-    {"id": 36, "chunkX": 0, "chunkY": 0, "tileX": 11, "tileY": 0, "type": "store"},
+    {"id": 36, "chunkX": 0, "chunkY": 0, "tileX": 11, "tileY": 0, "type": "shop"},
     {"id": 37, "chunkX": 0, "chunkY": 0, "tileX": 15, "tileY": 1, "type": "npc"},
     {"id": 38, "chunkX": 0, "chunkY": 0, "tileX": 7, "tileY": 4, "type": "wall"},
     {"id": 39, "chunkX": 0, "chunkY": 0, "tileX": 7, "tileY": 5, "type": "wall"},

@@ -441,6 +441,7 @@ void BattleEncounter::resolveEnemyTurn()
 	const int eRoll = m_enemy->diceRoll(10);
 	if (eRoll <= 5)
 	{
+		// enemy attacks
 		const int hpBefore = m_player.getHp();
 		if (m_enemy->attack(m_player, true))
 		{
