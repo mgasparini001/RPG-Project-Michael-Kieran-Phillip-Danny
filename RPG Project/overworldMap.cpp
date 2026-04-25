@@ -1134,6 +1134,21 @@ void OverworldMap::addEnemySpawnTile(int chunkX, int chunkY, int tileX, int tile
     m_enemySpawnTiles.push_back({chunkX, chunkY, tileX, tileY});
 }
 
+bool OverworldMap::removeEnemySpawnTile(int chunkX, int chunkY, int tileX, int tileY)
+{
+    const auto originalSize = m_enemySpawnTiles.size();
+    m_enemySpawnTiles.erase(
+        std::remove_if(m_enemySpawnTiles.begin(), m_enemySpawnTiles.end(),
+            [chunkX, chunkY, tileX, tileY](const EnemySpawnTile& tile)
+            {
+                return tile.chunkX == chunkX && tile.chunkY == chunkY &&
+                       tile.tileX == tileX && tile.tileY == tileY;
+            }),
+        m_enemySpawnTiles.end());
+
+    return m_enemySpawnTiles.size() != originalSize;
+}
+
 bool OverworldMap::isEnemySpawnTileAtPosition(int chunkX, int chunkY, int tileX, int tileY) const
 {
     for (const auto& spawnTile : m_enemySpawnTiles)

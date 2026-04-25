@@ -107,6 +107,8 @@ public:
     void addEnemySpawnTile(int chunkX, int chunkY, int tileX, int tileY);
     [[nodiscard]] bool isEnemySpawnTileAtPosition(int chunkX, int chunkY, int tileX, int tileY) const;
 
+    bool removeEnemySpawnTile(int chunkX, int chunkY, int tileX, int tileY);
+
     void setPlayerState(const PlayerState& playerState);
     [[nodiscard]] const PlayerState* getPlayerState() const;
 

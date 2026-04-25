@@ -591,7 +591,7 @@ void GameManager::renderClientViewport()
 
     const std::string controlsText =
         mapEditorEnabled
-        ? "Editor: 1 Grass 2 Water 3 Sand 4 Rock 5 Wall 6 Shop 7 NPC | Place: F | Erase: R | Save: F6 | Exit: Tab"
+        ? "Editor: 1 Grass 2 Water 3 Sand 4 Rock 5 Wall 6 Shop 7 NPC 8 Spawn | Place: F | Erase: R | Save: F6 | Exit: Tab"
         : "Move: WASD/Arrows | Interact: F | Inventory: E | Equip: Enter | Save: F5 | Editor: Tab";
 
     sf::Text controls(font, controlsText, 18);
@@ -1629,6 +1629,12 @@ bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
         showPopup("Brush: NPC", 0.9f);
         return true;
     }
+    if (scancode == sf::Keyboard::Scancode::Num8)
+    {
+        activeEditorBrush = EditorBrush::EnemySpawn;
+        showPopup("Brush: Spawn Tile", 0.9f);
+        return true;
+    }
 
     if (scancode == sf::Keyboard::Scancode::F)
     {
@@ -1693,6 +1699,8 @@ std::string GameManager::getEditorBrushName() const
         return "shop";
     case EditorBrush::Npc:
         return "npc";
+    case EditorBrush::EnemySpawn:
+        return "enemy_spawn";
     default:
         return "rock";
     }
@@ -1705,6 +1713,16 @@ bool GameManager::applyMapEditorBrushAtPlayer()
     const int chunkY = map.getPlayerChunkY();
     const int tileX = map.getPlayerTileX();
     const int tileY = map.getPlayerTileY();
+
+    if (activeEditorBrush == EditorBrush::EnemySpawn)
+    {
+        // Prevent duplicate stacking in the JSON array
+        if (!map.isEnemySpawnTileAtPosition(chunkX, chunkY, tileX, tileY))
+        {
+            map.addEnemySpawnTile(chunkX, chunkY, tileX, tileY);
+        }
+        return true; 
+    }
 
     if (activeEditorBrush == EditorBrush::Grass ||
         activeEditorBrush == EditorBrush::Water ||
@@ -1764,9 +1782,11 @@ bool GameManager::eraseMapEditorSelectionAtPlayer()
     const int tileY = map.getPlayerTileY();
 
     const bool removedEntity = map.removeEntityAtPosition(chunkX, chunkY, tileX, tileY);
+    const bool removedSpawn = map.removeEnemySpawnTile(chunkX, chunkY, tileX, tileY);
     const bool resetTerrain = map.setTileTerrain(chunkX, chunkY, tileX, tileY, OverworldMap::TerrainType::Grass);
     const bool resetPassability = map.setTilePassable(chunkX, chunkY, tileX, tileY, true);
-    return removedEntity || (resetTerrain && resetPassability);
+    
+    return removedEntity || removedSpawn || (resetTerrain && resetPassability);
 }
 
 // starts battle encounter with either random fodder enemy or specific scripted enemy based on passed id, shows popup if battle already active
