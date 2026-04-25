@@ -154,6 +154,10 @@ void Character::setHp(int hp) {
     HP = hp;
 }
 
+void Character::setStamina(int stamina) {
+    Stamina = stamina;
+}
+
 // Inventory management implementation
 Inventory& Character::getInventory() {
     return inventory;

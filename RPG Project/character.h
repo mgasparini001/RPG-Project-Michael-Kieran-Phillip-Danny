@@ -70,6 +70,7 @@ public:
     std::string getName() const;
 
     void setHp(int hp);
+    void setStamina(int stamina);
 
     // Inventory management
     Inventory& getInventory();
