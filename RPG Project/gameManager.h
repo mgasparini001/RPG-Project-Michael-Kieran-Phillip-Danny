@@ -74,7 +74,7 @@ private:
 
     // Input debouncing
     float timeSinceLastMove = 0.0f;
-    static constexpr float MOVE_COOLDOWN = 0.15f;
+    static constexpr float MOVE_COOLDOWN = 0.05f;
 
     bool inventoryOpen = false;
     bool shopOpen = false;

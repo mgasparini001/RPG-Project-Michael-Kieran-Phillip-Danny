@@ -104,6 +104,7 @@ GameManager::~GameManager()
 {
 }
 
+// try to load map and player state from a save file, return success
 bool GameManager::initialize()
 {
     // try local font first then windows font fallback
@@ -132,6 +133,7 @@ bool GameManager::initialize()
     return true;
 }
 
+// main game loop, runs until player closes window
 void GameManager::run()
 {
     sf::Clock clock;
@@ -169,6 +171,7 @@ void GameManager::run()
     }
 }
 
+// top level key handler, goes to diff handlers based on game state
 void GameManager::handleKeyPressed(sf::Keyboard::Scancode scancode)
 {
     // keep save select input isolated
@@ -226,6 +229,7 @@ void GameManager::handleSaveSelectionInput(sf::Keyboard::Scancode scancode)
     }
 }
 
+// handle the input for exit confirm
 void GameManager::handleExitConfirmInput(sf::Keyboard::Scancode scancode)
 {
     if (resetConfirmPending)
@@ -275,6 +279,7 @@ void GameManager::handleExitConfirmInput(sf::Keyboard::Scancode scancode)
     }
 }
 
+// gameplay input handle, only on during normal play
 void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
 {
     // while in battle, all key input goes to the battle overlay only
@@ -414,6 +419,7 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
     }
 }
 
+// handle player movement input + wild battle checks
 void GameManager::handleInput()
 {
     // no movement while menus are up
@@ -422,6 +428,7 @@ void GameManager::handleInput()
         return;
     }
 
+    
     // simple cooldown so movement doesn't spam
     timeSinceLastMove += 0.016f;
     
@@ -429,6 +436,7 @@ void GameManager::handleInput()
     {
         return;
     }
+    
 
     int dx = 0, dy = 0;
     
@@ -469,6 +477,7 @@ void GameManager::handleInput()
     }
 }
 
+// update game state, used for popup timers and battle end checks
 void GameManager::update(float deltaTime)
 {
     // popup expires over time
@@ -484,6 +493,8 @@ void GameManager::update(float deltaTime)
 
     if (activeBattle && activeBattle->shouldClose())
     {
+        bool playerDefeated = (mapPlayer.getHp() <= 0);
+        
         showPopup(activeBattle->getEndMessage(), 1.4f);
         activeBattle.reset();
 
@@ -496,9 +507,25 @@ void GameManager::update(float deltaTime)
         {
             backgroundMusic.play();
         }
+
+        // Handle death state
+        if (playerDefeated)
+        {
+            if (!selectedSaveFile.empty())
+            {
+                loadSaveFile(selectedSaveFile);
+                showPopup("Defeated. Loaded last save.", 2.0f);
+            }
+            else
+            {
+                resetGameState(); // This automatically pulls the _reset.json file
+                showPopup("Defeated. Game reset.", 2.0f);
+            }
+        }
     }
 }
 
+// render the current game state to the window
 void GameManager::render()
 {
     // each run phase has its own ui flow
@@ -529,12 +556,14 @@ void GameManager::render()
     renderPopup();
 }
 
+// top part of window is world view
 void GameManager::renderMapViewport()
 {
     // top part of window is world view
     mapController.render(window, WINDOW_WIDTH, WINDOW_HEIGHT, MAP_VIEWPORT_HEIGHT_RATIO);
 }
 
+// bottom part of window is for controls, stats, inventory, shop, etc
 void GameManager::renderClientViewport()
 {
     // bottom panel for controls/stats/inventory/shop
@@ -586,6 +615,7 @@ void GameManager::renderClientViewport()
     }
 }
 
+// full screen list of save files
 void GameManager::renderSaveSelectionScreen()
 {
     // full screen list of save files
@@ -636,6 +666,7 @@ void GameManager::renderSaveSelectionScreen()
     }
 }
 
+//overlay for confirming exit and save options
 void GameManager::renderExitPrompt()
 {
     // modal overlay when player tries to quit
@@ -672,6 +703,7 @@ void GameManager::renderExitPrompt()
     window.draw(actions);
 }
 
+// inventory panel on left side of client viewport
 void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
 {
     // inventory list with current selected item
@@ -721,6 +753,7 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
     }
 }
 
+//shop panel on right side of client viewport, shows current item for sale and price
 void GameManager::renderShopPanel(float panelTop, float panelHeight)
 {
     // simple shop panel shows first sellable item
@@ -761,6 +794,7 @@ void GameManager::renderShopPanel(float panelTop, float panelHeight)
     window.draw(line3);
 }
 
+// small popup messager
 void GameManager::renderPopup()
 {
     // short status popup near map area
@@ -790,6 +824,7 @@ void GameManager::renderPopup()
     window.draw(popupText);
 }
 
+// overlay for npc dialogue
 void GameManager::renderDialogueOverlay()
 {
     if (!activeDialogue.open || font.getInfo().family.empty())
@@ -851,6 +886,7 @@ void GameManager::renderDialogueOverlay()
     window.draw(hint);
 }
 
+// starting the npc dialogue, returns false if no dialogue available, true if dialogue started (even if just default text)
 bool GameManager::beginNpcDialogue(int entityId, const OverworldMap::EntityMetadata& metadata)
 {
     activeDialogue = ActiveDialogue{};
@@ -895,6 +931,7 @@ bool GameManager::beginNpcDialogue(int entityId, const OverworldMap::EntityMetad
     return true;
 }
 
+// helper to find active dialogue node by id, returns nullptr if not found
 const GameManager::ActiveDialogueNode* GameManager::getActiveDialogueNodeById(int nodeId) const
 {
     for (const auto& node : activeDialogue.nodes)
@@ -907,6 +944,7 @@ const GameManager::ActiveDialogueNode* GameManager::getActiveDialogueNodeById(in
     return nullptr;
 }
 
+// move dialogue selection up/down, wraps around
 void GameManager::stepDialogueSelection(int delta)
 {
     const ActiveDialogueNode* node = getActiveDialogueNodeById(activeDialogue.currentNodeId);
@@ -919,6 +957,7 @@ void GameManager::stepDialogueSelection(int delta)
     activeDialogue.selectedOptionIndex = (activeDialogue.selectedOptionIndex + delta + optionCount) % optionCount;
 }
 
+//confirm dialogue selection, handles moving to another node or triggering actions based on the values of the nextNodeId
 void GameManager::confirmDialogueSelection()
 {
     const ActiveDialogueNode* node = getActiveDialogueNodeById(activeDialogue.currentNodeId);
@@ -973,11 +1012,13 @@ void GameManager::confirmDialogueSelection()
     activeDialogue.selectedOptionIndex = 0;
 }
 
+// closes dialogue and resets state
 void GameManager::closeDialogue()
 {
     activeDialogue = ActiveDialogue{};
 }
 
+// trys to interact with any entity on same tile, then 4 adjacent, shows popup if nothing to interact with
 void GameManager::tryInteraction()
 {
     // check tile player is on first
@@ -1093,6 +1134,7 @@ void GameManager::tryInteraction()
     showPopup("There is nothing to interact with.", 1.4f);
 }
 
+// helper to show a temporary popup message, overwrites old message if still active
 void GameManager::showPopup(const std::string& message, float seconds)
 {
     // overwrites old popup with newest one
@@ -1100,6 +1142,7 @@ void GameManager::showPopup(const std::string& message, float seconds)
     popupTimeRemaining = seconds;
 }
 
+// loads +starts music, returns true if loaded
 bool GameManager::initializeBackgroundMusic()
 {
     // try load + loop bg music (not fatal if this fails)
@@ -1131,6 +1174,7 @@ bool GameManager::initializeBackgroundMusic()
     return true;
 }
 
+// initializes the item registry with all items used in the game, including those sold by shops and found in battles
 void GameManager::initializeMapGameplayState()
 {
     // register base items used in map gameplay
@@ -1206,6 +1250,7 @@ void GameManager::initializeMapGameplayState()
 
 }
 
+// applies default player state to map player, used for new saves and as fallback if save file is missing data
 void GameManager::applyDefaultPlayerState()
 {
     // fallback player state for new saves / missing player data
@@ -1219,6 +1264,7 @@ void GameManager::applyDefaultPlayerState()
     mapPlayer.addItemToInventory(2, itemRegistry, 1);
 }
 
+// builds a PlayerState struct from the current runtime player data, embedding into save files
 OverworldMap::PlayerState GameManager::buildPlayerStateForSave()
 {
     // copy runtime player + inventory into save struct
@@ -1246,6 +1292,7 @@ OverworldMap::PlayerState GameManager::buildPlayerStateForSave()
     return state;
 }
 
+// resets current state, resets using reset snapshot
 void GameManager::resetGameState()
 {
     if (selectedSaveFile.empty())
@@ -1278,12 +1325,14 @@ void GameManager::resetGameState()
     showPopup("Game reset to starting state", 1.5f);
 }
 
+// helper to get path for reset snapshot
 std::filesystem::path GameManager::getResetSnapshotPath(const std::filesystem::path& mapPath) const
 {
     const std::string stem = mapPath.stem().string();
     return mapPath.parent_path() / (stem + "_reset.json");
 }
 
+// makes sure there's a reset snapshot
 bool GameManager::ensureResetSnapshotExists(const std::filesystem::path& mapPath)
 {
     const std::filesystem::path resetPath = getResetSnapshotPath(mapPath);
@@ -1297,6 +1346,7 @@ bool GameManager::ensureResetSnapshotExists(const std::filesystem::path& mapPath
     return !ec;
 }
 
+// restores map file from reset snapshot, returns false if snapshot missing or copy fails
 bool GameManager::restoreFromResetSnapshot(const std::filesystem::path& mapPath)
 {
     const std::filesystem::path resetPath = getResetSnapshotPath(mapPath);
@@ -1310,12 +1360,16 @@ bool GameManager::restoreFromResetSnapshot(const std::filesystem::path& mapPath)
     return !ec;
 }
 
+// applies the loaded player state
 void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
 {
     // restore player basics + inventory from loaded file
     mapPlayer.setHp(state.hp);
     mapPlayer.setGold(state.gold);
     mapPlayer.setXp(state.xp);
+    
+    // restore stamina so the player isn't trapped in an exhausted state
+    mapPlayer.setStamina(1000);
 
     mapPlayer.getInventory().clear();
     for (const auto& entry : state.inventory)
@@ -1332,6 +1386,7 @@ void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
     }
 }
 
+// initializes available save files, creates default if none found, applies default player state if no player data in file
 bool GameManager::initializeMapFromSaveFile()
 {
     // make sure maps dir exists, and at least one save exists
@@ -1365,6 +1420,7 @@ bool GameManager::initializeMapFromSaveFile()
     return true;
 }
 
+// loads the currently selected save file, returns false if no files or load fails, applies embedded player state if present
 bool GameManager::loadSelectedSaveFile()
 {
     // load whichever file is highlighted in save list
@@ -1377,6 +1433,7 @@ bool GameManager::loadSelectedSaveFile()
     return loadSaveFile(selectedSaveFile);
 }
 
+// loads a save file by path, returns false if load fails, applies embedded player state if present
 bool GameManager::loadSaveFile(const std::filesystem::path& path)
 {
     // load map file and apply embedded player state if present
@@ -1399,6 +1456,7 @@ bool GameManager::loadSaveFile(const std::filesystem::path& path)
     return ensureResetSnapshotExists(path);
 }
 
+// saves current game state to currently selected file, returns false if no file selected or save fails
 bool GameManager::saveCurrentGameToSelectedFile()
 {
     // write latest player state back into selected map file
@@ -1411,6 +1469,7 @@ bool GameManager::saveCurrentGameToSelectedFile()
     return map.saveToFile(selectedSaveFile.string());
 }
 
+// helper to get list of item ids in player inventory with quantity > 0, used for rendering and interaction
 std::vector<int> GameManager::getInventoryItemIds()
 {
     // flattened list of inventory item ids with quantity > 0
@@ -1427,6 +1486,7 @@ std::vector<int> GameManager::getInventoryItemIds()
     return ids;
 }
 
+// helper get first avalible shop item
 bool GameManager::getShopListing(int& itemId, std::string& itemName, int& itemPrice) const
 {
     // pull first available shop item from npc inventory
@@ -1455,6 +1515,7 @@ bool GameManager::getShopListing(int& itemId, std::string& itemName, int& itemPr
     return false;
 }
 
+// tries to equip item, shows popup if failed
 void GameManager::equipSelectedInventoryItem()
 {
     // equip currently highlighted inventory entry
@@ -1477,6 +1538,7 @@ void GameManager::equipSelectedInventoryItem()
     }
 }
 
+// tries to buy first available shop item, shows popup if failed or on success
 void GameManager::tryBuyShopItem()
 {
     // basic buy flow: checks, then purchase
@@ -1507,6 +1569,7 @@ void GameManager::tryBuyShopItem()
     showPopup("Bought " + shopItemName, 1.2f);
 }
 
+//handles key input for editor
 bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
 {
     if (!mapEditorEnabled)
@@ -1601,6 +1664,7 @@ bool GameManager::handleMapEditorKeyInput(sf::Keyboard::Scancode scancode)
     return false;
 }
 
+// helper to get editor brush name
 std::string GameManager::getEditorBrushName() const
 {
     switch (activeEditorBrush)
@@ -1624,6 +1688,7 @@ std::string GameManager::getEditorBrushName() const
     }
 }
 
+// applies editor brush at player pos
 bool GameManager::applyMapEditorBrushAtPlayer()
 {
     const int chunkX = map.getPlayerChunkX();
@@ -1680,6 +1745,7 @@ bool GameManager::applyMapEditorBrushAtPlayer()
     return updatedPassability && updatedEntity;
 }
 
+// erases any entity at player pos and resets terrain to grass + passable
 bool GameManager::eraseMapEditorSelectionAtPlayer()
 {
     const int chunkX = map.getPlayerChunkX();
@@ -1693,6 +1759,7 @@ bool GameManager::eraseMapEditorSelectionAtPlayer()
     return removedEntity || (resetTerrain && resetPassability);
 }
 
+// starts battle encounter with either random fodder enemy or specific scripted enemy based on passed id, shows popup if battle already active
 void GameManager::startWildBattle(int enemyId)
 {
     if (activeBattle)
@@ -1741,6 +1808,7 @@ void GameManager::startWildBattle(int enemyId)
     }
 }
 
+// renders battle overlay if active battle, does nothing if no battle or font not loaded
 void GameManager::renderBattleOverlay()
 {
     if (!activeBattle || font.getInfo().family.empty())
