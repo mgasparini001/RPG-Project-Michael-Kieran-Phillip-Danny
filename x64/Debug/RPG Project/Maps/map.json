@@ -4336,6 +4336,32 @@
     {"entityId": 4809, "data": {"npcName": "Villager", "npcDescription": "A local villager.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": []}},
     {"entityId": 4810, "data": {"npcName": "Villager", "npcDescription": "A local villager.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": []}},
     {"entityId": 4832, "data": {"npcName": "Villager", "npcDescription": "A local villager.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": []}},
-    {"entityId": 4847, "data": {"npcName": "Villager", "npcDescription": "A local villager.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": []}}
+    {
+      "entityId": 4847,
+      "data": {
+        "npcName": "Villager",
+        "npcDescription": "A local villager.",
+        "dialogue": "Hello there",
+        "xpReward": 0,
+        "shopName": "",
+        "shopNpcName": "",
+        "shopInventory": "",
+        "dialogueTree": []
+      }
+    },
+    {
+      "entityId": 863,
+      "data": {
+        "npcName": "Villager",
+        "npcDescription": "A local villager.",
+        "dialogue": "Hello there",
+        "xpReward": 0,
+        "shopName": "",
+        "shopNpcName": "",
+        "shopInventory": "",
+        "dialogueTree": []
+      }
+    }
+
   ]
 }
