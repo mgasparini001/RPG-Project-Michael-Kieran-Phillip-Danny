@@ -391,19 +391,42 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
             tryInteraction();
         }
     }
-    else if (inventoryOpen && scancode == sf::Keyboard::Scancode::Up)
+    else if (scancode == sf::Keyboard::Scancode::Up)
     {
-        if (selectedInventoryIndex > 0)
+        // Inventory takes priority. If it's open, shop scrolling is locked.
+        if (inventoryOpen)
         {
-            --selectedInventoryIndex;
+            if (selectedInventoryIndex > 0)
+            {
+                --selectedInventoryIndex;
+            }
+        }
+        else if (shopOpen)
+        {
+            if (selectedShopIndex > 0)
+            {
+                --selectedShopIndex;
+            }
         }
     }
-    else if (inventoryOpen && scancode == sf::Keyboard::Scancode::Down)
+    else if (scancode == sf::Keyboard::Scancode::Down)
     {
-        const auto items = getInventoryItemIds();
-        if (!items.empty() && selectedInventoryIndex < static_cast<int>(items.size()) - 1)
+        // Inventory takes priority. If it's open, shop scrolling is locked.
+        if (inventoryOpen)
         {
-            ++selectedInventoryIndex;
+            const auto items = getInventoryItemIds();
+            if (!items.empty() && selectedInventoryIndex < static_cast<int>(items.size()) - 1)
+            {
+                ++selectedInventoryIndex;
+            }
+        }
+        else if (shopOpen)
+        {
+            const auto shopItems = getShopItemIds();
+            if (!shopItems.empty() && selectedShopIndex < static_cast<int>(shopItems.size()) - 1)
+            {
+                ++selectedShopIndex;
+            }
         }
     }
     else if (scancode == sf::Keyboard::Scancode::S && shopOpen && inventoryOpen)
@@ -721,9 +744,11 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
     std::string titleText = shopOpen 
         ? "Inventory (Up/Down: select, Enter: equip, S: sell, E: close)" 
         : "Inventory (Up/Down to select, Enter to equip, E to close)";
+    
+    // Moved title up slightly
     sf::Text title(font, titleText, 20);
     title.setFillColor(sf::Color::White);
-    title.setPosition({28.0f, panelTop + 20.0f});
+    title.setPosition({28.0f, panelTop + 18.0f}); 
     window.draw(title);
 
     const auto itemIds = getInventoryItemIds();
@@ -731,7 +756,7 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
     {
         sf::Text empty(font, "No items in inventory.", 18);
         empty.setFillColor(sf::Color(215, 215, 215));
-        empty.setPosition({28.0f, panelTop + 56.0f});
+        empty.setPosition({28.0f, panelTop + 46.0f});
         window.draw(empty);
         return;
     }
@@ -741,7 +766,10 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
         selectedInventoryIndex = static_cast<int>(itemIds.size()) - 1;
     }
 
-    float y = panelTop + 56.0f;
+    // Tighter spacing and higher start offset to avoid bottom clipping
+    const float itemSpacing = 22.0f;
+    int itemsPerColumn = (static_cast<int>(itemIds.size()) + 1) / 2;
+
     for (int i = 0; i < static_cast<int>(itemIds.size()); ++i)
     {
         const int itemId = itemIds[i];
@@ -754,9 +782,15 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
         sf::Text itemText(font, line, 18);
         itemText.setFillColor(i == selectedInventoryIndex ? sf::Color(255, 238, 145)
                                                           : sf::Color(220, 226, 235));
-        itemText.setPosition({28.0f, y});
+        
+        // Math for 2 columns: top-to-bottom, then left-to-right
+        int col = i / itemsPerColumn;
+        int row = i % itemsPerColumn;
+        
+        // Offset the second column by 300 pixels
+        float xOffset = col * 300.0f;
+        itemText.setPosition({28.0f + xOffset, panelTop + 46.0f + (row * itemSpacing)});
         window.draw(itemText);
-        y += 24.0f;
     }
 }
 
@@ -770,45 +804,61 @@ void GameManager::renderShopPanel(float panelTop, float panelHeight)
     shopBg.setOutlineThickness(2.0f);
     window.draw(shopBg);
 
-    sf::Text title(font, "Shopkeeper - Items for Sale", 22);
+    // Moved title up slightly
+    sf::Text title(font, "Shopkeeper (Up/Down: Select, Enter: Buy)", 20);
     title.setFillColor(sf::Color(255, 232, 170));
-    title.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 20.0f});
+    title.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 18.0f});
     window.draw(title);
 
-    float y = panelTop + 54.0f;
-    bool hasItems = false;
+    if (!shopNpc) return;
 
-    // Iterate through the shop NPC's inventory instead of getting just one listing
+    // Count valid items
+    int itemCount = 0;
+    InventoryNode* countNode = shopNpc->getInventory().getHead();
+    while (countNode != nullptr) {
+        if (countNode->item && countNode->quantity > 0) {
+            itemCount++;
+        }
+        countNode = countNode->next;
+    }
+
+    if (itemCount == 0) {
+        sf::Text empty(font, "Sold out!", 18);
+        empty.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 46.0f});
+        window.draw(empty);
+        return;
+    }
+
+    // Tighter spacing and higher start offset
+    const float itemSpacing = 22.0f;
+    int itemsPerColumn = (itemCount + 1) / 2; 
+    int i = 0;
+    
+    // Iterate and render
     InventoryNode* current = shopNpc->getInventory().getHead();
-    while (current != nullptr && y < panelTop + panelHeight - 40.0f)
-    {
-        if (current->item && current->quantity > 0)
-        {
-            hasItems = true;
-            std::string line = current->item->getName() + " - " + 
-                               std::to_string(current->item->getValue()) + " Gold";
+    while (current != nullptr) {
+        if (current->item && current->quantity > 0) {
+            bool isSelected = (i == selectedShopIndex);
+            std::string marker = isSelected ? "> " : "  ";
             
+            std::string line = marker + current->item->getName() + 
+                               " (" + std::to_string(current->item->getValue()) + "G)";
+
             sf::Text itemText(font, line, 18);
-            itemText.setFillColor(sf::Color(240, 240, 240));
-            itemText.setPosition({WINDOW_WIDTH - 544.0f, y});
+            itemText.setFillColor(isSelected ? sf::Color(255, 238, 145) : sf::Color(220, 226, 235));
+            
+            int col = i / itemsPerColumn;
+            int row = i % itemsPerColumn;
+            
+            // Offset the second column by 260 pixels
+            float xOffset = col * 260.0f; 
+            itemText.setPosition({WINDOW_WIDTH - 544.0f + xOffset, panelTop + 46.0f + (row * itemSpacing)});
+            
             window.draw(itemText);
-            y += 24.0f;
+            i++;
         }
         current = current->next;
     }
-
-    if (!hasItems)
-    {
-        sf::Text empty(font, "Sold out!", 18);
-        empty.setFillColor(sf::Color(180, 180, 180));
-        empty.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 54.0f});
-        window.draw(empty);
-    }
-
-    sf::Text hint(font, "Press Enter to buy first item | Press F to close", 16);
-    hint.setFillColor(sf::Color(230, 210, 160));
-    hint.setPosition({WINDOW_WIDTH - 544.0f, panelTop + panelHeight - 35.0f});
-    window.draw(hint);
 }
 
 // small popup messager
@@ -1561,32 +1611,34 @@ void GameManager::equipSelectedInventoryItem()
 // tries to buy first available shop item, shows popup if failed or on success
 void GameManager::tryBuyShopItem()
 {
-    // basic buy flow: checks, then purchase
-    if (!mapShop || !shopNpc)
-    {
-        showPopup("Shop unavailable", 1.2f);
+    if (!mapShop || !shopNpc) return;
+
+    const auto shopItems = getShopItemIds();
+    if (shopItems.empty() || selectedShopIndex >= shopItems.size()) {
+        showPopup("Nothing selected", 1.2f);
         return;
     }
 
-    int shopItemId = -1;
-    int shopItemPrice = 0;
-    std::string shopItemName;
-    if (!getShopListing(shopItemId, shopItemName, shopItemPrice))
-    {
-        showPopup("Shop is sold out", 1.2f);
+    int itemId = shopItems[selectedShopIndex];
+    int price = 0;
+
+    // Find the item directly in the NPC's inventory to get its value
+    InventoryNode* current = shopNpc->getInventory().getHead();
+    while (current != nullptr) {
+        if (current->item && current->item->getId() == itemId) {
+            price = current->item->getValue();
+            break;
+        }
+        current = current->next;
+    }
+
+    if (mapPlayer.getGold() < price) {
+        showPopup("Not enough gold!", 1.2f);
         return;
     }
 
-    if (mapPlayer.getGold() < shopItemPrice)
-    {
-        showPopup("Not enough gold", 1.2f);
-        return;
-    }
-
-
-
-    mapShop->buySomething(mapPlayer, *shopNpc, shopItemId, 1);
-    showPopup("Bought " + shopItemName, 1.2f);
+    mapShop->buySomething(mapPlayer, *shopNpc, itemId, 1);
+    showPopup("Purchased " + itemRegistry.getItemName(itemId), 1.2f);
 }
 
 //handles key input for editor
@@ -1907,4 +1959,19 @@ void GameManager::trySellSelectedItem()
     }
 
     showPopup("Sold " + itemName + " for " + std::to_string(sellPrice) + " gold", 1.2f);
+}
+
+std::vector<int> GameManager::getShopItemIds()
+{
+    std::vector<int> ids;
+    if (!shopNpc) return ids;
+
+    InventoryNode* current = shopNpc->getInventory().getHead();
+    while (current != nullptr) {
+        if (current->item && current->quantity > 0) {
+            ids.push_back(current->item->getId());
+        }
+        current = current->next;
+    }
+    return ids;
 }

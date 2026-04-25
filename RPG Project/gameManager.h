@@ -92,6 +92,8 @@ private:
 
     bool musicReady = false;
 
+    int selectedShopIndex = 0;
+
     std::unique_ptr<BattleEncounter> activeBattle;
 
     struct ActiveDialogueOption
@@ -160,6 +162,7 @@ private:
     bool handleMapEditorKeyInput(sf::Keyboard::Scancode scancode);
     std::string getEditorBrushName() const;
     bool applyMapEditorBrushAtPlayer();
+    std::vector<int> getShopItemIds();
     bool eraseMapEditorSelectionAtPlayer();
     void startWildBattle(int enemyId = -1);
     void renderBattleOverlay();
