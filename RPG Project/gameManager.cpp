@@ -763,7 +763,6 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
 //shop panel on right side of client viewport, shows current item for sale and price
 void GameManager::renderShopPanel(float panelTop, float panelHeight)
 {
-    // simple shop panel shows first sellable item
     sf::RectangleShape shopBg({540.0f, panelHeight - 24.0f});
     shopBg.setPosition({WINDOW_WIDTH - 556.0f, panelTop + 12.0f});
     shopBg.setFillColor(sf::Color(24, 20, 14, 240));
@@ -771,34 +770,45 @@ void GameManager::renderShopPanel(float panelTop, float panelHeight)
     shopBg.setOutlineThickness(2.0f);
     window.draw(shopBg);
 
-    sf::Text title(font, "Shopkeeper", 22);
+    sf::Text title(font, "Shopkeeper - Items for Sale", 22);
     title.setFillColor(sf::Color(255, 232, 170));
     title.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 20.0f});
     window.draw(title);
 
-    int shopItemId = -1;
-    int shopItemPrice = 0;
-    std::string shopItemName;
-    const bool hasListing = getShopListing(shopItemId, shopItemName, shopItemPrice);
+    float y = panelTop + 54.0f;
+    bool hasItems = false;
 
-    sf::Text line1(font,
-        hasListing ? ("Press Enter to buy: " + shopItemName) : "No items for sale",
-        18);
-    line1.setFillColor(sf::Color(240, 240, 240));
-    line1.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 54.0f});
-    window.draw(line1);
+    // Iterate through the shop NPC's inventory instead of getting just one listing
+    InventoryNode* current = shopNpc->getInventory().getHead();
+    while (current != nullptr && y < panelTop + panelHeight - 40.0f)
+    {
+        if (current->item && current->quantity > 0)
+        {
+            hasItems = true;
+            std::string line = current->item->getName() + " - " + 
+                               std::to_string(current->item->getValue()) + " Gold";
+            
+            sf::Text itemText(font, line, 18);
+            itemText.setFillColor(sf::Color(240, 240, 240));
+            itemText.setPosition({WINDOW_WIDTH - 544.0f, y});
+            window.draw(itemText);
+            y += 24.0f;
+        }
+        current = current->next;
+    }
 
-    sf::Text line2(font,
-        hasListing ? ("Price: " + std::to_string(shopItemPrice) + " gold") : "",
-        18);
-    line2.setFillColor(sf::Color(240, 240, 240));
-    line2.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 80.0f});
-    window.draw(line2);
+    if (!hasItems)
+    {
+        sf::Text empty(font, "Sold out!", 18);
+        empty.setFillColor(sf::Color(180, 180, 180));
+        empty.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 54.0f});
+        window.draw(empty);
+    }
 
-    sf::Text line3(font, "Press F to close shop", 18);
-    line3.setFillColor(sf::Color(230, 210, 160));
-    line3.setPosition({WINDOW_WIDTH - 544.0f, panelTop + 106.0f});
-    window.draw(line3);
+    sf::Text hint(font, "Press Enter to buy first item | Press F to close", 16);
+    hint.setFillColor(sf::Color(230, 210, 160));
+    hint.setPosition({WINDOW_WIDTH - 544.0f, panelTop + panelHeight - 35.0f});
+    window.draw(hint);
 }
 
 // small popup messager
@@ -1888,7 +1898,6 @@ void GameManager::trySellSelectedItem()
     // Process transaction
     mapPlayer.removeItemFromInventory(itemId, mapPlayer, 1);
     mapPlayer.setGold(mapPlayer.getGold() + sellPrice);
-    shopNpc->addItemToInventory(itemId, itemRegistry, 1);
 
     // Prevent out-of-bounds index if item stack reaches 0
     const auto newItemIds = getInventoryItemIds();
