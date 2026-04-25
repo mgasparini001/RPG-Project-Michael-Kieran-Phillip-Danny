@@ -299,10 +299,6 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
         {
             stepDialogueSelection(1);
         }
-        else if (scancode == sf::Keyboard::Scancode::S && shopOpen && inventoryOpen)
-        {
-            trySellSelectedItem();
-        }
         else if (scancode == sf::Keyboard::Scancode::Enter)
         {
             confirmDialogueSelection();
@@ -409,6 +405,10 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
         {
             ++selectedInventoryIndex;
         }
+    }
+    else if (scancode == sf::Keyboard::Scancode::S && shopOpen && inventoryOpen)
+    {
+        trySellSelectedItem();
     }
     else if (scancode == sf::Keyboard::Scancode::Enter)
     {
