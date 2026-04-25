@@ -151,6 +151,7 @@ private:
     void equipSelectedInventoryItem();
     bool getShopListing(int& itemId, std::string& itemName, int& itemPrice) const;
     void tryBuyShopItem();
+    void trySellSelectedItem();
     void handleKeyPressed(sf::Keyboard::Scancode scancode);
     void handleSaveSelectionInput(sf::Keyboard::Scancode scancode);
     void handleExitConfirmInput(sf::Keyboard::Scancode scancode);

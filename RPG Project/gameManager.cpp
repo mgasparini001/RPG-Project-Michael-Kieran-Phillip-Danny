@@ -406,6 +406,10 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
             ++selectedInventoryIndex;
         }
     }
+    else if (scancode == sf::Keyboard::Scancode::S && shopOpen && inventoryOpen)
+    {
+        trySellSelectedItem();
+    }
     else if (scancode == sf::Keyboard::Scancode::Enter)
     {
         if (inventoryOpen)
@@ -714,7 +718,10 @@ void GameManager::renderInventoryPanel(float panelTop, float panelHeight)
     invBg.setOutlineThickness(2.0f);
     window.draw(invBg);
 
-    sf::Text title(font, "Inventory (Up/Down to select, Enter to equip, E to close)", 20);
+    std::string titleText = shopOpen 
+        ? "Inventory (Up/Down: select, Enter: equip, S: sell, E: close)" 
+        : "Inventory (Up/Down to select, Enter to equip, E to close)";
+    sf::Text title(font, titleText, 20);
     title.setFillColor(sf::Color::White);
     title.setPosition({28.0f, panelTop + 20.0f});
     window.draw(title);
@@ -1039,7 +1046,7 @@ void GameManager::tryInteraction()
         {
             if (!shopNpc)
             {
-                showPopup("Shop unavailable", 1.2f);
+                showPopup("Shop unavailable (" + std::to_string(entity->id) + ")", 1.2f);
                 return true;
             }
 
@@ -1820,4 +1827,55 @@ void GameManager::renderBattleOverlay()
     }
 
     activeBattle->render(window, font);
+}
+
+void GameManager::trySellSelectedItem()
+{
+    if (!shopOpen || !inventoryOpen)
+    {
+        return;
+    }
+
+    const auto itemIds = getInventoryItemIds();
+    if (itemIds.empty() || selectedInventoryIndex < 0 || selectedInventoryIndex >= static_cast<int>(itemIds.size()))
+    {
+        showPopup("No item selected", 1.0f);
+        return;
+    }
+    
+    const int itemId = itemIds[selectedInventoryIndex];
+    int sellPrice = 0;
+    std::string itemName;
+    
+    InventoryNode* current = mapPlayer.getInventory().getHead();
+    while (current != nullptr)
+    {
+        if (current->item && current->item->getId() == itemId)
+        {
+            sellPrice = current->item->getValue();
+            itemName = current->item->getName();
+            break;
+        }
+        current = current->next;
+    }
+
+    if (sellPrice <= 0)
+    {
+        showPopup("Item has no value", 1.2f);
+        return;
+    }
+
+    // Process transaction
+    mapPlayer.removeItemFromInventory(itemId, mapPlayer, 1);
+    mapPlayer.setGold(mapPlayer.getGold() + sellPrice);
+    shopNpc->addItemToInventory(itemId, itemRegistry, 1);
+
+    // Prevent out-of-bounds index if item stack reaches 0
+    const auto newItemIds = getInventoryItemIds();
+    if (selectedInventoryIndex >= static_cast<int>(newItemIds.size()))
+    {
+        selectedInventoryIndex = std::max(0, static_cast<int>(newItemIds.size()) - 1);
+    }
+
+    showPopup("Sold " + itemName + " for " + std::to_string(sellPrice) + " gold", 1.2f);
 }
