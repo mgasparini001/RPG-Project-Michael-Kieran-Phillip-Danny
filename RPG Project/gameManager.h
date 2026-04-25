@@ -158,7 +158,7 @@ private:
     std::string getEditorBrushName() const;
     bool applyMapEditorBrushAtPlayer();
     bool eraseMapEditorSelectionAtPlayer();
-    void startWildBattle();
+    void startWildBattle(int enemyId = -1);
     void renderBattleOverlay();
     void handleInput();
     void update(float deltaTime);
