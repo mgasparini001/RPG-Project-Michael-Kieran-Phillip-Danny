@@ -6,6 +6,7 @@
 #include "MapController.h"
 #include "player.h"
 #include "ItemRegistry.h"
+#include "inventory.h"
 #include "Store.h"
 #include "npc.h"
 #include "battle.h"
