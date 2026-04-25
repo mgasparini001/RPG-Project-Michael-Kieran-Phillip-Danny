@@ -48,7 +48,8 @@ private:
         Rock,
         Wall,
         Shop,
-        Npc
+        Npc,
+        EnemySpawn
     };
 
     // Window and rendering
