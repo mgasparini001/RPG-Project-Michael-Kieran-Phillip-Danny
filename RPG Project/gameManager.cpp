@@ -1247,7 +1247,9 @@ void GameManager::initializeMapGameplayState()
     itemRegistry.setItem(31, HighPotion);
     itemRegistry.setItem(32, BollD);
     
-
+    mapShop = std::make_unique<store>("Map Shop", itemRegistry);
+    shopNpc = std::make_unique<npc>("Shopkeeper", "A local merchant", 50, 8, 4, 3, 1000, 6, 7, false, 0);
+    shopNpc->addItemToInventory(1, itemRegistry, 30);
 
 }
 
