@@ -96,7 +96,7 @@ BattleEncounter::BattleEncounter(std::unique_ptr<enemy> enemy,
 
 	// load sound effects
 	const std::filesystem::path attackPath = resolveBattleAssetPath("Attack.wav");
-	const std::filesystem::path restPath = resolveBattleAssetPath("eppy.wav");
+	const std::filesystem::path restPath = resolveBattleAssetPath("eppyV2.wav");
 	const std::filesystem::path fleePath = resolveBattleAssetPath("Scream.wav");
 
 	if (m_attackBuffer.loadFromFile(attackPath.string()))
