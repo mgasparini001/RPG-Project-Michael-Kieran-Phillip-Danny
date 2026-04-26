@@ -1251,7 +1251,7 @@ void GameManager::initializeMapGameplayState()
     auto waterBottle = std::make_shared<Item>(3, "Plastic Water Bottle", "", 10, false);
     auto RustySword = std::make_shared<Item>(4, "Rusty Sword", "", 10, false);
     auto SheepskinS = std::make_shared<Item>(5, "Sheepskin Shield", "", 30, false);
-    auto BollD = std::make_shared<Item>(32, "Bollock Dagger", "", 50, false);
+    auto kidD = std::make_shared<Item>(32, "Kidney Dagger", "", 50, false);
     auto cloth = std::make_shared<Item>(6, "Cloth Cloak", "", 40, false);
     auto TurkishDelight = std::make_shared<Item>(7, "Turkish Delight", "", 2, true);
     auto Bread = std::make_shared<Item>(8, "Bread", "", 6, true);
@@ -1312,7 +1312,7 @@ void GameManager::initializeMapGameplayState()
     itemRegistry.setItem(29, Watermelon);
     itemRegistry.setItem(30, Eggs);
     itemRegistry.setItem(31, HighPotion);
-    itemRegistry.setItem(32, BollD);
+    itemRegistry.setItem(32, kidD);
     
     mapShop = std::make_unique<store>("Map Shop", itemRegistry);
     shopNpc = std::make_unique<npc>("Shopkeeper", "A local merchant", 50, 8, 4, 3, 1000, 6, 7, false, 0);
