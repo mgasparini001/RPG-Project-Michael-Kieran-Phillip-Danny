@@ -4421,7 +4421,7 @@
   ],
   "playerState": {
     "hasData": true,
-    "hp": 5,
+    "hp": 50,
     "gold": 100,
     "xp": 0,
     "equippedItemId": 0,
