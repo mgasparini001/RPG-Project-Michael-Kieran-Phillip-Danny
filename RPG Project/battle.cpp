@@ -96,7 +96,7 @@ BattleEncounter::BattleEncounter(std::unique_ptr<enemy> enemy,
 
 	// load sound effects
 	const std::filesystem::path attackPath = resolveBattleAssetPath("Attack.wav");
-	const std::filesystem::path restPath = resolveBattleAssetPath("eppy.wav");
+	const std::filesystem::path restPath = resolveBattleAssetPath("eppyV3.wav");
 	const std::filesystem::path fleePath = resolveBattleAssetPath("Scream.wav");
 
 	if (m_attackBuffer.loadFromFile(attackPath.string()))
@@ -445,10 +445,10 @@ void BattleEncounter::resolveEnemyTurn()
 		const int hpBefore = m_player.getHp();
 		if (m_enemy->attack(m_player, true))
 		{
-			if (m_attackSound)
+		    /*if (m_attackSound)
 			{
 				m_attackSound->play();
-			}
+			}*/
 			m_statusMessage += "\n" + m_enemy->getName() + " hits you for " +
 			                   std::to_string(std::max(0, hpBefore - m_player.getHp())) + " damage";
 		}
@@ -460,20 +460,20 @@ void BattleEncounter::resolveEnemyTurn()
 	else if (eRoll <= 7)
 	{
 		m_enemy->rest();
-		if (m_restSound)
+		/*if (m_restSound)
 		{
 			m_restSound->play();
-		}
+		}*/
 		m_statusMessage += "\n" + m_enemy->getName() + " rests and restores stamina";
 	}
 	else if (eRoll <= 9 && m_healRuns <= 3)
 	{
 		m_enemy->heal();
 		++m_healRuns;
-		if (m_restSound)
+		/*if (m_restSound)
 		{
 			m_restSound->play();
-		}
+		}*/
 		m_statusMessage += "\n" + m_enemy->getName() + " rests and restores health";
 	}
 	else
@@ -481,10 +481,10 @@ void BattleEncounter::resolveEnemyTurn()
 		const bool escaped = m_enemy->flee();
 		if (escaped)
 		{
-			if (m_fleeSound)
+			/*if (m_fleeSound)
 			{
 				m_fleeSound->play();
-			}
+			}*/
 			finishBattle(m_enemy->getName() + " ran away");
 		}
 		m_statusMessage += escaped
