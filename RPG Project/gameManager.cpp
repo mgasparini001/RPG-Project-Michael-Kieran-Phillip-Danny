@@ -94,7 +94,7 @@ std::vector<std::filesystem::path> getMapFiles(const std::filesystem::path& maps
 // setup main game window and starting player object
 GameManager::GameManager()
     : window(sf::VideoMode(sf::Vector2u(WINDOW_WIDTH, WINDOW_HEIGHT)), "RPG Game"),
-      mapPlayer("Ash", 50, 8, 4, 3, 1000, 6, 7, 0, 100)
+      mapPlayer("Tobey", 50, 8, 4, 3, 1000, 6, 7, 0, 100)
 {
     window.setFramerateLimit(60);
 }
