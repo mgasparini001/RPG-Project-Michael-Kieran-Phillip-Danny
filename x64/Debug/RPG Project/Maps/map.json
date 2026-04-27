@@ -6055,7 +6055,183 @@
     {"entityId": 4868, "data": {"npcName": "", "npcDescription": "", "dialogue": "", "xpReward": 0, "shopName": "Landia Shop", "shopNpcName": "Morgan Chapman", "shopInventory": "24:1, 25:1, 26:1, 27:1, 28:1, 29:6, 30:9, 31:2", "dialogueTree": []}},
     {"entityId": 4869, "data": {"npcName": "", "npcDescription": "", "dialogue": "", "xpReward": 0, "shopName": "Lake Shop", "shopNpcName": "Mitch Marlow", "shopInventory": "17:1, 18:1, 19:1, 20:1, 21:1, 22:1, 23:6, 24:8", "dialogueTree": []}},
     {"entityId": 4870, "data": {"npcName": "", "npcDescription": "", "dialogue": "", "xpReward": 0, "shopName": "Robert's Workshop", "shopNpcName": "Robert Hill", "shopInventory": "3:1, 4:1, 5:1, 32:1, 6:1, 1:5, 7:1, 8:3, 9:2", "dialogueTree": []}},
-    {"entityId": 4954, "data": {"npcName": "Fisherman", "npcDescription": "Strikes a wise look and an old fishing rod", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "Hello adventurer!", "options": [{"text": "Hello?", "nextNodeId": 2}]},{"id": 2, "npcText": "What are you looking for?", "options": [{"text": "I dont know", "nextNodeId": 3},{"text": "Where am I? Why am I here?", "nextNodeId": 3},{"text": "Do you know where I can find a shop?", "nextNodeId": 10}]},{"id": 3, "npcText": "Dont you know?", "options": [{"text": "No, I am lost", "nextNodeId": 4}]},{"id": 4, "npcText": "Not all is as it seems..you are lost, but keep searching and you will be found.", "options": [{"text": "Continue", "nextNodeId": 5}]},{"id": 4, "npcText": "Not all is as it seems..you are lost, but keep searching and you will be found.", "options": [{"text": "Continue", "nextNodeId": 5}]},{"id": 5, "npcText": "The journey will reveal everything to you.", "options": [{"text": "Where am I even supposed to be journeying to?", "nextNodeId": 6}]},{"id": 6, "npcText": "Journey to the lands of fire. There you will see your enemy, and know him when you see him.", "options": [{"text": "Continue", "nextNodeId": 7}]},{"id": 7, "npcText": "But be warned: do not rush to the end! Prepare yourself, that you may pass the test.", "options": [{"text": "Continue", "nextNodeId": 8}]},{"id": 8, "npcText": "Do not charge in and die horribly. Instead, fight the battles you are ready to fight to win the war.", "options": [{"text": "Continue", "nextNodeId": 9}]},{"id": 9, "npcText": "Seek the truth always, and God be with you!", "options": [{"text": "Continue", "nextNodeId": -1}]},{"id": 10, "npcText": "The shop is in the northern part of town. God be with you!", "options": [{"text": "Continue", "nextNodeId": -1}]}]}},
-    {"entityId": 5024, "data": {"npcName": "Villager", "npcDescription": "A local villager.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": []}}
+    {
+      "entityId": 4954,
+      "data": {
+        "npcName": "Fisherman",
+        "npcDescription": "Strikes a wise look and an old fishing rod",
+        "dialogue": "Hello there",
+        "xpReward": 0,
+        "shopName": "",
+        "shopNpcName": "",
+        "shopInventory": "",
+        "dialogueTree": [
+          {
+            "id": 1,
+            "npcText": "Hello adventurer!",
+            "options": [
+              {
+                "text": "Hello?",
+                "nextNodeId": 2
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "npcText": "What are you looking for?",
+            "options": [
+              {
+                "text": "I dont know",
+                "nextNodeId": 3
+              },
+              {
+                "text": "Where am I? Why am I here?",
+                "nextNodeId": 3
+              },
+              {
+                "text": "Do you know where I can find a shop?",
+                "nextNodeId": 10
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "npcText": "Dont you know?",
+            "options": [
+              {
+                "text": "No, I am lost",
+                "nextNodeId": 4
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "npcText": "Not all is as it seems..you are lost, but keep searching and you will be found.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 5
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "npcText": "Not all is as it seems..you are lost, but keep searching and you will be found.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 5
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "npcText": "The journey will reveal everything to you.",
+            "options": [
+              {
+                "text": "Where am I even supposed to be journeying to?",
+                "nextNodeId": 6
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "npcText": "Journey to the lands of fire. There you will see your enemy, and know him when you see him.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 7
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "npcText": "But be warned: do not rush to the end! Prepare yourself, that you may pass the test.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 8
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "npcText": "Do not charge in and die horribly. Instead, fight the battles you are ready to fight to win the war.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 9
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "npcText": "Seek the truth always, and God be with you!",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": -1
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "npcText": "The shop is in the northern part of town. God be with you!",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": -1
+              }
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "entityId": 5024,
+      "data": {
+        "npcName": "Coastal Villager",
+        "npcDescription": "A local who lives in solace on the shore.",
+        "dialogue": "Hello there",
+        "xpReward": 0,
+        "shopName": "",
+        "shopNpcName": "",
+        "shopInventory": "",
+        "dialogueTree": [
+          {
+            "id": 1,
+            "npcText": "Hello, stranger.",
+            "options": [
+              {
+                "text": "Hello, pardon me, but where can I restock on resources?",
+                "nextNodeId": 2
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "npcText": "Hello, stranger.",
+            "options": [
+              {
+                "text": "Hello, pardon me, but where can I restock on resources?",
+                "nextNodeId": 3
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "npcText": "Head over to the sea shop if you wish to recover and rest.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": -1
+              }
+            ]
+          }
+        ]
+      }
+    }
+
   ]
 }
