@@ -1963,6 +1963,7 @@ void GameManager::startWildBattle(int enemyId)
 
     std::unique_ptr<fodder> enemy;
 
+
     if (enemyId == -1)
     {
         // Random enemy pool
@@ -1982,12 +1983,14 @@ void GameManager::startWildBattle(int enemyId)
         switch (enemyId)
         {
             //ultimate boss is Red Dragon
+            // name, hp, melee, range, armor, stamina, dmg, ap
             case 1: enemy = std::make_unique<fodder>("Rogue Guard", 40, 8, 4, 3, 1000, 10, 5); break;
             case 2: enemy = std::make_unique<fodder>("Boss Slime", 80, 12, 5, 2, 1200, 25, 10); break;
             case 3: enemy = std::make_unique<fodder>("Final Boss", 150, 20, 10, 5, 2000, 50, 20); break;
-            case 4: enemy = std::make_unique<fodder>("Red Dragon", 200, 25, 15, 6, 2500, 100, 30); break;
+            case 4: enemy = std::make_unique<fodder>("Red Dragon", 200, 25, 20, 10, 2500, 100, 30); break;
             case 5: enemy = std::make_unique<fodder>("Ruffian leader", 50, 12, 5, 2, 1200, 25, 10); break;
             case 6: enemy = std::make_unique<fodder>("Obi Wan Kenobi", 10000, 1000, 1000, 1000, 1000, 1000, 1000); break;
+            case 7: enemy = std::make_unique<fodder>("Goblin King", 100, 10, 10, 5, 1000, 1000, 1000); break;
             default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 100, 1, 1); break; 
         }
     }
