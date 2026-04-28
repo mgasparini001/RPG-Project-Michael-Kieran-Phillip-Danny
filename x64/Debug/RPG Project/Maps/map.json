@@ -6061,11 +6061,356 @@
     {"entityId": 4954, "data": {"npcName": "Fisherman", "npcDescription": "Strikes a wise look and an old fishing rod", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "Hello adventurer!", "options": [{"text": "Hello?", "nextNodeId": 2}]},{"id": 2, "npcText": "What are you looking for?", "options": [{"text": "I dont know", "nextNodeId": 3},{"text": "Where am I? Why am I here?", "nextNodeId": 3},{"text": "Do you know where I can find a shop?", "nextNodeId": 10}]},{"id": 3, "npcText": "Dont you know?", "options": [{"text": "No, I am lost", "nextNodeId": 4}]},{"id": 4, "npcText": "Not all is as it seems..you are lost, but keep searching and you will be found.", "options": [{"text": "Continue", "nextNodeId": 5}]},{"id": 4, "npcText": "Not all is as it seems..you are lost, but keep searching and you will be found.", "options": [{"text": "Continue", "nextNodeId": 5}]},{"id": 5, "npcText": "The journey will reveal everything to you.", "options": [{"text": "Where am I even supposed to be journeying to?", "nextNodeId": 6}]},{"id": 6, "npcText": "Journey to the lands of fire. There you will see your enemy, and know him when you see him.", "options": [{"text": "Continue", "nextNodeId": 7}]},{"id": 7, "npcText": "But be warned: do not rush to the end! Prepare yourself, that you may pass the test.", "options": [{"text": "Continue", "nextNodeId": 8}]},{"id": 8, "npcText": "Do not charge in and die horribly. Instead, fight the battles you are ready to fight to win the war.", "options": [{"text": "Continue", "nextNodeId": 9}]},{"id": 9, "npcText": "Seek the truth always, and God be with you!", "options": [{"text": "Continue", "nextNodeId": -1}]},{"id": 10, "npcText": "The shop is in the northern part of town. God be with you!", "options": [{"text": "Continue", "nextNodeId": -1}]}]}},
     {"entityId": 5024, "data": {"npcName": "Coastal Villager", "npcDescription": "A local who lives in solace on the shore.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "Hello, stranger.", "options": [{"text": "Hello, pardon me, but where can I restock on resources?", "nextNodeId": 2}]},{"id": 2, "npcText": "Hello, stranger.", "options": [{"text": "Hello, pardon me, but where can I restock on resources?", "nextNodeId": 3}]},{"id": 3, "npcText": "Head over to the sea shop if you wish to recover and rest.", "options": [{"text": "Continue", "nextNodeId": -1}]}]}},
     {"entityId": 5025, "data": {"npcName": "Lumberjack", "npcDescription": "Roams the forest with his axe.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "Hey, I know you! Why are you still here? Shouldnt you be on your way to the Goblin Kingdom by now?", "options": [{"text": "Huh? Who are you and whats the Goblin Kingdom?", "nextNodeId": 2}]},{"id": 2, "npcText": "?!? You..dont you remember???", "options": [{"text": "Wheres the nearest Inn? I think Id better lie down.", "nextNodeId": 3}]},{"id": 3, "npcText": "Southwest of here, in Townland. I hope you find what youre looking for..", "options": [{"text": "Continue", "nextNodeId": -1}]}]}},
-    {"entityId": 5026, "data": {"npcName": "Bartender", "npcDescription": "Serves home-brewed ale.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "Hello adventurer! Care for some ale to cure a dry throat?", "options": [{"text": "Yes Please!", "nextNodeId": 2},{"text": "No thanks", "nextNodeId": 6},{"text": "How dare you ask payment!? (Punch him in the face and steal it)", "nextNodeId": 6}]},{"id": 2, "npcText": "Where are you off to?", "options": [{"text": "Nowhere in particular", "nextNodeId": 3},{"text": "Im on a quest!", "nextNodeId": 5},{"text": "NONE OF YOUR BUSINESS (Punch him in the face)", "nextNodeId": 6}]},{"id": 3, "npcText": "Then let me give you some advice, those mountains up ahead are dangerous.", "options": [{"text": "Continue", "nextNodeId": 7}]},{"id": 4, "npcText": "It is said that the Goblin King has a great treasure horde that would make a man rich", "options": [{"text": "Continue", "nextNodeId": 10}]},{"id": 5, "npcText": "That is great! Where to?", "options": [{"text": "Just over those mountains", "nextNodeId": 3},{"text": "I would tell you but I would have to kill you.", "nextNodeId": 6},{"text": "NONE OF YOUR BUSINESS (Punch him)", "nextNodeId": 6}]},{"id": 6, "npcText": "Oh no! Not this band of ruffians again!", "options": [{"text": "Continue", "nextNodeId": 15}]},{"id": 7, "npcText": "They have Goblins that travel in their dark places and at night", "options": [{"text": "Continue", "nextNodeId": 8}]},{"id": 8, "npcText": "If you take the mountain pass, you will probably meet some at nightfall,..", "options": [{"text": "Continue", "nextNodeId": 9}]},{"id": 9, "npcText": "but if you go into the caves you will definitely meet some", "options": [{"text": "Tell me more about the goblins", "nextNodeId": 4},{"text": "Okay Thanks! (leave)", "nextNodeId": 6},{"text": "Which way do you recommend?", "nextNodeId": 4}]},{"id": 10, "npcText": "but he keeps it hidden away in those caves so that no one can find it.", "options": [{"text": "Continue", "nextNodeId": 11}]},{"id": 11, "npcText": "There is also supposed to be an anicent armory near the entrance of the caves.", "options": [{"text": "Continue", "nextNodeId": 12}]},{"id": 12, "npcText": "If I was you, I would go see if I could get some weapons and fight the goblins...", "options": [{"text": "Continue", "nextNodeId": 13}]},{"id": 13, "npcText": "good and proper. Who knows...", "options": [{"text": "Continue", "nextNodeId": 14}]},{"id": 14, "npcText": "you may even find some treasure!", "options": [{"text": "Continue", "nextNodeId": -1}]},{"id": 15, "npcText": "Their leader does not seem to like you, and that punch had to hurt", "options": [{"text": "I can do this all day", "nextNodeId": -105},{"text": "You are own your own! (leave)", "nextNodeId": -1},{"text": "YOU ARE ALL BENEATH ME!!!", "nextNodeId": -105}]}]}},
+    {
+      "entityId": 5026,
+      "data": {
+        "npcName": "Bartender",
+        "npcDescription": "Serves home-brewed ale.",
+        "dialogue": "Hello there",
+        "xpReward": 0,
+        "shopName": "",
+        "shopNpcName": "",
+        "shopInventory": "",
+        "dialogueTree": [
+          {
+            "id": 1,
+            "npcText": "Hello adventurer! Care for some ale to cure a dry throat?",
+            "options": [
+              {
+                "text": "Yes Please!",
+                "nextNodeId": 2
+              },
+              {
+                "text": "No thanks",
+                "nextNodeId": 6
+              },
+              {
+                "text": "How dare you ask payment!? [Punch him in the face and steal it]",
+                "nextNodeId": 6
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "npcText": "Where are you off to?",
+            "options": [
+              {
+                "text": "Nowhere in particular",
+                "nextNodeId": 3
+              },
+              {
+                "text": "Im on a quest!",
+                "nextNodeId": 5
+              },
+              {
+                "text": "NONE OF YOUR BUSINESS (Punch him in the face)",
+                "nextNodeId": 6
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "npcText": "Then let me give you some advice, those mountains up ahead are dangerous.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 7
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "npcText": "It is said that the Goblin King has a great treasure horde that would make a man rich",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 10
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "npcText": "Great! Where to?",
+            "options": [
+              {
+                "text": "Just over those mountains",
+                "nextNodeId": 3
+              },
+              {
+                "text": "Id tell you but Id have to kill you.",
+                "nextNodeId": 6
+              },
+              {
+                "text": "NONE OF YOUR BUSINESS (Punch him)",
+                "nextNodeId": 6
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "npcText": "Oh no! Not this band of ruffians again!",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 15
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "npcText": "They have Goblins that travel in their dark places and at night",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 8
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "npcText": "If you take the mountain pass, you will probably meet some at nightfall,..",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 9
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "npcText": "but if you go into the caves you will definitely meet some",
+            "options": [
+              {
+                "text": "Tell me more about the goblins",
+                "nextNodeId": 4
+              },
+              {
+                "text": "Okay Thanks! (leave)",
+                "nextNodeId": 6
+              },
+              {
+                "text": "Which way do you recommend?",
+                "nextNodeId": 4
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "npcText": "but he keeps it hidden away in those caves so that no one can find it.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 11
+              }
+            ]
+          },
+          {
+            "id": 11,
+            "npcText": "There is also supposed to be an anicent armory near the entrance of the caves.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 12
+              }
+            ]
+          },
+          {
+            "id": 12,
+            "npcText": "If I was you, I would go see if I could get some weapons and fight the goblins...",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 13
+              }
+            ]
+          },
+          {
+            "id": 13,
+            "npcText": "good and proper. Who knows...",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 14
+              }
+            ]
+          },
+          {
+            "id": 14,
+            "npcText": "you may even find some treasure!",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": -1
+              }
+            ]
+          },
+          {
+            "id": 15,
+            "npcText": "Their leader does not seem to like you, and that punch had to hurt",
+            "options": [
+              {
+                "text": "I can do this all day",
+                "nextNodeId": -105
+              },
+              {
+                "text": "You are on your own! (leave)",
+                "nextNodeId": -1
+              },
+              {
+                "text": "YOU ARE ALL BENEATH ME!!!",
+                "nextNodeId": -105
+              }
+            ]
+          }
+        ]
+      }
+    },
+
     {"entityId": 5027, "data": {"npcName": "Ghost Swordsman", "npcDescription": "OOO", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "Beeewaaare!", "options": [{"text": "Beware of what?", "nextNodeId": 2}]},{"id": 2, "npcText": "Beeewaare, lehhst yoooouuu beeecooome liiike meeeee!", "options": [{"text": "How did you come to be like this?", "nextNodeId": 3}]},{"id": 3, "npcText": " I wahhs ooonce liiike youuu! iii lohhst sihhght of whyyy…", "options": [{"text": "Why what?", "nextNodeId": 4}]},{"id": 4, "npcText": "Whyyy iii wahhs heeere…", "options": [{"text": "why were you here?", "nextNodeId": 5}]},{"id": 5, "npcText": "Ihht ahhll seeeems liiike a dreeeam… ihht ahhll seems lohhst… sohh ihh lehht gohh...", "options": [{"text": ".......", "nextNodeId": 6}]},{"id": 6, "npcText": "ahhnd nowww iii aaam traaaped iiin theee dreeeam… ", "options": [{"text": "Continue", "nextNodeId": -1}]}]}},
     {"entityId": 5028, "data": {"npcName": "Red Dragon", "npcDescription": "A local villager.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "WHO DARES ENTER MY DOMAIN?", "options": [{"text": "Tobey", "nextNodeId": 2}]},{"id": 2, "npcText": "[scoffing] AND WHY DO YOU THINK YOU’RE WORTHY TO CHALLENGE ME?", "options": [{"text": "Because I am ready at last to face my fears and leave this dream", "nextNodeId": 3}]},{"id": 3, "npcText": "I AM POWERFUL BEYOND YOUR WILDEST DREAMS.", "options": [{"text": "Continue", "nextNodeId": 4}]},{"id": 4, "npcText": "I HAVE LEVELED CITIES OF FOLK LIKE YOU!", "options": [{"text": "Continue", "nextNodeId": 5}]},{"id": 5, "npcText": "I HAVE DEVOURED MOUNTAINS WITH MY FIRE.", "options": [{"text": "Continue", "nextNodeId": 6}]},{"id": 6, "npcText": "ALL THIS LAND AROUND YOU USED TO BE GREEN AND ALIVE.", "options": [{"text": "Continue", "nextNodeId": 7}]},{"id": 7, "npcText": "THE DESERT WAS A SPRAWLING FOREST. I LAYED THEM LOW.", "options": [{"text": "Continue", "nextNodeId": 8}]},{"id": 8, "npcText": "I KILLED THE ARMIES OF MEN THAT LIVED HERE.", "options": [{"text": "Continue", "nextNodeId": 9}]},{"id": 9, "npcText": "I BURNED THEIR HOMES TO ASH AND ATE THEIR LIVESTOCK.", "options": [{"text": "Continue", "nextNodeId": 10}]},{"id": 10, "npcText": "AND YOU TOBEY? YOU THINK YOU CAN FACE ME? [laughs evilly] ", "options": [{"text": "Yes", "nextNodeId": -104}]}]}},
     {"entityId": 5029, "data": {"npcName": "Masked Rogue", "npcDescription": "A strong man with a golden glint in his sachel.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "What is your name, traveler?", "options": [{"text": "Tobey, sir", "nextNodeId": 2}]},{"id": 2, "npcText": "Tobey..Youd better be careful, this world is a treacherous place hidden beneath a beautiful guise", "options": [{"text": "Hold on, can you explain to me whats going on? It feels as if Im in a dream I cannot wake up from.", "nextNodeId": 3}]},{"id": 3, "npcText": "Oh no, its just as what was feared to come.", "options": [{"text": "Continue", "nextNodeId": 4}]},{"id": 4, "npcText": "Those who try to discover what is waiting above for them are forced to lose their past identity.", "options": [{"text": "Continue", "nextNodeId": 5}]},{"id": 5, "npcText": "You must run west, find Marlow the shopkeeper. He has the key.", "options": [{"text": "..The key for what?", "nextNodeId": 6},{"text": "OK", "nextNodeId": 8}]},{"id": 6, "npcText": "Everything will make sense, in due time. The Prophet will guide you, and the Priest will heal you.", "options": [{"text": "Continue", "nextNodeId": 7}]},{"id": 7, "npcText": "God be with you..", "options": [{"text": "Continue", "nextNodeId": -1}]},{"id": 8, "npcText": "God be with you..", "options": [{"text": "Continue", "nextNodeId": -1}]}]}},
-    {"entityId": 5030, "data": {"npcName": "Goblin King", "npcDescription": "An unsightly specimen who rules the Goblin race.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "[The Goblin King traps you] Ello, wut do we ave ere?", "options": [{"text": "[Say nothing]", "nextNodeId": 2},{"text": "Stupid goblin! Free me at once and Ill show you what Im made of", "nextNodeId": 6},{"text": "[Start crying]", "nextNodeId": 7}]},{"id": 2, "npcText": "A umie eh? I aint ever seen one uv dem so scrawny", "options": [{"text": "[Say nothing]", "nextNodeId": 3},{"text": "The only reason you think Im skinny is because youre so fat!", "nextNodeId": -107},{"text": "[Start crying]", "nextNodeId": 7}]},{"id": 3, "npcText": "Doesnt talk much does he? Do you talk, umie?", "options": [{"text": "[Say nothing]", "nextNodeId": 4},{"text": "Only to those worth talking to, you blob of slime", "nextNodeId": -107},{"text": "[Start crying]", "nextNodeId": 7}]},{"id": 4, "npcText": "Guess not. Oh well, cook im for dinner I spose.", "options": [{"text": "Continue", "nextNodeId": 9}]},{"id": 9, "npcText": "Put some extra salt on im too. I dont fink eed taste like much otherwise.", "options": [{"text": "[Say nothing]", "nextNodeId": -107},{"text": "[Start crying]", "nextNodeId": 7}]},{"id": 7, "npcText": "awww, iz it gonna cry? Dats da most umie fing Io eva did see.", "options": [{"text": "Continue", "nextNodeId": 10}]},{"id": 10, "npcText": "Frow it in da cage and we can watch it cry fur fun", "options": [{"text": "[Keep Crying]", "nextNodeId": -1},{"text": "Im gonna put some dirt in your eye..", "nextNodeId": -107}]},{"id": 5, "npcText": "Put some extra salt on im too. I dont fink eed taste like much otherwise.", "options": [{"text": "[Say nothing]", "nextNodeId": 5},{"text": "[Start crying]", "nextNodeId": 7}]}]}},
+    {
+      "entityId": 5030,
+      "data": {
+        "npcName": "Goblin King",
+        "npcDescription": "An unsightly specimen who rules the Goblin race.",
+        "dialogue": "Hello there",
+        "xpReward": 0,
+        "shopName": "",
+        "shopNpcName": "",
+        "shopInventory": "",
+        "dialogueTree": [
+          {
+            "id": 1,
+            "npcText": "[The Goblin King traps you] Ello, wut do we ave ere?",
+            "options": [
+              {
+                "text": "[Say nothing]",
+                "nextNodeId": 2
+              },
+              {
+                "text": "Stupid goblin! Free me at once and Ill show you what Im made of",
+                "nextNodeId": 6
+              },
+              {
+                "text": "[Start crying]",
+                "nextNodeId": 7
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "npcText": "A umie eh? I aint ever seen one uv dem so scrawny",
+            "options": [
+              {
+                "text": "[Say nothing]",
+                "nextNodeId": 3
+              },
+              {
+                "text": "The only reason you think Im skinny is because youre so fat!",
+                "nextNodeId": -107
+              },
+              {
+                "text": "[Start crying]",
+                "nextNodeId": 7
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "npcText": "Doesnt talk much does he? Do you talk, umie?",
+            "options": [
+              {
+                "text": "[Say nothing]",
+                "nextNodeId": 4
+              },
+              {
+                "text": "Only to those worth talking to, you blob of slime",
+                "nextNodeId": -107
+              },
+              {
+                "text": "[Start crying]",
+                "nextNodeId": 7
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "npcText": "Guess not. Oh well, cook im for dinner I spose.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 9
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "npcText": "Put some extra salt on im too. I dont fink eed taste like much otherwise.",
+            "options": [
+              {
+                "text": "[Say nothing]",
+                "nextNodeId": -107
+              },
+              {
+                "text": "[Start crying]",
+                "nextNodeId": 7
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "npcText": "awww, iz it gonna cry? Dats da most umie fing Io eva did see.",
+            "options": [
+              {
+                "text": "Continue",
+                "nextNodeId": 10
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "npcText": "Frow it in da cage and we can watch it cry fur fun",
+            "options": [
+              {
+                "text": "[Keep Crying]",
+                "nextNodeId": -1
+              },
+              {
+                "text": "Im gonna put some dirt in your eye..",
+                "nextNodeId": -107
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "npcText": "Put some extra salt on im too. I dont fink eed taste like much otherwise.",
+            "options": [
+              {
+                "text": "[Say nothing]",
+                "nextNodeId": 5
+              },
+              {
+                "text": "[Start crying]",
+                "nextNodeId": 7
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "npcText": "ur gonna regret dat, umie. You want a foight, you got un.",
+            "options": [
+              {
+                "text": "That all you got?",
+                "nextNodeId": -107
+              }
+              
+            ]
+          }
+        ]
+      }
+    },
+
     {"entityId": 5031, "data": {"npcName": "Townland Guard", "npcDescription": "Keeps the town, war veteran.", "dialogue": "Hello there", "xpReward": 0, "shopName": "", "shopNpcName": "", "shopInventory": "", "dialogueTree": [{"id": 1, "npcText": "Who goes there?", "options": [{"text": "It is I, Tobey.", "nextNodeId": 2},{"text": "Out of my way.", "nextNodeId": 3}]},{"id": 2, "npcText": "Oh, Tobey. Forgive me sir, I didnt see you earlier.", "options": [{"text": "How do you know me?", "nextNodeId": 4},{"text": "Continue", "nextNodeId": -1}]},{"id": 4, "npcText": "Dont you remember? I served you during the war sir.", "options": [{"text": "No, I don’t remember anything!", "nextNodeId": 5}]},{"id": 5, "npcText": "? Im sorry sir. I hope you find what youre looking for", "options": [{"text": "Continue", "nextNodeId": -1}]},{"id": 3, "npcText": "Stop right there, criminal scum! Nobody breaks the law on my watch!", "options": [{"text": "I missed the part where thats my problem.", "nextNodeId": -108}]}]}}
   ]
 }
