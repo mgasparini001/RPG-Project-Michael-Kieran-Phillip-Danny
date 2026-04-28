@@ -1991,6 +1991,7 @@ void GameManager::startWildBattle(int enemyId)
             case 5: enemy = std::make_unique<fodder>("Ruffian leader", 50, 12, 5, 2, 1200, 25, 10); break;
             case 6: enemy = std::make_unique<fodder>("Obi Wan Kenobi", 10000, 1000, 1000, 1000, 1000, 1000, 1000); break;
             case 7: enemy = std::make_unique<fodder>("Goblin King", 100, 10, 10, 5, 1000, 1000, 1000); break;
+            case 8: enemy = std::make_unique<fodder>("Town Guard", 100, 10, 10, 5, 1000, 1000, 1000); break;
             default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 100, 1, 1); break; 
         }
     }
