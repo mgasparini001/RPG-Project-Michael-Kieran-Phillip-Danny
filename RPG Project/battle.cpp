@@ -1,6 +1,6 @@
 #include "battle.h"
 #include <iostream>
-#include "Inventory.h"
+#include "inventory.h"
 #include <SFML/Audio.hpp>
 #include "character.h"
 #include "enemy.h"
@@ -125,6 +125,8 @@ void BattleEncounter::handleKey(sf::Keyboard::Scancode scancode)
 		if (scancode == sf::Keyboard::Scancode::Enter)
 		{
 			m_step = Step::MainChoice;
+			m_combatStarted = true;
+			m_combatStartSignal = true;
 			m_promptMessage = "1 Fight  2 Rest  3 Run  4 Item";
 		}
 		return;
@@ -276,6 +278,22 @@ bool BattleEncounter::shouldClose() const
 std::string BattleEncounter::getEndMessage() const
 {
 	return m_endMessage;
+}
+
+bool BattleEncounter::hasCombatStarted() const
+{
+	return m_combatStarted;
+}
+
+bool BattleEncounter::consumeCombatStartSignal()
+{
+	if (!m_combatStartSignal)
+	{
+		return false;
+	}
+
+	m_combatStartSignal = false;
+	return true;
 }
 
 void BattleEncounter::resolvePlayerAttack(bool meleeAttack)

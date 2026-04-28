@@ -25,6 +25,8 @@ public:
 	void render(sf::RenderWindow& window, const sf::Font& font) const;
 	bool shouldClose() const;
 	std::string getEndMessage() const;
+	bool hasCombatStarted() const;
+	bool consumeCombatStartSignal();
 
 private:
 	enum class Step
@@ -52,6 +54,8 @@ private:
 	bool m_isWild = true;
 	bool m_finished = false;
 	bool m_closeRequested = false;
+	bool m_combatStarted = false;
+	bool m_combatStartSignal = false;
 	int m_healRuns = 1;
 	int m_itemSelectionIndex = 0;
 	Step m_step = Step::Intro;

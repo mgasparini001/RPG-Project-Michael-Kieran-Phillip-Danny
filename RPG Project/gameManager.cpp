@@ -346,6 +346,7 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
         else if (shopOpen)
         {
             shopOpen = false;
+            activeShopEntityId = -1;
             showPopup("Shop closed", 0.9f);
         }
         else
@@ -384,6 +385,7 @@ void GameManager::handlePlayingKeyInput(sf::Keyboard::Scancode scancode)
         if (shopOpen)
         {
             shopOpen = false;
+            activeShopEntityId = -1;
             showPopup("Shop closed", 0.9f);
         }
         else if (!inventoryOpen)
@@ -526,6 +528,10 @@ void GameManager::update(float deltaTime)
         activeBattle.reset();
 
         // stop battle music and resume background music
+        if (encounterMusic.getStatus() == sf::SoundSource::Status::Playing)
+        {
+            encounterMusic.stop();
+        }
         if (battleMusic.getStatus() == sf::SoundSource::Status::Playing)
         {
             battleMusic.stop();
@@ -548,6 +554,19 @@ void GameManager::update(float deltaTime)
                 resetGameState(); // This automatically pulls the _reset.json file
                 showPopup("Defeated. Game reset.", 2.0f);
             }
+        }
+    }
+
+    if (activeBattle && activeBattle->consumeCombatStartSignal())
+    {
+        if (encounterMusic.getStatus() == sf::SoundSource::Status::Playing)
+        {
+            encounterMusic.stop();
+        }
+
+        if (battleMusic.getStatus() != sf::SoundSource::Status::Playing)
+        {
+            battleMusic.play();
         }
     }
 }
@@ -1145,11 +1164,13 @@ void GameManager::tryInteraction()
                 }
 
                 const std::string shopName = metadata->shopName.empty() ? "Shop" : metadata->shopName;
+                activeShopEntityId = entity->id;
                 shopOpen = true;
                 showPopup(shopName + " opened: Press Enter to buy", 1.6f);
                 return true;
             }
 
+            activeShopEntityId = entity->id;
             shopOpen = true;
             showPopup("Shop opened: Press Enter to buy", 1.6f);
             return true;
@@ -1225,8 +1246,25 @@ bool GameManager::initializeBackgroundMusic()
     backgroundMusic.setVolume(40.0f);
     backgroundMusic.play();
 
-    // load battle music (also not fatal)
-    const std::filesystem::path battleMusicPath = resolveAssetPath("Encounter.wav");
+    // load pre-battle encounter music (also not fatal)
+    const std::filesystem::path encounterMusicPath = resolveAssetPath("Encounter.wav");
+    if (!encounterMusic.openFromFile(encounterMusicPath.string()))
+    {
+        std::cerr << "Warning: failed to load encounter music from " << encounterMusicPath << std::endl;
+    }
+    else
+    {
+        encounterMusic.setLooping(true);
+        encounterMusic.setVolume(40.0f);
+    }
+
+    // load active battle music (also not fatal)
+    std::filesystem::path battleMusicPath = resolveAssetPath("Placeholder.wav");
+    if (!std::filesystem::exists(battleMusicPath))
+    {
+        battleMusicPath = resolveAssetPath("Placeholder_song.wav");
+    }
+
     if (!battleMusic.openFromFile(battleMusicPath.string()))
     {
         std::cerr << "Warning: failed to load battle music from " << battleMusicPath << std::endl;
@@ -1327,11 +1365,16 @@ void GameManager::applyDefaultPlayerState()
     mapPlayer.setHp(50);
     mapPlayer.setGold(100);
     mapPlayer.setXp(0);
+    if (mapPlayer.getHasItemEquipped())
+    {
+        mapPlayer.unequipItem();
+    }
     mapPlayer.getInventory().clear();
 
     mapPlayer.addItemToInventory(0, itemRegistry, 1);
     mapPlayer.addItemToInventory(1, itemRegistry, 3);
     mapPlayer.addItemToInventory(2, itemRegistry, 1);
+    mapPlayer.equipItem(0);
 }
 
 // builds a PlayerState struct from the current runtime player data, embedding into save files
@@ -1441,6 +1484,11 @@ void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
     // restore stamina so the player isn't trapped in an exhausted state
     mapPlayer.setStamina(1000);
 
+    if (mapPlayer.getHasItemEquipped())
+    {
+        mapPlayer.unequipItem();
+    }
+
     mapPlayer.getInventory().clear();
     for (const auto& entry : state.inventory)
     {
@@ -1450,9 +1498,19 @@ void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
         }
     }
 
-    if (state.equippedItemId >= 0 && mapPlayer.hasItem(state.equippedItemId))
+    int equippedItemId = state.equippedItemId;
+    if (equippedItemId < 0)
     {
-        mapPlayer.equipItem(state.equippedItemId);
+        equippedItemId = 0;
+    }
+
+    if (mapPlayer.hasItem(equippedItemId))
+    {
+        mapPlayer.equipItem(equippedItemId);
+    }
+    else if (mapPlayer.hasItem(0))
+    {
+        mapPlayer.equipItem(0);
     }
 }
 
@@ -1556,33 +1614,58 @@ std::vector<int> GameManager::getInventoryItemIds()
     return ids;
 }
 
-// helper get first avalible shop item
-bool GameManager::getShopListing(int& itemId, std::string& itemName, int& itemPrice) const
+int GameManager::getPlayerInventoryItemCount()
 {
-    // pull first available shop item from npc inventory
-    itemId = -1;
-    itemName.clear();
-    itemPrice = 0;
-
-    if (!shopNpc)
+    int totalItemCount = 0;
+    InventoryNode* current = mapPlayer.getInventory().getHead();
+    while (current != nullptr)
     {
-        return false;
+        if (current->item && current->quantity > 0)
+        {
+            totalItemCount += current->quantity;
+        }
+        current = current->next;
+    }
+    return totalItemCount;
+}
+
+void GameManager::persistActiveShopInventory()
+{
+    if (!shopNpc || activeShopEntityId < 0)
+    {
+        return;
     }
 
+    const OverworldMap::EntityMetadata* existingMetadata = map.getEntityMetadata(activeShopEntityId);
+    if (!existingMetadata)
+    {
+        return;
+    }
+
+    OverworldMap::EntityMetadata updatedMetadata = *existingMetadata;
+    updatedMetadata.shopInventory.clear();
+
+    bool firstEntry = true;
     InventoryNode* current = shopNpc->getInventory().getHead();
     while (current != nullptr)
     {
         if (current->item && current->quantity > 0)
         {
-            itemId = current->item->getId();
-            itemName = current->item->getName();
-            itemPrice = current->item->getValue();
-            return true;
+            if (!firstEntry)
+            {
+                updatedMetadata.shopInventory += ",";
+            }
+
+            updatedMetadata.shopInventory += std::to_string(current->item->getId());
+            updatedMetadata.shopInventory += ":";
+            updatedMetadata.shopInventory += std::to_string(current->quantity);
+            firstEntry = false;
         }
+
         current = current->next;
     }
 
-    return false;
+    map.setEntityMetadata(activeShopEntityId, updatedMetadata);
 }
 
 // tries to equip item, shows popup if failed
@@ -1637,7 +1720,25 @@ void GameManager::tryBuyShopItem()
         return;
     }
 
+    if (getPlayerInventoryItemCount() >= PLAYER_INVENTORY_CAP)
+    {
+        showPopup("You can't buy any more items.", 1.4f);
+        return;
+    }
+
     mapShop->buySomething(mapPlayer, *shopNpc, itemId, 1);
+    persistActiveShopInventory();
+
+    const auto refreshedShopItems = getShopItemIds();
+    if (refreshedShopItems.empty())
+    {
+        selectedShopIndex = 0;
+    }
+    else if (selectedShopIndex >= static_cast<int>(refreshedShopItems.size()))
+    {
+        selectedShopIndex = static_cast<int>(refreshedShopItems.size()) - 1;
+    }
+
     showPopup("Purchased " + itemRegistry.getItemName(itemId), 1.2f);
 }
 
@@ -1894,9 +1995,9 @@ void GameManager::startWildBattle(int enemyId)
     {
         backgroundMusic.stop();
     }
-    if (battleMusic.getStatus() != sf::SoundSource::Status::Playing)
+    if (encounterMusic.getStatus() != sf::SoundSource::Status::Playing)
     {
-        battleMusic.play();
+        encounterMusic.play();
     }
 }
 

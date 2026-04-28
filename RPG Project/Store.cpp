@@ -5,6 +5,24 @@
 //forward declare
 void refreshScreen();
 
+namespace
+{
+int getTotalInventoryItems(player& p)
+{
+	int totalItems = 0;
+	InventoryNode* current = p.getInventory().getHead();
+	while (current != nullptr)
+	{
+		if (current->item && current->quantity > 0)
+		{
+			totalItems += current->quantity;
+		}
+		current = current->next;
+	}
+	return totalItems;
+}
+}
+
 store::store(string n, ItemRegistry i)
 {
 	storeName = n;
@@ -87,6 +105,16 @@ void store::enterStore(player& p, npc& o)
 				}
 				if (q <= o.getInventory().getQuantity(i))
 				{
+					if (getTotalInventoryItems(p) + q > 10)
+					{
+						std::cout << "You can't buy any more items. Inventory cap is 10." << std::endl;
+						std::cout << "Press enter to proceed";
+						std::cin.ignore();
+						std::cin.get();
+						refreshScreen();
+						continue;
+					}
+
 					int price = (o.getInventory().getItem(i)->getValue() * q);
 					std::cout << "That will be " << price << " gold" << std::endl;
 					if(p.getGold() >= price)

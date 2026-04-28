@@ -202,258 +202,92 @@ void Character::unequipItem()
     {
         return;
     }
-    //unequip
-    int itemId = current->item->getId();
-    if (itemId == 0) {
+    const int itemId = current->item->getId();
+    current->isEquipped = false;
+    hasItemEquipped = false;
 
-
-        current->isEquipped = false;
-        hasItemEquipped = false;
+    switch (itemId)
+    {
+    case 0:
         AP -= 3;
-    }
-
-    else if (itemId == 1)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-
-    else if (itemId == 2)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 2:
         Armor -= 5;
-
-    }
-
-    else if (itemId == 3)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 3:
         Dmg -= 2;
         HP -= 5;
         Stamina -= 100;
-
-    }
-
-    else if (itemId == 4)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 4:
         Dmg -= 2;
-
-    }
-    else if (itemId == 5)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 5:
         Armor -= 2;
-
-    }
-    else if (itemId == 6)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 6:
         Armor -= 3;
-
-    }
-    else if (itemId == 7)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 8)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 9)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 10)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 10:
         Dmg -= 6;
         AP -= 4;
-
-    }
-    else if (itemId == 11)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 11:
         Armor -= 6;
-
-    }
-    else if (itemId == 12)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 12:
         Dmg -= 4;
         AP -= 3;
         Stamina -= 100;
-
-    }
-    else if (itemId == 13)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 13:
         Dmg -= 3;
         AP -= 3;
         Armor -= 3;
         HP -= 10;
         Stamina -= 100;
-
-    }
-    else if (itemId == 14)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 15)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 16)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 17)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 17:
         Dmg -= 8;
         AP -= 5;
-    }
-    else if (itemId == 18)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 18:
         Armor -= 9;
-
-    }
-    else if (itemId == 19)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 19:
         Armor -= 3;
-
-    }
-    else if (itemId == 20)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 21)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 21:
         Dmg -= 5;
         AP -= 5;
         Armor -= 3;
-    }
-    else if (itemId == 22)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 23)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 24)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 24:
         Dmg -= 10;
         AP -= 6;
-    }
-    else if (itemId == 25)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 25:
         Dmg -= 11;
         AP -= 4;
         HP -= 10;
-    }
-    else if (itemId == 26)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 26:
         Armor -= 12;
-    }
-    else if (itemId == 27)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 27:
         Armor -= 6;
-    }
-    else if (itemId == 28)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
+        break;
+    case 28:
         Armor -= 5;
         Stamina -= 200;
-    }
-    else if (itemId == 29)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 30)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 31)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = false;
-        hasItemEquipped = false;
-    }
-    else if (itemId == 32)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 32:
         Dmg -= 2;
         AP -= 2;
         Stamina -= 300;
+        break;
+    default:
+        break;
     }
    
 }
@@ -478,277 +312,136 @@ bool Character::equipItem(int equippedItemID)
     }
    
 
-    int itemId = current->item ? current->item->getId() : -1;
-    if (!hasItemEquipped && itemId == 0) {
+    const int itemId = current->item ? current->item->getId() : -1;
+    if (itemId < 0)
+    {
+        return false;
+    }
 
-        
-        current->isEquipped = true;
-        hasItemEquipped = true;
+    current->isEquipped = true;
+    hasItemEquipped = true;
+
+    switch (itemId)
+    {
+    case 0:
         AP += 3;
-    }
-
-    else if (!hasItemEquipped && itemId == 1)
-    {
-       // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 1:
         HP += 12;
-    }
-
-    else if (!hasItemEquipped && itemId == 2)
-    {
-       // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 2:
         Armor += 5;
-
-    }
-
-    else if (!hasItemEquipped && itemId == 3)
-    {
-       // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 3:
         Dmg += 2;
         HP += 5;
         Stamina += 100;
-
-    }
-
-    else if (!hasItemEquipped && itemId == 4)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 4:
         Dmg += 2;
-
-    }
-    else if (!hasItemEquipped && itemId == 5)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 5:
         Armor += 2;
-
-    }
-    else if (!hasItemEquipped && itemId == 6)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 6:
         Armor += 3;
-
-    }
-    else if (!hasItemEquipped && itemId == 7)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 7:
         HP += 5;
         Stamina += 500;
-        
-
-    }
-    else if (!hasItemEquipped && itemId == 8)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 8:
         HP += 5;
         Stamina += 50;
-
-    }
-    else if (!hasItemEquipped && itemId == 9)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 9:
         HP += 3;
-    }
-    else if (!hasItemEquipped && itemId == 10)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 10:
         Dmg += 6;
         AP += 4;
-
-    }
-    else if (!hasItemEquipped && itemId == 11)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 11:
         Armor += 6;
-
-    }
-    else if (!hasItemEquipped && itemId == 12)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 12:
         Dmg += 4;
         AP += 3;
         Stamina += 100;
-
-    }
-    else if (!hasItemEquipped && itemId == 13)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 13:
         Dmg += 3;
         AP += 3;
         Armor += 3;
         HP += 10;
         Stamina += 100;
-
-    }
-    else if (!hasItemEquipped && itemId == 14)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 14:
         HP += 15;
-    }
-    else if (!hasItemEquipped && itemId == 15)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 15:
         HP += 10;
-
-    }
-    else if (!hasItemEquipped && itemId == 16)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 16:
         HP += 20;
-
-    }
-    else if (!hasItemEquipped && itemId == 17)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 17:
         Dmg += 8;
         AP += 5;
-    }
-    else if (!hasItemEquipped && itemId == 18)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 18:
         Armor += 9;
-
-    }
-    else if (!hasItemEquipped && itemId == 19)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 19:
         Armor += 3;
-
-    }
-    else if (!hasItemEquipped && itemId == 20)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
-    }
-    else if (!hasItemEquipped && itemId == 21)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 21:
         Dmg += 5;
         AP += 5;
         Armor += 3;
-    }
-    else if (!hasItemEquipped && itemId == 22)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 22:
         HP += 15;
-    }
-    else if (!hasItemEquipped && itemId == 23)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 23:
         HP += 10;
-    }
-    else if (!hasItemEquipped && itemId == 24)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 24:
         Dmg += 10;
         AP += 6;
-    }
-    else if (!hasItemEquipped && itemId == 25)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 25:
         Dmg += 11;
         AP += 4;
         HP += 10;
-    }
-    else if (!hasItemEquipped && itemId == 26)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 26:
         Armor += 12;
-    }
-    else if (!hasItemEquipped && itemId == 27)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 27:
         Armor += 6;
-    }
-    else if (!hasItemEquipped && itemId == 28)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 28:
         Armor += 5;
         Stamina += 200;
-    }
-    else if (!hasItemEquipped && itemId == 29)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 29:
         HP += 5;
-    }
-    else if (!hasItemEquipped && itemId == 30)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 30:
         HP += 15;
-    }
-    else if (!hasItemEquipped && itemId == 31)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 31:
         HP += 50;
         Stamina += 300;
-    }
-    else if (!hasItemEquipped && itemId == 32)
-    {
-        // current->itemID = equippedItemID;
-        current->isEquipped = true;
-        hasItemEquipped = true;
+        break;
+    case 32:
         Dmg += 2;
         AP += 2;
         Stamina += 300;
+        break;
+    default:
+        break;
     }
     return true;
    
