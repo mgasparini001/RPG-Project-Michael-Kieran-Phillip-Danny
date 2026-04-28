@@ -56,6 +56,7 @@ private:
     sf::RenderWindow window;
     sf::Font font;
     sf::Music backgroundMusic;
+    sf::Music encounterMusic;
     sf::Music battleMusic;
 
     // Game state
@@ -80,6 +81,7 @@ private:
     bool inventoryOpen = false;
     bool shopOpen = false;
     int selectedInventoryIndex = 0;
+    static constexpr int PLAYER_INVENTORY_CAP = 10;
     bool mapEditorEnabled = false;
     EditorBrush activeEditorBrush = EditorBrush::Grass;
 
@@ -93,6 +95,7 @@ private:
     bool musicReady = false;
 
     int selectedShopIndex = 0;
+    int activeShopEntityId = -1;
 
     std::unique_ptr<BattleEncounter> activeBattle;
 
@@ -151,8 +154,9 @@ private:
     bool loadSaveFile(const std::filesystem::path& path);
     bool saveCurrentGameToSelectedFile();
     std::vector<int> getInventoryItemIds();
+    int getPlayerInventoryItemCount();
     void equipSelectedInventoryItem();
-    bool getShopListing(int& itemId, std::string& itemName, int& itemPrice) const;
+    void persistActiveShopInventory();
     void tryBuyShopItem();
     void trySellSelectedItem();
     void handleKeyPressed(sf::Keyboard::Scancode scancode);

@@ -37,8 +37,6 @@ public:
     // destructor for bang bang boom
     ~Inventory();
 
-    int getSize();
-    void setSize(int size);
     // add or increase
     void addItem(const std::shared_ptr<Item>& item, int quantity = 1);
 
@@ -63,9 +61,6 @@ public:
     InventoryNode* getHead();
 
     const std::shared_ptr<Item>& getItem(int id);
- 
-    void manageInventory(player& p1, ItemRegistry& registry, bool inBattle);
-    void inventoryDebug(player& p1, ItemRegistry& registry);
 };
 
 //test commit
