@@ -1976,6 +1976,7 @@ void GameManager::startWildBattle(int enemyId)
             case 4: enemy = std::make_unique<fodder>("Googlie Mooglie", 20, 6, 1, 3, 600, 8, 4); break;
             default: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
         }
+        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
     }
     else
     {
@@ -1994,9 +1995,10 @@ void GameManager::startWildBattle(int enemyId)
             case 8: enemy = std::make_unique<fodder>("Town Guard", 100, 10, 10, 5, 1000, 1000, 1000); break;
             default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 100, 1, 1); break; 
         }
+        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, false, false);
     }
 
-    activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
+    //activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
 
     if (backgroundMusic.getStatus() == sf::SoundSource::Status::Playing)
     {
