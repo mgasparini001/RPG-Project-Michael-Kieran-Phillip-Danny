@@ -102,6 +102,7 @@ private:
 
     //dragon final battle bool
     bool isFightingDragon = false;
+    bool isFightingObiWan = false;
 
     struct ActiveDialogueOption
     {

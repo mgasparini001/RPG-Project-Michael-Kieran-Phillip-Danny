@@ -571,6 +571,21 @@ void GameManager::update(float deltaTime)
                 showPopup("Defeated. Game reset.", 2.0f);
             }
         }
+        else if(isFightingDragon)
+        {
+            mapPlayer.setHp(1); // Keep alive to read dialogue
+            isFightingDragon = false;
+
+            OverworldMap::EntityMetadata youMeta;
+            youMeta.npcName = "You";
+
+            // Node 1
+            youMeta.dialogueTree.push_back({ 1, "YES, huh a Staircase?", {{"Walk up the staircase", 2}} });
+            // Node 2 (Option ID -99 triggers the game over)
+            youMeta.dialogueTree.push_back({ 2, "Its beautiful, I suddenly feel like my entire life has flashed before my eyes", {{"Continue", 3}} });
+            youMeta.dialogueTree.push_back({ 3, "Thats all in the past. I have a new everlasting life, I am now free", {{"End", -99}} });
+            beginNpcDialogue(-1, youMeta);
+        }
     }
 
     if (activeBattle && activeBattle->consumeCombatStartSignal())
@@ -1413,7 +1428,7 @@ void GameManager::applyDefaultPlayerState()
     mapPlayer.addItemToInventory(0, itemRegistry, 1);
     mapPlayer.addItemToInventory(1, itemRegistry, 3);
     mapPlayer.addItemToInventory(2, itemRegistry, 1);
-    mapPlayer.equipItem(0);
+    mapPlayer.equipItem(0, false);
 }
 
 // builds a PlayerState struct from the current runtime player data, embedding into save files
@@ -1545,11 +1560,11 @@ void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
 
     if (mapPlayer.hasItem(equippedItemId))
     {
-        mapPlayer.equipItem(equippedItemId);
+        mapPlayer.equipItem(equippedItemId, false);
     }
     else if (mapPlayer.hasItem(0))
     {
-        mapPlayer.equipItem(0);
+        mapPlayer.equipItem(0, false);
     }
 }
 
@@ -1719,14 +1734,14 @@ void GameManager::equipSelectedInventoryItem()
     }
 
     const int itemId = itemIds[selectedInventoryIndex];
-    const bool equipped = mapPlayer.equipItem(itemId);
+    const bool equipped = mapPlayer.equipItem(itemId, false);
     if (equipped)
     {
         showPopup("Equipped: " + itemRegistry.getItemName(itemId), 1.1f);
     }
     else
     {
-        showPopup("Could not equip selected item", 1.1f);
+        showPopup("Consumables can only be used in battle", 1.1f);
     }
 }
 
@@ -2003,6 +2018,7 @@ void GameManager::startWildBattle(int enemyId)
 
     //set flag true when fighting dragon
     isFightingDragon = (enemyId == 4);
+    isFightingObiWan = (enemyId == 6);
 
     if (enemyId == -1)
     {
@@ -2016,7 +2032,7 @@ void GameManager::startWildBattle(int enemyId)
             case 4: enemy = std::make_unique<fodder>("Googlie Mooglie", 20, 6, 1, 3, 600, 8, 4); break;
             default: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
         }
-        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
+        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true, true);
     }
     else
     {
@@ -2036,7 +2052,7 @@ void GameManager::startWildBattle(int enemyId)
             case 9: enemy = std::make_unique<fodder>("SandWorm", 75, 10, 5, 7, 5, 3, 6); break;
             default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 100, 1, 1); break; 
         }
-        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, false, false);
+        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, false, false, false);
     }
 
     //activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);

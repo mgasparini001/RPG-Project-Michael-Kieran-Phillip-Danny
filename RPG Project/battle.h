@@ -19,7 +19,7 @@ public:
 					player& playerRef,
 					ItemRegistry& registry,
 					bool canRun,
-					bool isWild);
+					bool isWild, bool enemyRun);
 
 	void handleKey(sf::Keyboard::Scancode scancode);
 	void render(sf::RenderWindow& window, const sf::Font& font) const;
@@ -52,6 +52,7 @@ private:
 	ItemRegistry& m_registry;
 	bool m_canRun = true;
 	bool m_isWild = true;
+	bool m_enemyRun = true;
 	bool m_finished = false;
 	bool m_closeRequested = false;
 	bool m_combatStarted = false;
