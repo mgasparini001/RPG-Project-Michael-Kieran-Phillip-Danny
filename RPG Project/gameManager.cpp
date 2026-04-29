@@ -542,8 +542,23 @@ void GameManager::update(float deltaTime)
             backgroundMusic.play();
         }
 
-        // Handle death state
-        if (playerDefeated)
+        // Handle death state (with dragon end battle exception)
+        if (playerDefeated && isFightingDragon)
+        {
+            mapPlayer.setHp(1); // Keep alive to read dialogue
+            isFightingDragon = false;
+
+            OverworldMap::EntityMetadata dragonMeta;
+            dragonMeta.npcName = "Red Dragon";
+            
+            // Node 1
+            dragonMeta.dialogueTree.push_back({1, "Foolish mortal. You thought you could defeat me?", {{"*cough blood*", 2}}});
+            // Node 2 (Option ID -99 triggers the game over)
+            dragonMeta.dialogueTree.push_back({2, "Now, your world will burn.", {{"...", -99}}});
+
+            beginNpcDialogue(-1, dragonMeta);
+        }
+        else if (playerDefeated)
         {
             if (!selectedSaveFile.empty())
             {
@@ -575,6 +590,24 @@ void GameManager::update(float deltaTime)
 // render the current game state to the window
 void GameManager::render()
 {
+    //start with end case
+    if (runPhase == RunPhase::TheEnd)
+    {
+        window.clear(sf::Color::Black);
+        if (!font.getInfo().family.empty())
+        {
+            sf::Text endText(font, "THE END", 72);
+            endText.setFillColor(sf::Color::Red);
+            
+            // Center the text
+            sf::FloatRect bounds = endText.getLocalBounds();
+            endText.setOrigin({bounds.size.x / 2.0f, bounds.size.y / 2.0f});
+            endText.setPosition({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+            
+            window.draw(endText);
+        }
+        return; // skip rendering everything else
+    }
     // each run phase has its own ui flow
     if (runPhase == RunPhase::SaveSelection)
     {
@@ -1072,7 +1105,12 @@ void GameManager::confirmDialogueSelection()
         int actionCode = option.nextNodeId;
         closeDialogue();
         
-        if (actionCode == -2)
+        if (actionCode == -99)
+        {
+            runPhase = RunPhase::TheEnd; // Trigger the end screen
+            return;
+        }
+        else if (actionCode == -2)
         {
             startWildBattle(-1); // Trigger random battle
         }
@@ -1963,6 +2001,8 @@ void GameManager::startWildBattle(int enemyId)
 
     std::unique_ptr<fodder> enemy;
 
+    //set flag true when fighting dragon
+    isFightingDragon = (enemyId == 4);
 
     if (enemyId == -1)
     {
