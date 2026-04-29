@@ -336,7 +336,7 @@ void BattleEncounter::resolvePlayerAttack(bool meleeAttack)
 	}
 	else
 	{
-		finishBattle("Enemy defeated, Earned 50 Gold!");
+		finishBattle("Enemy defeated");
 		return;
 	}
 
@@ -518,10 +518,6 @@ void BattleEncounter::resolveEnemyTurn()
 
 void BattleEncounter::finishBattle(const std::string& endMessage)
 {
-	if (endMessage == "Enemy defeated, Earned 50 Gold!")
-	{
-		m_player.setGold(m_player.getGold() + 50);
-	}
 	m_finished = true;
 	m_endMessage = endMessage;
 	m_step = Step::ResolveMessage;
