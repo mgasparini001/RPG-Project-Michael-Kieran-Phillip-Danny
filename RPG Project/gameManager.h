@@ -37,7 +37,8 @@ private:
     {
         SaveSelection,
         Playing,
-        ConfirmExitSave
+        ConfirmExitSave,
+        TheEnd
     };
 
     enum class EditorBrush
@@ -98,6 +99,10 @@ private:
     int activeShopEntityId = -1;
 
     std::unique_ptr<BattleEncounter> activeBattle;
+
+    //dragon final battle bool
+    bool isFightingDragon = false;
+    bool isFightingObiWan = false;
 
     struct ActiveDialogueOption
     {

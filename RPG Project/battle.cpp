@@ -82,12 +82,14 @@ BattleEncounter::BattleEncounter(std::unique_ptr<enemy> enemy,
                                  player& playerRef,
                                  ItemRegistry& registry,
                                  bool canRun,
-                                 bool isWild)
+                                 bool isWild, bool enemyRun)
 	: m_enemy(std::move(enemy)),
 	  m_player(playerRef),
 	  m_registry(registry),
 	  m_canRun(canRun),
-	  m_isWild(isWild)
+	  m_isWild(isWild),
+	  m_enemyRun(enemyRun)
+
 {
 	m_statusMessage = m_isWild
 	    ? ("A wild " + m_enemy->getName() + " appears!")
@@ -421,7 +423,7 @@ void BattleEncounter::resolvePlayerItemUse()
 	m_itemSelectionIndex = std::clamp(m_itemSelectionIndex, 0, static_cast<int>(ids.size()) - 1);
 	const int itemId = ids[static_cast<std::size_t>(m_itemSelectionIndex)];
 
-	if (!m_player.equipItem(itemId))
+	if (!m_player.equipItem(itemId, true))
 	{
 		m_statusMessage = "you cant equip an item you dont have, dingus";
 	}
@@ -494,7 +496,7 @@ void BattleEncounter::resolveEnemyTurn()
 		}*/
 		m_statusMessage += "\n" + m_enemy->getName() + " rests and restores health";
 	}
-	else
+	else if(m_enemyRun)
 	{
 		const bool escaped = m_enemy->flee();
 		if (escaped)
@@ -508,6 +510,24 @@ void BattleEncounter::resolveEnemyTurn()
 		m_statusMessage += escaped
 		    ? ("\n" + m_enemy->getName() + " escaped")
 		    : ("\n" + m_enemy->getName() + " failed to escape");
+	}
+	else
+	{
+		// enemy attacks more often if they don't run
+		const int hpBefore = m_player.getHp();
+		if (m_enemy->attack(m_player, true))
+		{
+			/*if (m_attackSound)
+			{
+				m_attackSound->play();
+			}*/
+			m_statusMessage += "\n" + m_enemy->getName() + " hits you for " +
+				std::to_string(std::max(0, hpBefore - m_player.getHp())) + " damage";
+		}
+		else
+		{
+			m_statusMessage += "\n" + m_enemy->getName() + " attack missed";
+		}
 	}
 
 	if (m_player.getHp() <= 0)

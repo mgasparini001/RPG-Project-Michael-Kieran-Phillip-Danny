@@ -542,8 +542,23 @@ void GameManager::update(float deltaTime)
             backgroundMusic.play();
         }
 
-        // Handle death state
-        if (playerDefeated)
+        // Handle death state (with dragon end battle exception)
+        if (playerDefeated && isFightingDragon)
+        {
+            mapPlayer.setHp(1); // Keep alive to read dialogue
+            isFightingDragon = false;
+
+            OverworldMap::EntityMetadata dragonMeta;
+            dragonMeta.npcName = "Red Dragon";
+            
+            // Node 1
+            dragonMeta.dialogueTree.push_back({1, "Foolish mortal. You thought you could defeat me?", {{"*cough blood*", 2}}});
+            // Node 2 (Option ID -99 triggers the game over)
+            dragonMeta.dialogueTree.push_back({2, "Now, your world will burn.", {{"...", -99}}});
+
+            beginNpcDialogue(-1, dragonMeta);
+        }
+        else if (playerDefeated)
         {
             if (!selectedSaveFile.empty())
             {
@@ -555,6 +570,21 @@ void GameManager::update(float deltaTime)
                 resetGameState(); // This automatically pulls the _reset.json file
                 showPopup("Defeated. Game reset.", 2.0f);
             }
+        }
+        else if(isFightingDragon)
+        {
+            mapPlayer.setHp(1); // Keep alive to read dialogue
+            isFightingDragon = false;
+
+            OverworldMap::EntityMetadata youMeta;
+            youMeta.npcName = "You";
+
+            // Node 1
+            youMeta.dialogueTree.push_back({ 1, "YES, huh a Staircase?", {{"Walk up the staircase", 2}} });
+            // Node 2 (Option ID -99 triggers the game over)
+            youMeta.dialogueTree.push_back({ 2, "Its beautiful, I suddenly feel like my entire life has flashed before my eyes", {{"Continue", 3}} });
+            youMeta.dialogueTree.push_back({ 3, "Thats all in the past. I have a new everlasting life, I am now free", {{"End", -99}} });
+            beginNpcDialogue(-1, youMeta);
         }
     }
 
@@ -575,6 +605,24 @@ void GameManager::update(float deltaTime)
 // render the current game state to the window
 void GameManager::render()
 {
+    //start with end case
+    if (runPhase == RunPhase::TheEnd)
+    {
+        window.clear(sf::Color::Black);
+        if (!font.getInfo().family.empty())
+        {
+            sf::Text endText(font, "THE END", 72);
+            endText.setFillColor(sf::Color::Red);
+            
+            // Center the text
+            sf::FloatRect bounds = endText.getLocalBounds();
+            endText.setOrigin({bounds.size.x / 2.0f, bounds.size.y / 2.0f});
+            endText.setPosition({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f});
+            
+            window.draw(endText);
+        }
+        return; // skip rendering everything else
+    }
     // each run phase has its own ui flow
     if (runPhase == RunPhase::SaveSelection)
     {
@@ -1072,7 +1120,12 @@ void GameManager::confirmDialogueSelection()
         int actionCode = option.nextNodeId;
         closeDialogue();
         
-        if (actionCode == -2)
+        if (actionCode == -99)
+        {
+            runPhase = RunPhase::TheEnd; // Trigger the end screen
+            return;
+        }
+        else if (actionCode == -2)
         {
             startWildBattle(-1); // Trigger random battle
         }
@@ -1375,7 +1428,7 @@ void GameManager::applyDefaultPlayerState()
     mapPlayer.addItemToInventory(0, itemRegistry, 1);
     mapPlayer.addItemToInventory(1, itemRegistry, 3);
     mapPlayer.addItemToInventory(2, itemRegistry, 1);
-    mapPlayer.equipItem(0);
+    mapPlayer.equipItem(0, false);
 }
 
 // builds a PlayerState struct from the current runtime player data, embedding into save files
@@ -1507,11 +1560,11 @@ void GameManager::applyLoadedPlayerState(const OverworldMap::PlayerState& state)
 
     if (mapPlayer.hasItem(equippedItemId))
     {
-        mapPlayer.equipItem(equippedItemId);
+        mapPlayer.equipItem(equippedItemId, false);
     }
     else if (mapPlayer.hasItem(0))
     {
-        mapPlayer.equipItem(0);
+        mapPlayer.equipItem(0, false);
     }
 }
 
@@ -1681,14 +1734,14 @@ void GameManager::equipSelectedInventoryItem()
     }
 
     const int itemId = itemIds[selectedInventoryIndex];
-    const bool equipped = mapPlayer.equipItem(itemId);
+    const bool equipped = mapPlayer.equipItem(itemId, false);
     if (equipped)
     {
         showPopup("Equipped: " + itemRegistry.getItemName(itemId), 1.1f);
     }
     else
     {
-        showPopup("Could not equip selected item", 1.1f);
+        showPopup("Consumables can only be used in battle", 1.1f);
     }
 }
 
@@ -1963,6 +2016,9 @@ void GameManager::startWildBattle(int enemyId)
 
     std::unique_ptr<fodder> enemy;
 
+    //set flag true when fighting dragon
+    isFightingDragon = (enemyId == 4);
+    isFightingObiWan = (enemyId == 6);
 
     if (enemyId == -1)
     {
@@ -1976,7 +2032,7 @@ void GameManager::startWildBattle(int enemyId)
             case 4: enemy = std::make_unique<fodder>("Googlie Mooglie", 20, 6, 1, 3, 600, 8, 4); break;
             default: enemy = std::make_unique<fodder>("Slime", 18, 3, 1, 1, 500, 4, 1); break;
         }
-        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);
+        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true, true);
     }
     else
     {
@@ -1996,7 +2052,7 @@ void GameManager::startWildBattle(int enemyId)
             case 9: enemy = std::make_unique<fodder>("SandWorm", 75, 10, 5, 7, 5, 3, 6); break;
             default: enemy = std::make_unique<fodder>("Unknown", 10, 1, 1, 1, 100, 1, 1); break; 
         }
-        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, false, false);
+        activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, false, false, false);
     }
 
     //activeBattle = std::make_unique<BattleEncounter>(std::move(enemy), mapPlayer, itemRegistry, true, true);

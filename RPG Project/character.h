@@ -82,7 +82,7 @@ public:
    
     bool getHasItemEquipped();
     void unequipItem();
-    bool equipItem(int equippedItemID);
+    bool equipItem(int equippedItemID, bool inBattle);
     int getEquippedItemID();
     
     void heal();

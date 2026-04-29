@@ -291,7 +291,7 @@ void Character::unequipItem()
     }
    
 }
-bool Character::equipItem(int equippedItemID)
+bool Character::equipItem(int equippedItemID, bool inBattle)
 {
     
     InventoryNode* current = inventory.getHead();
@@ -313,7 +313,7 @@ bool Character::equipItem(int equippedItemID)
    
 
     const int itemId = current->item ? current->item->getId() : -1;
-    if (itemId < 0)
+    if (itemId < 0 || (current->item->isConsumable() && !inBattle))
     {
         return false;
     }
